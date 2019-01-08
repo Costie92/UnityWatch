@@ -6,6 +6,15 @@ using Photon.Pun;
 
 
 public class HeroSoldier : Hero {
+    [Tooltip("attached FPS Cam, only take a handle for animation thing for fps cam")]
+    [SerializeField]
+    HeroSoldierFPSCam fpsCam;
+
+    [SerializeField]
+    Transform firePos;
+    [SerializeField]
+    ParticleSystem normalMuzzleFlash;
+
     [SerializeField]
     HSHealDrone healDrone;
 
@@ -132,6 +141,12 @@ public class HeroSoldier : Hero {
         activeCtrlDic[param].Activate();
     }
 
+    [PunRPC]
+    void normalMuzzleFlashPlay()
+    {
+        normalMuzzleFlash.Play();
+    }
+
     void NormalAttack()
     {
         if (isUltOn) return;
@@ -142,7 +157,9 @@ public class HeroSoldier : Hero {
         }
 
         currBullet--;
-
+        photonView.RPC("normalMuzzleFlashPlay", RpcTarget.Others);
+        fpsCam.HSNormalMuzzleFlash();// 나자신의 시각효과만 담당.
+       // normalMuzzleFlash.Play();   //fps 카메라라서 다른 곳의 파티클을 뿜어줘야함.
 
         float correctionRange = 1f;
         
@@ -223,6 +240,13 @@ public class HeroSoldier : Hero {
     
     private void Update()
     {
+        /*
+        if (Input.GetKeyDown("w"))
+        {
+            normalMuzzleFlash.Play();   
+        }
+        */
+
         if (!photonView.IsMine) return;
 
         if (!isUltOn)
@@ -239,4 +263,5 @@ public class HeroSoldier : Hero {
             }
         }
     }
+    
 }

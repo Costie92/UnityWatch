@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class InGameUIManager : MonoBehaviour {
-    public GameObject cont;
-    public GameObject contBack;
-    public GameObject contMax;
+    [Tooltip("controller point")]
+    [SerializeField]
+    GameObject cont;
+    [Tooltip("controller range")]
+    [SerializeField]
+    GameObject contBack;
+    [Tooltip("controller max point")]
+    [SerializeField]
+    GameObject contMax;
 
     [SerializeField]
     Vector3 charactorMoveV;
@@ -17,7 +23,7 @@ public class InGameUIManager : MonoBehaviour {
 
     MoveController moveController;
 
-    public GameObject tempChara;
+    public GameObject targetHero;
     
     // Use this for initialization
     void Start () {
@@ -27,7 +33,7 @@ public class InGameUIManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        tempChara.transform.Translate(charactorMoveV * Time.deltaTime*5, Space.Self);
+        targetHero.transform.Translate(charactorMoveV * Time.deltaTime*5, Space.Self);
 
 
         //임시로 하는 것 뿐임.
@@ -50,7 +56,7 @@ public class InGameUIManager : MonoBehaviour {
 
             Vector3 mousePos = Input.mousePosition;
             Vector3 rotateV = mousePos - mouseTouched;
-            tempChara.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
+            targetHero.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
         }
 
         /*
