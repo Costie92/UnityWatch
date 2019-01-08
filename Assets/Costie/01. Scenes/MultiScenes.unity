@@ -533,7 +533,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 731184630}
-  - component: {fileID: 731184629}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -541,21 +540,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &731184629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 731184628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc7a64eaa8003649b73931627ddf01a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  connectText: {fileID: 1889762449}
-  player: {fileID: 1285125894872794, guid: 04ea49bd4b9b67e4eaa3b05e13321cf6, type: 2}
-  spawnPoint: {fileID: 6969542}
-  lobbycamera: {fileID: 612841958}
 --- !u!4 &731184630
 Transform:
   m_ObjectHideFlags: 0

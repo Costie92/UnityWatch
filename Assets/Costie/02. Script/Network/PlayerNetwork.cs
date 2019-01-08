@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PhotonView))]
 public class PlayerNetwork : MonoBehaviour {
 
     [SerializeField] private GameObject Playercamera;
