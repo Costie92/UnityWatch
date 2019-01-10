@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class NetworkManager : Photon.MonoBehaviour {
+public class NetworkManager : MonoBehaviourPunCallbacks {
 
     [SerializeField] private Text connectText;
     [SerializeField] private GameObject player;
@@ -17,8 +19,9 @@ public class NetworkManager : Photon.MonoBehaviour {
     void Start () {
         players = new Dictionary<int, bool>();
         ReadyCount = 0;
-        PhotonNetwork.automaticallySyncScene = true;
-        PhotonNetwork.ConnectUsingSettings("0.1");
+        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.GameVersion = "0.1";
+        PhotonNetwork.ConnectUsingSettings();
         DontDestroyOnLoad(this);
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
@@ -27,7 +30,7 @@ public class NetworkManager : Photon.MonoBehaviour {
     {
         if (arg1.name == "MultiScenes")
         {
-            if (PhotonNetwork.inRoom)
+            if (PhotonNetwork.InRoom)
             {
                 Destroy(photonView);
                 StartCoroutine(CreatePlayer());
@@ -57,12 +60,12 @@ public class NetworkManager : Photon.MonoBehaviour {
         
         //Debug.Log(PhotonNetwork.connectionStateDetailed.ToString());
         //connectText.text = PhotonNetwork.connectionStateDetailed.ToString();
-        if (PhotonNetwork.inRoom) {
-            if (PhotonNetwork.isMasterClient)
+        if (PhotonNetwork.InRoom) {
+            if (PhotonNetwork.IsMasterClient)
             {
                 if (Input.GetKeyDown(KeyCode.P))
                 {
-                    PhotonPlayer[] photonPlayers = PhotonNetwork.otherPlayers;
+                    Photon.Realtime.Player[] photonPlayers = PhotonNetwork.PlayerListOthers;
                     Debug.Log("Plyaer Count : " + photonPlayers.Length);
                     foreach (KeyValuePair<int,bool> items in players) {
                         if (players[items.Key] == true) {
@@ -71,13 +74,13 @@ public class NetworkManager : Photon.MonoBehaviour {
                     }
                     if (photonPlayers.Length == ReadyCount)
                     {
-                        PhotonNetwork.LoadLevelAsync(1);
+                        PhotonNetwork.LoadLevel(1);
                     }
                 }
             }
             else {
                 if (Input.GetKeyDown(KeyCode.R)) {
-                    photonView.RPC("Ready", PhotonTargets.All);
+                    photonView.RPC("Ready", RpcTarget.All);
                 }
 
             }
@@ -87,26 +90,40 @@ public class NetworkManager : Photon.MonoBehaviour {
     [PunRPC]
     public void Join(PhotonMessageInfo mi)
     {
-        players.Add(mi.sender.ID, false);
-        Debug.Log(mi.sender.ID + " Joined");
+        
+        players.Add(mi.Sender.ActorNumber, false);
+        Debug.Log(" ID : " + mi.Sender.ActorNumber + " Joined");
     }
     [PunRPC]
     public void Ready(PhotonMessageInfo mi)
     {
-        players[mi.sender.ID] = true;
-        Debug.Log(mi.sender.ID + " Ready");
+        players[mi.Sender.ActorNumber] = !players[mi.Sender.ActorNumber];
+        if (players[mi.Sender.ActorNumber])
+        {
+            Debug.Log(" ID : " + mi.Sender.ActorNumber + " Ready");
+        }
+        else {
+            Debug.Log(" ID : " + mi.Sender.ActorNumber + " UnReady");
+        }
     }
-    public virtual void OnJoinedLobby()
+    public override void OnConnectedToMaster()
+    {
+        PhotonNetwork.JoinLobby();
+    }
+    public override void OnJoinedLobby()
     {
         //PhotonNetwork.JoinRandomRoom();
         //RoomOptions roomOptions = new RoomOptions();
         PhotonNetwork.JoinOrCreateRoom("Test",null,null);
     }
-    public virtual void OnJoinedRoom() {
+    public override void OnJoinedRoom() {
 
         Debug.Log("Joined Room");
-        if (!PhotonNetwork.isMasterClient) {
-            photonView.RPC("Join", PhotonTargets.All);
+        if (photonView.IsMine) {
+            Debug.Log("Is Mine");
+        }
+        if (!PhotonNetwork.IsMasterClient) {
+            photonView.RPC("Join", RpcTarget.All);
         }
     }
 

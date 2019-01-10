@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon;
+using Photon.Pun;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(PhotonView))]
-public class PlayerNetwork : MonoBehaviour {
+public class PlayerNetwork : MonoBehaviour, IPunObservable {
 
     [SerializeField] private GameObject Playercamera;
     [SerializeField] private MonoBehaviour[] playerControlscripts;
@@ -24,7 +26,7 @@ public class PlayerNetwork : MonoBehaviour {
     }
     private void Update()
     {
-        if (!photonView.isMine)
+        if (!photonView.IsMine)
         {
             return;
         }
@@ -43,7 +45,7 @@ public class PlayerNetwork : MonoBehaviour {
         
     }
     private void Initiliaze() {
-        if (photonView.isMine)
+        if (photonView.IsMine)
         {
             m_UIText.text = Health.ToString();
         }
@@ -57,13 +59,13 @@ public class PlayerNetwork : MonoBehaviour {
         updateUI(Health);
     }
 
-    private void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-        if (stream.isWriting)
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+        if (stream.IsWriting)
         {
             Debug.Log("Write");
             stream.SendNext(Health);
         }
-        else if (stream.isReading)
+        else if (stream.IsReading)
         {
             Debug.Log("Read");
             Health = (int)stream.ReceiveNext();

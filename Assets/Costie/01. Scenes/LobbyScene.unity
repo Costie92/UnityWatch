@@ -145,7 +145,7 @@ MonoBehaviour:
   player: {fileID: 1285125894872794, guid: 04ea49bd4b9b67e4eaa3b05e13321cf6, type: 2}
   spawnPoint: {fileID: 0}
   lobbycamera: {fileID: 0}
-  players: 
+  ReadyCount: 0
 --- !u!4 &30929365
 Transform:
   m_ObjectHideFlags: 0
@@ -170,20 +170,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerId: 0
-  group: 0
-  OwnerShipWasTransfered: 0
-  prefixBackup: -1
-  synchronization: 3
-  onSerializeTransformOption: 3
-  onSerializeRigidBodyOption: 2
-  ownershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents: []
   viewIdField: 1
-  instantiationId: 1
-  currentMasterID: -1
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!1 &1398134333
 GameObject:

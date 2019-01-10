@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon;
+using Photon.Pun;
 
 public class PlayerUI : MonoBehaviour {
 
@@ -15,7 +17,7 @@ public class PlayerUI : MonoBehaviour {
 
     public void UpdateUI(int newHealth) {
         
-        Debug.Log("My Health is : " + newHealth + ", my ID is : " + photonView.viewID);
+        Debug.Log("My Health is : " + newHealth + ", my ID is : " + photonView.ViewID);
         m_Text.text = newHealth.ToString();
     }
 }

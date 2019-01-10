@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon;
+using Photon.Pun;
 
 public class NetworkShooting : MonoBehaviour {
 
@@ -25,7 +27,7 @@ public class NetworkShooting : MonoBehaviour {
                 PhotonView pView = hit.transform.GetComponent<PhotonView>();
 
                 if (pView) {
-                    pView.RPC("ApplyDamage", PhotonTargets.All, damage);
+                    pView.RPC("ApplyDamage", RpcTarget.All, damage);
                 }
             }
         }
