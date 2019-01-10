@@ -68,7 +68,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Level: 0.548
+    - _Level: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -83,5 +83,5 @@ Material:
     - TempColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColour1: {r: 0.4039216, g: 0.2784314, b: 0.08627451, a: 0}
-    - _EdgeColour2: {r: 0, g: 0.98978424, b: 1, a: 1}
+    - _EdgeColour2: {r: 0, g: 0.9548309, b: 1, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}

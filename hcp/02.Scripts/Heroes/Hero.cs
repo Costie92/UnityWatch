@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 public abstract class Hero : MonoBehaviourPun {
-    protected E_BadState badState;
+    protected E_BadState badState = E_BadState.None;
     
     protected Animator anim;
     [SerializeField]
@@ -22,8 +22,24 @@ public abstract class Hero : MonoBehaviourPun {
     [SerializeField]
     protected float nowUltAmount;
 
+    [Tooltip("Screen Center Point Vector")]
+    [SerializeField]
+    protected Vector3 screenCenterPoint;
+
+    [Tooltip("Max Shot Length (For infinite Range)")]
+    [SerializeField]
+    protected float maxShotLength = 5000;
+
+    protected float maxShotLengthDiv;
+
+    [SerializeField]
+    protected int mapLayer;
+
     protected virtual void Awake()
     {
+        mapLayer = LayerMask.NameToLayer(Constants.mapLayerName);
+        maxShotLengthDiv = 1/maxShotLength;
+        screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
         anim = this.gameObject.GetComponent<Animator>();
         SetActiveCtrls();
     }

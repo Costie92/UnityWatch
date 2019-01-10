@@ -58,18 +58,32 @@ public class HeroSoldier : Hero {
     [SerializeField]
     int maxBullet;
 
-    bool reloading;
+    [SerializeField]
+    float correctionRange = 1f;
+
+    [SerializeField]
+    float correctionRangeSqr;
+    [SerializeField]
+    bool reloading = false;
+
+    [SerializeField]
+    AnimationClip reloadClip;
+
+    
 
     protected override void Awake()
     {
+        correctionRangeSqr = correctionRange * correctionRange;
         base.Awake();
         for (int i = 0; i < ultMissiles.Length; i++)
         {
             ultMissiles[i].DeActivate();
+            ultMissiles[i].attachedNumber = i;
         }
-        healDrone.DeActivate();
         maxHP = 100f;
         currHP = maxHP;
+        maxBullet = 25;
+        currBullet = maxBullet;
         neededUltAmount = 10000f;
         nowUltAmount = 0f;
     }
@@ -87,8 +101,11 @@ public class HeroSoldier : Hero {
     {
         if (!photonView.IsMine || badState == E_BadState.Stun || IsDie)//원래 스턴을 이런식으로 처리하면 매우 곤란한데.
         {
+            Debug.Log("무브히어로가 묵살되었음." + moveV + "포톤이 내것인지? = "+photonView.IsMine);
+
             return;
         }
+        Debug.Log("무브히어로" + moveV);
         transform.Translate(moveV, Space.Self);
     }
 
@@ -98,7 +115,7 @@ public class HeroSoldier : Hero {
         {
             return;
         }
-
+        Debug.Log("RotateHero" + rotateV);
         transform.Rotate(rotateV, Space.Self);
     }
 
@@ -108,6 +125,7 @@ public class HeroSoldier : Hero {
         {
             return;
         }
+        Debug.Log("ControlHero" + param);
 
         if (param == E_ControlParam.Ultimate)
         {
@@ -137,15 +155,13 @@ public class HeroSoldier : Hero {
 
         if (! activeCtrlDic[param].IsCoolTimeOver())
             return;
+        Debug.Log(param+"입력 - 쿨타임 검사통과");
 
         activeCtrlDic[param].Activate();
     }
 
-    [PunRPC]
-    void normalMuzzleFlashPlay()
-    {
-        normalMuzzleFlash.Play();
-    }
+
+    #region Normal Attack
 
     void NormalAttack()
     {
@@ -159,60 +175,95 @@ public class HeroSoldier : Hero {
         currBullet--;
         photonView.RPC("normalMuzzleFlashPlay", RpcTarget.Others);
         fpsCam.HSNormalMuzzleFlash();// 나자신의 시각효과만 담당.
-       // normalMuzzleFlash.Play();   //fps 카메라라서 다른 곳의 파티클을 뿜어줘야함.
+                                     // normalMuzzleFlash.Play();   //fps 카메라라서 다른 곳의 파티클을 뿜어줘야함.
 
-        float correctionRange = 1f;
-        
-        //보정해서 레이캐스트로 바로 쏘는 작업. 히트스캔.
-        Hero[] enemyHeroes = new Hero[2];   //나중에 받아오는 걸로 교체..
+ 
+        Camera camera = Camera.main;
 
-        Vector3 shotVector = transform.position * 5000  - transform.position;//현자 자기 보는 곳 z 앞으로 5000 짜리 벡터.
-        Vector3 enemyPosition;
-        Hero selectedTarget = null;
-        float minEnemyDistance = 0f;
-
-        for (int i = 0; i < enemyHeroes.Length; i++)    //보정 더해 맞을 놈 구함.
+        Ray screenCenterRay = camera.ScreenPointToRay(screenCenterPoint);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(screenCenterRay, out hitInfo, maxShotLength))
         {
-            enemyPosition = enemyHeroes[i].transform.position - transform.position; //현재 내 위치에서 적의 위치
-            float dot = Vector3.Dot(shotVector, enemyPosition);
-            if (dot < Mathf.Epsilon)   //내적 값이 0보다 작으므로 뒤에 있드니 함으로 논외.
-                continue;
-
-            float enemyDistance = enemyPosition.sqrMagnitude;
-            float farFromShootSqr = enemyDistance - (dot * dot);  //쏘는 벡터에 적 위치에서 수선으로 내린 길이의 제곱
-
-            if (farFromShootSqr > correctionRange * correctionRange)    //보정 범위의 밖. 논외.
-                continue;
-
-            //보정 범위 안에 들어옴.
-
-            if (selectedTarget == null) //선택 된게 없으면 바로 선택.
-            {
-                selectedTarget = enemyHeroes[i];
-                minEnemyDistance = enemyDistance;
-                continue;
-            }
-
-            if ( selectedTarget!= null &&  enemyDistance < minEnemyDistance)   //더 가까이 있는 경우라면
-            {
-                selectedTarget = enemyHeroes[i];
-                minEnemyDistance = enemyDistance;
-            }
-        }
-
-        if (selectedTarget == null) //맞은 놈이 없음.
-        {
-            //총 쏘는 이펙트만 RPC해주기.
+            //레이캐스트 쏴서 뭐 맞았음. 벽이나, 적팀이나 이런 것을 검출.
+            Debug.Log("쏴서 맞았음." + hitInfo);
             return;
         }
 
-        //총쏘는 이펙트와 적의 체력 깎기 해주기. normalFireDamage
+        //이제는 혹시 보정 값에 걸리나 체크.
+        Hero[] enemyHeroes = new Hero[0];   //나중에 받아오는 걸로 교체..
+        Vector3 shotVector = screenCenterRay.direction * maxShotLength;
+
+        for (int i = 0; i < enemyHeroes.Length; i++)
+        {
+            Vector3 enemyPosition = enemyHeroes[i].transform.position - screenCenterPoint;
+            float enemyScreenCenterDot = Vector3.Dot(enemyPosition, shotVector);
+
+            if (enemyScreenCenterDot < Mathf.Epsilon)   //벡터가 마이너스 , 뒤에 있음
+                continue;
+            float projectedEnemyDis = enemyScreenCenterDot * maxShotLengthDiv;
+            float farFromShotVectorSqr = enemyPosition.sqrMagnitude - (projectedEnemyDis * projectedEnemyDis) ;
+
+            if (farFromShotVectorSqr > correctionRangeSqr)  //보정 범위 밖
+                continue;
+
+            //보정으로 히트됨.
+
+            //벽 등에 가려졌는지 레이를 한번 더쏴야하나...????
+
+            if (Physics.Raycast(screenCenterRay.origin, enemyPosition, out hitInfo, maxShotLength))
+            {
+                if (hitInfo.collider.gameObject.layer.Equals(mapLayer))
+                {
+                    //벽에 맞았을 경우.
+                }
+                //적에 맞았을 경우도 체크하기.
+            }
+        }
+    
+        
     }
+
+    [PunRPC]
+    void normalMuzzleFlashPlay()
+    {
+        normalMuzzleFlash.Play();
+    }
+
+#endregion
+
+
+    #region First Skill HealDrone
 
     void FirstSkill_HealDrone() //주위를 힐 하는 힐 드론 소환. 얘는 애니메이션 동기화 해줄 필요 없음
     {
-        healDrone.Activate();   //rpc로 호출해야함.
+        if (!photonView.IsMine) return;
+
+        photonView.RPC("DroneAppear", RpcTarget.All);
+        
+        healDrone.Activate();   
     }
+
+    [PunRPC]
+    void DroneAppear()
+    {
+        healDrone.Appear();
+    }
+    [PunRPC]
+    public void DroneDisAppear()
+    {
+        healDrone.DisAppear();
+    }
+    [PunRPC]
+    void DroneHeal(Hero hero, float healAmount)
+    {
+        hero.GetHealed(healAmount);
+    }
+
+
+
+    #endregion
+
+    #region Reloading
 
     void Reloading()
     {
@@ -220,24 +271,65 @@ public class HeroSoldier : Hero {
         if (currBullet == maxBullet) return;
         reloading = true; //리로드 애니메이션 후 풀어주기.
         //리로드 애니메이션 해주기.
+
+        StartCoroutine(ReloadingCheck());
         currBullet = maxBullet;
     }
 
+    IEnumerator ReloadingCheck()
+    {
+        anim.SetTrigger("reload");
+        /*
+        float time = 0f;
+        while (time < reloadClip.length)
+        {
+            Debug.Log("리로딩 기다리는중" + time);
+            time += 0.3f;
+            yield return new WaitForSeconds(0.3f);
+        }*/
+        yield return new WaitForSeconds(reloadClip.length);
+        /*
+
+      //  yield return new WaitForSeconds(0.1f);
+        Debug.Log(anim.GetCurrentAnimatorStateInfo(0).length +"   "+ anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+
+       Debug.Log("리로드 이름 맞음?"+anim.GetCurrentAnimatorStateInfo(0).IsName("Reload") );
+      //  Debug.Log("리로드 이름 맞음?" + anim.GetCurrentAnimatorStateInfo(0).IsName("Reload"));
+        while (
+          //  anim.GetCurrentAnimatorStateInfo(0).IsName("Reload") && 
+            anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            Debug.Log("리로딩 애니메이션 체크중");
+            
+            yield return new WaitForSeconds(0.3f);
+        }
+        */
+        reloading = false;
+    }
+    #endregion
+
+    #region Ultimate
+
     void Ult_ShotMissile()
     {
-        //궁로직.
+        photonView.RPC("ShootUltimate", RpcTarget.All, ultShootCount);
         ultShootCount++;
-
-        //궁 발사 로직.
-        for (int i = 0; i < ultMissiles.Length; i++)
-        {
-            if (!ultMissiles[i].gameObject.activeSelf)
-            {
-                ultMissiles[i].Activate();
-            }
-        }
+        //궁로직.
     }
-    
+
+    [PunRPC]
+    void ShootUltimate(int num,Vector3 shootStartPos)
+    {
+        ultMissiles[num].Activate(shootStartPos);
+    }
+    [PunRPC]
+    void BoomUltMissile(int num,Vector3 boomedPos)
+    {
+        ultMissiles[num].Boom(boomedPos);
+    }
+
+    #endregion
+
     private void Update()
     {
         /*
@@ -251,7 +343,7 @@ public class HeroSoldier : Hero {
 
         if (!isUltOn)
         {
-            PlusUltAmount(Time.deltaTime);
+            PlusUltAmount(100*Time.deltaTime);//1초에 100씩 차게.
         }
         else
         {

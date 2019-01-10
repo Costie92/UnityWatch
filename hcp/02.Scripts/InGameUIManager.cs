@@ -14,7 +14,7 @@ public class InGameUIManager : MonoBehaviour {
     GameObject contMax;
 
     [SerializeField]
-    Vector3 charactorMoveV;
+    Vector3 charactorMoveV = Vector3.zero;
 
     [SerializeField]
     Vector3 mouseTouched;//임시로 회전 용으로 사용. 에디터에서 터치를 못 읽어서
@@ -23,7 +23,7 @@ public class InGameUIManager : MonoBehaviour {
 
     MoveController moveController;
 
-    public GameObject targetHero;
+    public Hero targetHero;
     
     // Use this for initialization
     void Start () {
@@ -33,9 +33,9 @@ public class InGameUIManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        targetHero.transform.Translate(charactorMoveV * Time.deltaTime*5, Space.Self);
+        targetHero.MoveHero(charactorMoveV * Time.deltaTime * 5);
 
-
+        /*
         //임시로 하는 것 뿐임.
         if (Input.GetMouseButtonDown(0) && !contTouched)
         {
@@ -56,8 +56,10 @@ public class InGameUIManager : MonoBehaviour {
 
             Vector3 mousePos = Input.mousePosition;
             Vector3 rotateV = mousePos - mouseTouched;
-            targetHero.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
+            // targetHero.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
+            targetHero.RotateHero(new Vector3(0, rotateV.x / Screen.width, 0));
         }
+        */
 
         /*
         Debug.Log("터치카운트" + Input.touchCount);
@@ -71,7 +73,6 @@ public class InGameUIManager : MonoBehaviour {
             tempChara.transform.Rotate(rotate, Space.Self);
         }
         */
-
     }
     public void On_MoveCont()  //회전 상관 없이 이동만 관장함.
         //이제 쉐이더 넣고 해주면 됨.
@@ -81,12 +82,28 @@ public class InGameUIManager : MonoBehaviour {
         Vector3 moveV = moveController.GetMoveVector(Input.mousePosition , out contV);
         cont.transform.position = contV;
         charactorMoveV = moveV;
-       
     }
     public void On_MoveStop()
     {
         contTouched = false;
         cont.transform.position = contBack.transform.position;
         charactorMoveV = Vector3.zero;
+    }
+
+    public void OnClick_NormalAttack()
+    {
+        targetHero.ControlHero(E_ControlParam.NormalAttack);
+    }
+    public void OnClick_Reload()
+    {
+        targetHero.ControlHero(E_ControlParam.Reload);
+    }
+    public void OnClick_FirstSkill()
+    {
+        targetHero.ControlHero(E_ControlParam.FirstSkill);
+    }
+    public void OnClick_Ultimate()
+    {
+        targetHero.ControlHero(E_ControlParam.Ultimate);
     }
 }

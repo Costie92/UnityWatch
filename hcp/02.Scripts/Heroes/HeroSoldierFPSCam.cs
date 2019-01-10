@@ -6,14 +6,10 @@ public class HeroSoldierFPSCam : MonoBehaviour {
     [SerializeField]
     ParticleSystem fpsNormalMuzzleFlash;
     [SerializeField]
-    HSHealDrone fpsHealDrone;
+    GameObject rifleModel;
 
     public void HSNormalMuzzleFlash()
     {
         fpsNormalMuzzleFlash.Play();
-    }
-    public void HSHealDroneShow()
-    {
-        fpsHealDrone.gameObject.SetActive(true);
     }
 }
