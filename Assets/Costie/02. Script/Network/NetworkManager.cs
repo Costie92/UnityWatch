@@ -51,7 +51,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         yield return new WaitForSeconds(1.0f);
         lobbycamera = GameObject.Find("LobbyCamera");
         lobbycamera.SetActive(false);
-        spawnPoint = GameObject.Find("spawnPoint").transform;
+        spawnPoint = GameObject.Find("AspawnPoint").transform;
         PhotonNetwork.Instantiate(player.name, spawnPoint.position, spawnPoint.rotation, 0);
     }
 
