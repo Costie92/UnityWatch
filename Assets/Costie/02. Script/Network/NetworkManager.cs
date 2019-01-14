@@ -26,6 +26,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount;
 
+    private static NetworkManager _instance = null;
+    public static NetworkManager instance
+    {
+        get
+        {
+            if (_instance == null)
+                Debug.LogError("NetworkManager is NULL");
+            return _instance;
+        }
+    }
+
     public Dictionary<int, bool> Players
     {
         get
@@ -52,6 +63,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    private void Awake()
+    {
+        _instance = this;
+    }
     // Use this for initialization
     void Start()
     {
