@@ -45,9 +45,8 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
         
     }
     private void Initiliaze() {
-        NetworkManager networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         int TeamKey = (photonView.ViewID / 1000) * 1000 + 1;
-        switch (networkManager.Teams[TeamKey]) {
+        switch (NetworkManager.instance.Teams[TeamKey]) {
             case "A":
                 this.gameObject.layer = 9;
                 break;

@@ -9,14 +9,13 @@ using UnityEngine.SceneManagement;
 public class PlayerTeam : MonoBehaviour
 {
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
-    private NetworkManager networkManager;
     private PhotonView photonView;
 
     // Use this for initialization
     void Start()
     {
+
         photonView = GetComponent<PhotonView>();
-        networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         Debug.Log(photonView.ViewID);
 
         foreach (MonoBehaviour m in LobbyControlscripts)
@@ -27,8 +26,8 @@ public class PlayerTeam : MonoBehaviour
                 m.enabled = false;
             }
         }
-        networkManager.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
-        networkManager.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID);
+        NetworkManager.instance.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
+        NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID);
     }
 
     // Update is called once per frame
@@ -42,14 +41,14 @@ public class PlayerTeam : MonoBehaviour
                 {
                     if (Input.GetKeyDown(KeyCode.P))
                     {
-                        networkManager.photonView.RPC("Play", RpcTarget.All);
+                        NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
                     }
                 }
                 else
                 {
                     if (Input.GetKeyDown(KeyCode.R))
                     {
-                        networkManager.photonView.RPC("Ready", RpcTarget.All, photonView.ViewID);
+                        NetworkManager.instance.photonView.RPC("Ready", RpcTarget.All, photonView.ViewID);
                     }
                 }
             }
