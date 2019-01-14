@@ -45,11 +45,29 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
         
     }
     private void Initiliaze() {
+        NetworkManager networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
+        int TeamKey = (photonView.ViewID / 1000) * 1000 + 1;
+        switch (networkManager.Teams[TeamKey]) {
+            case "A":
+                this.gameObject.layer = 9;
+                break;
+            case "B":
+                this.gameObject.layer = 10;
+                break;
+            case "C":
+                this.gameObject.layer = 11;
+                break;
+            case "D":
+                this.gameObject.layer = 12;
+                break;
+        }
+        
         if (photonView.IsMine)
         {
             m_UIText.text = Health.ToString();
         }
         else {
+            Debug.Log(photonView.ViewID);
             m_UIText.text = "";
             Playercamera.SetActive(false);
             foreach (MonoBehaviour m in playerControlscripts) {
@@ -62,12 +80,10 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
         if (stream.IsWriting)
         {
-            Debug.Log("Write");
             stream.SendNext(Health);
         }
         else if (stream.IsReading)
         {
-            Debug.Log("Read");
             Health = (int)stream.ReceiveNext();
             updateUI(Health);
         }
