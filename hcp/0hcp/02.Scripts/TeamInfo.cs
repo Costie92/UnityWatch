@@ -50,7 +50,6 @@ namespace hcp
 
         private void Awake()
         {
-            
             if (_instance == null)
                 _instance = this;
         }
@@ -58,7 +57,7 @@ namespace hcp
         IEnumerator Start()
         {
             yield return new WaitForSeconds(2f);
-            GetTeamInfoFromNetworkManager();
+            StartCoroutine(WaitForAllHeroBorn());
         }
         Dictionary<int, string> teamInfoDic = new Dictionary<int, string>();
 
@@ -72,7 +71,17 @@ namespace hcp
             teamInfoDic = NetworkManager.instance .Teams;
 
             List<int> enemyLayerList = new List<int>();    //자기 팀 외로.
-            int myPhotonViewIDKey = photonView.ViewID / 1000;
+            int myPhotonViewIDKey =0;
+            Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
+            for (int i = 0; i < heroes.Length; i++)
+            {
+                if (heroes[i].photonView.IsMine)
+                {
+                    myPhotonViewIDKey = heroes[i].photonView.ViewID / 1000;
+                }
+            }
+
+            
             Dictionary<int, string>.Enumerator enu = teamInfoDic.GetEnumerator();
             while (enu.MoveNext())
             {
@@ -105,6 +114,8 @@ namespace hcp
                 yield return new WaitForSeconds(1f);
             }
             //히어로 전부 생성된 시간임.
+            GetTeamInfoFromNetworkManager();
+
             Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
             myTeamHeroes.Clear();
             enemyHeroes.Clear();
