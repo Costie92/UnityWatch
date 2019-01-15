@@ -19,7 +19,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform BspawnPoint;
     [SerializeField] private Transform CspawnPoint;
     [SerializeField] private Transform DspawnPoint;
-    [SerializeField] private GameObject lobbycamera;
+    [SerializeField] private GameObject TeamInfo;
+    //[SerializeField] private GameObject lobbycamera;
 
     [SerializeField] private Dictionary<int, bool> players;
     [SerializeField] private Dictionary<int, string> teams;
@@ -106,39 +107,42 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     IEnumerator CreatePlayer()
     {
         yield return new WaitForSeconds(1.0f);
-        lobbycamera = GameObject.Find("LobbyCamera");
-        if (lobbycamera)
-            lobbycamera.SetActive(false);
+        //lobbycamera = GameObject.Find("LobbyCamera");
+        //if (lobbycamera)
+        //    lobbycamera.SetActive(false);
         
         
         Destroy(photonView);
         Debug.Log(myID);
-        if (Teams[myID] == "A")
+        Debug.Log(Teams[myID]);
+        if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             AspawnPoint = GameObject.Find("AspawnPoint").transform;
             PhotonNetwork.Instantiate(player.name, AspawnPoint.position, AspawnPoint.rotation, 0);
+
             Debug.Log(myID + " : Create at A");
 
         }
-        else if (Teams[myID] == "B")
+        else if (Teams[myID] == hcp.Constants.teamB_LayerName)
         {
             BspawnPoint = GameObject.Find("BspawnPoint").transform;
             PhotonNetwork.Instantiate(player.name, BspawnPoint.position, BspawnPoint.rotation, 0);
 
             Debug.Log(myID + " : Create at B");
         }
-        else if (Teams[myID] == "C")
+        else if (Teams[myID] == hcp.Constants.teamC_LayerName)
         {
             CspawnPoint = GameObject.Find("CspawnPoint").transform;
             GameObject obj = PhotonNetwork.Instantiate(player.name, CspawnPoint.position, CspawnPoint.rotation, 0);
             Debug.Log(myID + " : Create at C");
         }
-        else if (Teams[myID] == "D")
+        else if (Teams[myID] == hcp.Constants.teamD_LayerName)
         {
             DspawnPoint = GameObject.Find("DspawnPoint").transform;
             GameObject obj = PhotonNetwork.Instantiate(player.name, DspawnPoint.position, DspawnPoint.rotation, 0);
             Debug.Log(myID + " : Create at D");
         }
+        
     }
 
     // Update is called once per frame
@@ -178,17 +182,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void SelectTeam(int pViewID)
     {
-        if (!Teams.ContainsKey(pViewID))
+        int pVID = pViewID / 1000;
+        if (!Teams.ContainsKey(pVID))
         {
-            if ((pViewID / 1000) % 2 == 0)
+            
+            if ((pVID % 2 == 0))
             {
                 Debug.Log("Assigned A");
-                Teams.Add(pViewID, "A");
+                Teams.Add(pVID, hcp.Constants.teamA_LayerName);
             }
             else
             {
                 Debug.Log("Assigned B");
-                Teams.Add(pViewID, "B");
+                Teams.Add(pVID, hcp.Constants.teamB_LayerName);
             }
         }
     }
@@ -196,26 +202,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Join(int pViewID)
     {
-
-        if (!Players.ContainsKey(pViewID))
+        int pVID = pViewID / 1000;
+        if (!Players.ContainsKey(pVID))
         {
             if (myID == 0)
-                myID = pViewID;
-            Players.Add(pViewID, false);
-            Debug.Log(" ID : " + pViewID + " Joined");
+                myID = pVID;
+            Players.Add(pVID, false);
+            Debug.Log(" ID : " + pVID + " Joined");
         }
     }
     [PunRPC]
     public void Ready(int pViewID)
     {
-        Players[pViewID] = !Players[pViewID];
-        if (Players[pViewID])
+        int pVID = pViewID / 1000;
+        Players[pVID] = !Players[pVID];
+        if (Players[pVID])
         {
-            Debug.Log(" ID : " + pViewID + " Ready");
+            Debug.Log(" ID : " + pVID + " Ready");
         }
         else
         {
-            Debug.Log(" ID : " + pViewID + " UnReady");
+            Debug.Log(" ID : " + pVID + " UnReady");
         }
     }
     [PunRPC]

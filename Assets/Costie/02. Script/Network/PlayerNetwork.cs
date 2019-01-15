@@ -17,7 +17,7 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
     private PhotonView photonView;
 
     public int Health = 100;
-
+    
     private void Start()
     {
         photonView = GetComponent<PhotonView>();
@@ -86,5 +86,13 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
             Health = (int)stream.ReceiveNext();
             updateUI(Health);
         }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "OuterLine")
+        {
+            this.gameObject.SetActive(false);
+        }
+        
     }
 }

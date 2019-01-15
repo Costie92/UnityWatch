@@ -53,13 +53,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectText: {fileID: 0}
-  player: {fileID: 1285125894872794, guid: 04ea49bd4b9b67e4eaa3b05e13321cf6, type: 2}
+  player: {fileID: 1860531334529730, guid: a3527cf616a52dd4cb7d7551e088ea80, type: 2}
   Lobby: {fileID: 1380293930047288, guid: 77d2bdd7eaf855742b0efc513d8ab9d4, type: 2}
   AspawnPoint: {fileID: 0}
   BspawnPoint: {fileID: 0}
   CspawnPoint: {fileID: 0}
   DspawnPoint: {fileID: 0}
-  lobbycamera: {fileID: 0}
+  TeamInfo: {fileID: 1999819980196746, guid: f895f1f416327b346a959558cb83d375, type: 2}
   myID: 0
   ReadyCount: 0
 --- !u!114 &114488559401381148
