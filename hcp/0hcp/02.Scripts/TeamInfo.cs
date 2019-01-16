@@ -188,6 +188,14 @@ namespace hcp
                 return layer;
             }
         }
+        public int MapAndEnemyMaskedLayer//에너미가 한 개 이상이면 그에 맞게 마스킹해서 줌.
+        {
+            get
+            {
+                int layer = EnemyMaskedLayer;
+                return layer | 1 << Constants.mapLayerMask;
+            }
+        }
         public bool IsThisLayerEnemy(int layer)
         {
             return enemyTeamLayer.Contains(layer);

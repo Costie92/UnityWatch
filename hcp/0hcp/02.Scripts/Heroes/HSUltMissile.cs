@@ -40,12 +40,11 @@ namespace hcp
             boomEffectLength = boomEffect.main.duration;
             renderers = GetComponentsInChildren<MeshRenderer>();
             coll = GetComponent<Collider>();
-
-            /*
+            
             if (!attachingHero.photonView.IsMine)
             {
                 Destroy(GetComponent<Rigidbody>());
-            }*/
+            }
 
             knockBackPowerInterValue = knockBackPower / explosionRange;
             explosionRangeDiv = 1 / explosionRange;
@@ -104,19 +103,21 @@ namespace hcp
 
             for (int i = 0; i < enemyHeroes.Count; i++)
             {
-                Vector3 enemyPosition = enemyHeroes[i].transform.position - collCenter;
-                if (enemyPosition.sqrMagnitude <= explosionRangeSqr)
+                Vector3 enemyPosition = enemyHeroes[i].CenterPos - collCenter;
+                if (enemyPosition.sqrMagnitude < explosionRangeSqr)
                 {
-                    RaycastHit hit;
                     float dis = enemyPosition.magnitude;
 
-                    if (Physics.Raycast(collCenter, enemyPosition, out hit, dis, 1 << Constants.mapLayerMask))
+                    if (Physics.Raycast(collCenter, enemyPosition,  dis, 1 << Constants.mapLayerMask))
                     {
+                        Debug.Log(enemyHeroes[i].photonView.ViewID+"는 솔져 궁 폭발 속에서, 중간에 벽이 있어서 피해를 받지 않음");
                         continue;   //중간에 벽 있으므로 패스.
                     }
                     Vector3 dir = enemyPosition.normalized;
 
                     dir *= ((explosionRange - dis) * knockBackPowerInterValue); //폭발 지점과 거리 계산해서 알맞게 넉백 파워를 조절해줌.
+
+                    Debug.Log(enemyHeroes[i].photonView.ViewID + "는 솔져 궁 영향 입음. 넉백 = " + dir + "피해량=" + amount * (explosionRange - dis) * explosionRangeDiv);
 
                     enemyHeroes[i].photonView.RPC("Knock", Photon.Pun.RpcTarget.All, dir);
                     enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount * (explosionRange - dis) * explosionRangeDiv);

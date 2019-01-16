@@ -91,13 +91,8 @@ namespace hcp
 
         [SerializeField]
         float ultActivateTime = 0f;
-        
-        protected override void Awake()
+        private void Start()
         {
-            correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
-            correctionRangeSqr = correctionRange * correctionRange;
-            base.Awake();
-
             ultMissiles = new HSUltMissile[ultMissileParent.transform.childCount];
             for (int i = 0; i < ultMissiles.Length; i++)
             {
@@ -108,6 +103,17 @@ namespace hcp
             
             ultMissileParent.transform.SetParent(null);//미사일 관리만을 위한 애니까.
             ultMissileParent.transform.position = Vector3.zero + Vector3.down * 5f; //원점의 바닥 밑으로 숨겨버림.
+
+            
+        }
+
+        protected override void Awake()
+        {
+            correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
+            correctionRangeSqr = correctionRange * correctionRange;
+            base.Awake();
+
+            centerOffset = 1.0f;
 
             normalAttackParticles = new ParticleSystem[normalAttackParticleParent.transform.childCount];
 
@@ -194,7 +200,7 @@ namespace hcp
             {
                 return;
             }
-            Debug.Log("RotateHero" + rotateV);
+           // Debug.Log("RotateHero" + rotateV);
             transform.Rotate(rotateV, Space.Self);
         }
 
@@ -273,20 +279,32 @@ namespace hcp
 
             #region 일반 공격 직접 레이
 
-            if (Physics.Raycast(screenCenterRay, out hitInfo, maxShotLength, 1 << Constants.mapLayerMask | TeamInfo.GetInstance().EnemyMaskedLayer))
+            if (Physics.Raycast(screenCenterRay, out hitInfo, maxShotLength,TeamInfo.GetInstance().MapAndEnemyMaskedLayer))
             {
+                Debug.DrawLine(screenCenterRay.origin, screenCenterRay.direction * maxShotLength + screenCenterRay.origin, Color.blue, 1f);
+                Debug.DrawRay(screenCenterRay.origin, screenCenterRay.direction, Color.magenta, 1f);
+                Constants.DebugLayerMask(TeamInfo.GetInstance().MapAndEnemyMaskedLayer);
+
                 GameObject hit = hitInfo.collider.gameObject;
                 //레이캐스트 쏴서 뭐 맞았음. 벽이나, 적팀이나 이런 것을 검출.
                 Vector3 hitPos = hitInfo.point;
 
-                if (hit.layer.Equals(TeamInfo.GetInstance().EnemyTeamLayer))
+                if (TeamInfo.GetInstance().IsThisLayerEnemy(hit.layer))
                 {
-                    Debug.Log("쏴서 적이 맞았음." + hitInfo + "레이 당첨 위치 = " + hitPos);
+                    Debug.Log("솔져 직접 레이 쏴서 적이 맞았음." + hitInfo + "레이 당첨 위치 = " + hitPos);
                     photonView.RPC("normalHitParticle", RpcTarget.All, hitPos);  //맞는 효과.
                     Hero hitEnemyHero = hit.GetComponent<Hero>();
+                    if (hitEnemyHero == null)
+                    {
+                        Debug.Log("HS-NormalAttack 히어로 컴포넌트가 없음");
+                        return;
+                    }
                     float damage = normalFireDamage;
                     if (hitEnemyHero.IsHeadShot(hitPos))
+                    {
+                        Debug.Log("HS-NormalAttack 헤드샷.");
                         damage *= 2f;
+                    }
                     hitEnemyHero.photonView.RPC("GetDamaged", RpcTarget.All, damage);
 
                     return;
@@ -298,12 +316,17 @@ namespace hcp
                     hitCorrectionEnemyPos = hitPos;
                 }
                 else
+                {
+                    //맵에 맞은것도 아니고 적에 맞은 것도 아니고. 있을 수 없는 일임.
                     return;
+                }
             }
 
             #endregion
 
             #region 일반 공격 보정 (직접 레이에서 맵에 피격된 경우)
+
+            Debug.Log("솔져 노멀어택이 맵에 피격, 보정 연산 진입.");
 
             Vector3 shotVector = screenCenterRay.direction * maxShotLength;
             Hero hitEnemy = null;
@@ -313,40 +336,81 @@ namespace hcp
 
             for (int i = 0; i < enemyHeroes.Count; i++)
             {
-                Vector3 enemyPosition = enemyHeroes[i].transform.position - screenCenterRay.origin;
+                Vector3 enemyPosition = enemyHeroes[i].CenterPos - screenCenterRay.origin;
+                Debug.Log(enemyHeroes[i].photonView.ViewID + "의 센터 포스, " + enemyHeroes[i].CenterPos + "샷 원점에서 부터 포지션" + enemyPosition);
+
+                Debug.DrawLine(screenCenterRay.origin, screenCenterRay.origin + enemyPosition , Color.red,4f);
+
                 float enemyScreenCenterDot = Vector3.Dot(enemyPosition, shotVector);
 
                 if (enemyScreenCenterDot < Mathf.Epsilon)   //벡터가 마이너스 , 뒤에 있음
+                {
+                    Debug.Log("뒤에 있으므로 보정 연산제외");
                     continue;
-
+                }
                 float projectedEnemyDis = enemyScreenCenterDot * maxShotLengthDiv;  //카메라에서 적 까지의 샷벡터에 투영된 길이.
                 if (projectedEnemyDis > correctionMaxLength)
                 {
                     //보점 최대 길이 보다 못하면 연산 제외.
+                    Debug.Log("보정 최대 길이에 도달하지 못하므로 보정연산제외. 샷벡터 투영길이 = " + projectedEnemyDis + "직선 보정 최대 길이 = " + correctionMaxLength);
                     continue;
                 }
                 float projectedEnemyDisSqr = projectedEnemyDis * projectedEnemyDis;
+
+                
 
                 if (rayMapHit && rayHitDisSqr < projectedEnemyDisSqr)
                 //처음 레이를 쏜게 벽이었는데. 그 벽 까지의 거리 보다도 먼 적이니까.
                 //연산의 대상이 아님.
                 {
+                    Debug.Log("앞에 벽이 있으므로 연산 제외. 샷벡터 투영길이 제곱 = " + projectedEnemyDisSqr + "직접레이가 벽에 맞았던 길이 제곱 = " + rayHitDisSqr);
                     continue;
                 }
 
+                Debug.DrawLine(screenCenterRay.origin, screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis, Color.white, 4f);
+
                 float farFromShotVectorSqr = enemyPosition.sqrMagnitude - projectedEnemyDisSqr;//샷벡터 투영 점에서 적까지의 수직 거리.
 
-                if (farFromShotVectorSqr > correctionRangeSqr)  //보정 범위 밖
-                    continue;
+                Debug.DrawLine( screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis
+                    ,
+                     (screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis)
+                     +
+                    ( enemyHeroes[i].CenterPos -  (screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis) ).normalized
+                    * Mathf.Sqrt( farFromShotVectorSqr)
+                     , Color.magenta, 4f);
 
+                Debug.DrawLine(
+                    screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis
+                    
+                    ,
+                     (screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis )
+                     +
+                    (enemyHeroes[i].CenterPos - (screenCenterRay.origin + screenCenterRay.direction * projectedEnemyDis)).normalized
+                    * correctionRange
+                     , 
+                     
+                     Color.green, 4f);
+
+
+                if (farFromShotVectorSqr > correctionRangeSqr)  //보정 범위 밖
+                {
+                    Debug.Log("보정 길이 벗어남으로 인해 보정 연산 제외. 보정에 쓰인 적 위치 길이 제곱 = " + farFromShotVectorSqr +
+                        "최대 보정 넓이 반지름 제곱 = " + correctionRangeSqr);
+                    continue;
+                }
                 //보정으로 히트 된 적임.
+
+               
 
                 //벽 등에 가려졌는지 레이를 한번 더쏴야하나...????
 
                 if (Physics.Raycast(screenCenterRay.origin, enemyPosition, enemyPosition.magnitude, 1 << Constants.mapLayerMask))
                 {
+                    Debug.Log(enemyHeroes[i].photonView.ViewID + "가 솔져의 보정 노멀 공격 판정 받았으나 중간에 벽이 있어서 취소.");
                     continue;
                 }
+
+                Debug.Log(enemyHeroes[i].photonView.ViewID + "가 보정으로 인해 솔져의 노멀 공격 어택으로 판정이 일단 됨.");
 
                 //적에 피격된 경우.
                 Hero hitHero = enemyHeroes[i];
@@ -354,13 +418,13 @@ namespace hcp
                 {
                     hitEnemy = hitHero;
                     minHitLength = enemyPosition.sqrMagnitude;
-                    hitCorrectionEnemyPos = hitHero.transform.position;
+                    hitCorrectionEnemyPos = hitHero.CenterPos;
                 }
                 else if (minHitLength > enemyPosition.sqrMagnitude)
                 {
                     hitEnemy = hitHero;
                     minHitLength = enemyPosition.sqrMagnitude;
-                    hitCorrectionEnemyPos = hitHero.transform.position;
+                    hitCorrectionEnemyPos = hitHero.CenterPos;
                 }
             }
 
@@ -406,9 +470,7 @@ namespace hcp
         }
 
         #endregion
-
-
-
+        
         #region First Skill HealDrone
 
         void FirstSkill_HealDrone() //주위를 힐 하는 힐 드론 소환. 얘는 애니메이션 동기화 해줄 필요 없음
@@ -536,12 +598,6 @@ namespace hcp
 
         private void Update()
         {
-            /*
-            if (Input.GetKeyDown("w"))
-            {
-                normalMuzzleFlash.Play();   
-            }
-            */
 
             if (!photonView.IsMine) return;
 

@@ -63,6 +63,23 @@ namespace hcp
         [SerializeField]
         public HeroHpBar hpBar;
 
+        [Tooltip("local base . to apply center Position Offset")]
+        [SerializeField]
+        protected float centerOffset;
+
+        /*
+         center position for apply this hero's center
+             */
+        public Vector3 CenterPos
+        {
+            get
+            {
+                Vector3 v = transform.position;
+                v.y += centerOffset;
+                return v;
+            }
+        }
+
         
         Rigidbody rb;
         public Rigidbody GetRigidBody
@@ -75,16 +92,13 @@ namespace hcp
         
         protected virtual void Awake()
         {
-            hpBar.SetAsTeamSetting();
-            if (photonView.IsMine)
-            {
-                GameObject.Destroy(hpBar.gameObject);
-            }
+            rb = this.gameObject.GetComponent<Rigidbody>();
+            maxShotLengthDiv = 1 / maxShotLength;
+            screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
+            anim = this.gameObject.GetComponent<Animator>();
+            SetActiveCtrls();
 
-            bool test = false;
-            if (
-               test ||
-                photonView.IsMine)
+            if (photonView.IsMine)
             {
                 InGameUIManager.Instance.SetTargetHero(this);
                 Camera mainCam = Camera.main;
@@ -117,14 +131,10 @@ namespace hcp
             }
             else
             {
-
+                //내 것이 아님.
+                rb.isKinematic = true;
             }
 
-            rb = this.gameObject.GetComponent<Rigidbody>();
-            maxShotLengthDiv = 1 / maxShotLength;
-            screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
-            anim = this.gameObject.GetComponent<Animator>();
-            SetActiveCtrls();
         }
 
         protected virtual void SetActiveCtrls()//어웨이크 시 불러온다든지... 스킬들 세팅해주는 함수임.
@@ -144,13 +154,13 @@ namespace hcp
         public virtual void GetDamaged(float damage)
         {
             currHP -= damage;
-            Debug.Log("겟 데미지드");
+            Debug.Log("겟 데미지드"+damage);
         }
         [PunRPC]
         public virtual void GetHealed(float heal)
         {
             currHP += heal;
-            Debug.Log("겟 힐");
+            Debug.Log("겟 힐"+heal);
         }
         public virtual void PlusUltAmount(float value)
         {
@@ -293,17 +303,21 @@ namespace hcp
          넉백 등이 일어날 때 호출.
              */
         [PunRPC]
-        void Knock(Vector3 worldForceVector)
+        public void Knock(Vector3 worldForceVector)
         {
             if (photonView.IsMine)
-                rb.AddForce(worldForceVector, ForceMode.Force); //이 넉백 rpc 경우는 트랜스폼은 알아서 연결되니까
+
+            {
+                Debug.Log("넉 받음");
+                rb.AddForce(worldForceVector*1000f, ForceMode.Force); //이 넉백 rpc 경우는 트랜스폼은 알아서 연결되니까
                                                                 //이즈마인을 체크하지만
                                                                 //데미지 같은 경우는 모든 클라이언트에서 다 닳아있어야함.
+            }
         }
 
         //갈고리에 걸린 위치, 땡겨올 위치. 몇 초 동안 의 정보
         [PunRPC]
-        void Hooked(Vector3 hookedStartWorldPos, Vector3 hookedDestWorldPos, float duration)
+        public void Hooked(Vector3 hookedStartWorldPos, Vector3 hookedDestWorldPos, float duration)
         {
             if (!photonView.IsMine)
                 return;
@@ -330,6 +344,7 @@ namespace hcp
             }
             transform.SetPositionAndRotation(hookedDestWorldPos, destRot);
         }
+
         
     }
 }

@@ -7825,6 +7825,7 @@ MonoBehaviour:
     type: 2}
   FPSCamPerHero: {fileID: 0}
   hpBar: {fileID: 114171302416772874}
+  centerOffset: 0
   firePos: {fileID: 4876097736563572}
   healDrone: {fileID: 114106299794873186}
   normalMuzzleFlash: {fileID: 198268648169206662}

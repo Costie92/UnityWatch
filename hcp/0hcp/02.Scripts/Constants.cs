@@ -38,5 +38,23 @@ namespace hcp
             }
             return str;
         }
+        public static void DebugLayerMask(int layer)
+        {
+            int mask = 1;
+            int showMask = 0 | mask;   // 맨 앞의 애만 추려내는 마스크임.
+            string str="충돌 체크 되는 레이어 목록[";
+            for (int i = 0; i < 32; i++)
+            {
+                int temp = layer >> i;
+                temp = temp & showMask;
+                if (temp == 1)
+                {
+                    //비트가 선 레이어의 경우
+                    str += (LayerMask.LayerToName(i)+",");
+                }
+            }
+            str += "]";
+            Debug.Log(str);
+        }
     }
 }
