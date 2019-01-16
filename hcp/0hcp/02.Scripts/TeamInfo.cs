@@ -7,6 +7,12 @@ namespace hcp
     public class TeamInfo : MonoBehaviourPun
     {
         [SerializeField]
+        int myPhotonViewIDKey;
+        public int MyPhotonViewIDKey
+        {
+            get { return myPhotonViewIDKey; }
+        }
+        [SerializeField]
         int myTeamLayer;
         public int MyTeamLayer
         {
@@ -61,17 +67,70 @@ namespace hcp
         }
         Dictionary<int, string> teamInfoDic = new Dictionary<int, string>();
 
+        IEnumerator WaitForAllHeroBorn()
+        {
+            int heroCounts = 0;
+            while (heroCounts != PhotonNetwork.CurrentRoom.PlayerCount)
+            {
+                heroCounts = GameObject.FindObjectsOfType<Hero>().Length;
+                yield return new WaitForSeconds(1f);
+            }
+            //히어로 전부 생성된 시간임.
+            GetTeamInfoFromNetworkManager();
+            //내 레이어와 적 레이어 셋팅이 끝남.
+            //여기서 영웅의 레이어 셋팅과 영웅 분류를 저장한다.
+            //hpBar 셋팅도 끝내.
+
+            Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
+            myTeamHeroes.Clear();
+            enemyHeroes.Clear();
+
+            for (int i = 0; i < heroes.Length; i++)
+            {
+                int heroPhotonID = heroes[i].photonView.ViewID / 1000;  //이 영웅의 포톤뷰 키
+                int setLayerByNM = LayerMask.NameToLayer( teamInfoDic[heroPhotonID]);   //네트워크 매니저에서 저장되어 넘어온 이 포톤뷰의 팀 설정 (레이어)
+                if (setLayerByNM ==  myTeamLayer)
+                {
+                    myTeamHeroes.Add(heroes[i]);
+                    heroes[i].gameObject.layer = myTeamLayer;
+                }
+                else
+                {
+                    //내팀이 아니면 일단 적이고
+                    enemyHeroes.Add(heroes[i]);
+                    heroes[i].gameObject.layer = setLayerByNM;  //저장되어 넘어온 레이어를 영웅에 넣어줌.
+                }
+            }
+
+            //팀세팅이 모두 긑난 시점임.
+
+            for (int i = 0; i < heroes.Length; i++)
+            {
+                if (heroes[i].hpBar != null)
+                {
+                    heroes[i].hpBar.SetAsTeamSetting();
+                }
+                if (heroes[i].photonView.IsMine)
+                {
+                    Destroy(heroes[i].hpBar.gameObject);
+                }
+            }
+
+            Debug.Log(" 팀인포 : 팀세팅과 관련된 처리 모두 끝.");
+        }
+
         void GetTeamInfoFromNetworkManager()
         {
             teamInfoDic.Clear();
 
             if (NetworkManager.instance == null)
+            {
                 return;
-
+            }
             teamInfoDic = NetworkManager.instance .Teams;
 
             List<int> enemyLayerList = new List<int>();    //자기 팀 외로.
-            int myPhotonViewIDKey =0;
+            myPhotonViewIDKey =0;
             Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
             for (int i = 0; i < heroes.Length; i++)
             {
@@ -88,7 +147,7 @@ namespace hcp
                 int photonViewIDKey = enu.Current.Key;
                 string layerName = enu.Current.Value;
 
-                if (myPhotonViewIDKey == photonViewIDKey)
+                if (myPhotonViewIDKey == photonViewIDKey)   
                 {
                     myTeamLayer = LayerMask.NameToLayer(layerName);
                 }
@@ -102,41 +161,9 @@ namespace hcp
                 }
             }
             enemyTeamLayer = enemyLayerList;
-            StartCoroutine(WaitForAllHeroBorn());
         }
 
-        IEnumerator WaitForAllHeroBorn()
-        {
-            int heroCounts = 0;
-            while (heroCounts != PhotonNetwork.CurrentRoom.PlayerCount)
-            {
-                heroCounts = GameObject.FindObjectsOfType<Hero>().Length;
-                yield return new WaitForSeconds(1f);
-            }
-            //히어로 전부 생성된 시간임.
-            GetTeamInfoFromNetworkManager();
-
-            Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
-            myTeamHeroes.Clear();
-            enemyHeroes.Clear();
-            for (int i = 0; i < heroes.Length; i++)
-            {
-                int heroPhotonID = heroes[i].photonView.ViewID / 1000;
-                if (heroPhotonID == myTeamLayer)
-                {
-                    myTeamHeroes.Add(heroes[i]);
-                }
-                else
-                {
-                    enemyHeroes.Add(heroes[i]);
-                }
-            }
-            if (teamSettingIsDone == null)
-            {
-                Debug.LogError("팀세팅 이벤트를 리스닝 하고 있는 애들이 없어.");
-            }
-            teamSettingIsDone();
-        }
+      
 
         public int EnemyMaskedLayer//에너미가 한 개 이상이면 그에 맞게 마스킹해서 줌.
         {
@@ -165,13 +192,7 @@ namespace hcp
         {
             return enemyTeamLayer.Contains(layer);
         }
-
-        //팀세팅 끝났을 때 이벤트.
-        System.Action teamSettingIsDone;
-        public void AddListnerToTeamSettingIsDone(System.Action act)
-        {
-            teamSettingIsDone += act;
-        }
+        
 
         public int GetTeamLayerByPhotonViewID(int photonViewID)
         {

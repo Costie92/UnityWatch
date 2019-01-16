@@ -24,7 +24,13 @@ namespace hcp
 
         MAX
     }
-
+    [System.Serializable]
+    public enum E_HeroType
+    {
+        Soldier,
+        Hook,
+        MAX
+    }
 
 
 

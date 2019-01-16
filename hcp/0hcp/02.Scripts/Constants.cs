@@ -18,5 +18,25 @@ namespace hcp
         public static readonly string teamD_LayerName = "TEAM D";
         public static readonly int teamD_LayerMask = LayerMask.NameToLayer(teamD_LayerName);
 
+        public static readonly string hero_SoldierPath = "hcp/HeroSoldier";
+        public static readonly string hero_HookPath = "hcp/HeroHook";
+
+        public static string GetHeroPhotonNetworkInstanciatePath(E_HeroType type)
+        {
+            string str = "";
+            switch (type)
+            {
+                case E_HeroType.Soldier:
+                    str = hero_SoldierPath;
+                    break;
+                case E_HeroType.Hook:
+                    str = hero_HookPath;
+                    break;
+                default:
+                    Debug.LogError("GetHeroPhotonNetworkInstanciatePath: 넘겨받은 히어로 타입이 적절치 못함.");
+                    break;
+            }
+            return str;
+        }
     }
 }

@@ -61,7 +61,8 @@ namespace hcp
 
 
         [SerializeField]
-        HeroHpBar hpBar;
+        public HeroHpBar hpBar;
+
         
         Rigidbody rb;
         public Rigidbody GetRigidBody
@@ -74,6 +75,12 @@ namespace hcp
         
         protected virtual void Awake()
         {
+            hpBar.SetAsTeamSetting();
+            if (photonView.IsMine)
+            {
+                GameObject.Destroy(hpBar.gameObject);
+            }
+
             bool test = false;
             if (
                test ||
@@ -118,27 +125,6 @@ namespace hcp
             screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
             anim = this.gameObject.GetComponent<Animator>();
             SetActiveCtrls();
-        }
-        protected virtual void Start()
-        {
-            TeamInfo.GetInstance().AddListnerToTeamSettingIsDone(teamSettingDone);  //초기 팀세팅 맞춤.(레이어만 변경해줄뿐이긴함.)
-        }
-        
-        protected void teamSettingDone()
-        {
-            if (photonView.IsMine)
-            {
-                this.gameObject.layer = TeamInfo.GetInstance().MyTeamLayer;
-            }
-            else
-            {
-                this.gameObject.layer = TeamInfo.GetInstance().GetTeamLayerByPhotonViewID(photonView.ViewID);
-            }
-            hpBar.SetAsTeamSetting();
-            if (photonView.IsMine)
-            {
-                GameObject.Destroy(hpBar.gameObject);
-            }
         }
 
         protected virtual void SetActiveCtrls()//어웨이크 시 불러온다든지... 스킬들 세팅해주는 함수임.
