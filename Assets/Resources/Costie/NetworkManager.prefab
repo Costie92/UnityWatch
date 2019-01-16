@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectText: {fileID: 0}
-  player: {fileID: 1860531334529730, guid: a3527cf616a52dd4cb7d7551e088ea80, type: 2}
+  player: {fileID: 0}
   Lobby: {fileID: 1380293930047288, guid: 77d2bdd7eaf855742b0efc513d8ab9d4, type: 2}
   AspawnPoint: {fileID: 0}
   BspawnPoint: {fileID: 0}

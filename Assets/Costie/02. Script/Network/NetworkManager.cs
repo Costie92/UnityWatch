@@ -110,15 +110,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //lobbycamera = GameObject.Find("LobbyCamera");
         //if (lobbycamera)
         //    lobbycamera.SetActive(false);
-        
-        
+
+        string playerpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         Destroy(photonView);
         Debug.Log(myID);
         Debug.Log(Teams[myID]);
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             AspawnPoint = GameObject.Find("AspawnPoint").transform;
-            PhotonNetwork.Instantiate(player.name, AspawnPoint.position, AspawnPoint.rotation, 0);
+            PhotonNetwork.Instantiate(playerpath, AspawnPoint.position, AspawnPoint.rotation, 0);
 
             Debug.Log(myID + " : Create at A");
 
@@ -126,20 +126,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         else if (Teams[myID] == hcp.Constants.teamB_LayerName)
         {
             BspawnPoint = GameObject.Find("BspawnPoint").transform;
-            PhotonNetwork.Instantiate(player.name, BspawnPoint.position, BspawnPoint.rotation, 0);
+            PhotonNetwork.Instantiate(playerpath, BspawnPoint.position, BspawnPoint.rotation, 0);
 
             Debug.Log(myID + " : Create at B");
         }
         else if (Teams[myID] == hcp.Constants.teamC_LayerName)
         {
             CspawnPoint = GameObject.Find("CspawnPoint").transform;
-            GameObject obj = PhotonNetwork.Instantiate(player.name, CspawnPoint.position, CspawnPoint.rotation, 0);
+            GameObject obj = PhotonNetwork.Instantiate(playerpath, CspawnPoint.position, CspawnPoint.rotation, 0);
             Debug.Log(myID + " : Create at C");
         }
         else if (Teams[myID] == hcp.Constants.teamD_LayerName)
         {
             DspawnPoint = GameObject.Find("DspawnPoint").transform;
-            GameObject obj = PhotonNetwork.Instantiate(player.name, DspawnPoint.position, DspawnPoint.rotation, 0);
+            GameObject obj = PhotonNetwork.Instantiate(playerpath, DspawnPoint.position, DspawnPoint.rotation, 0);
             Debug.Log(myID + " : Create at D");
         }
         
