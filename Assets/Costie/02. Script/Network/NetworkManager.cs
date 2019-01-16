@@ -20,12 +20,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform CspawnPoint;
     [SerializeField] private Transform DspawnPoint;
     [SerializeField] private GameObject TeamInfo;
+    public GameObject buttons;
     //[SerializeField] private GameObject lobbycamera;
 
     [SerializeField] private Dictionary<int, bool> players;
     [SerializeField] private Dictionary<int, string> teams;
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount;
+    [SerializeField] private int RandomNumber;
 
     private static NetworkManager _instance = null;
     public static NetworkManager instance
@@ -71,11 +73,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Use this for initialization
     void Start()
     {
+        buttons.SetActive(false);
         myID = 0;
         Players = new Dictionary<int, bool>();
         Teams = new Dictionary<int, string>();
         ReadyCount = 0;
-        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
         DontDestroyOnLoad(this);
@@ -157,13 +159,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.JoinLobby();
     }
     public override void OnJoinedLobby()
     {
+        Debug.Log("Joined Lobby");
         //PhotonNetwork.JoinRandomRoom();
         //RoomOptions roomOptions = new RoomOptions();
-        PhotonNetwork.JoinOrCreateRoom("Test", null, null);
+            PhotonNetwork.JoinOrCreateRoom("Test", null, null);
     }
     public override void OnJoinedRoom()
     {
@@ -173,30 +177,31 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Joined Room");
     }
 
-    void OnPhotonRandomJoinFailed()
+    public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("Can't join random room!");
-        PhotonNetwork.CreateRoom(null);
+        RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)4 };
+        RandomNumber = Random.Range(0, 10000);
+        PhotonNetwork.CreateRoom(RandomNumber.ToString("N"));
     }
 
     [PunRPC]
-    public void SelectTeam(int pViewID)
+    public void SelectTeam(int pViewID,string TeamString)
     {
         int pVID = pViewID / 1000;
-        if (!Teams.ContainsKey(pVID))
-        {
-            
-            if ((pVID % 2 == 0))
-            {
+        switch (TeamString) {
+            case "A":
                 Debug.Log("Assigned A");
-                Teams.Add(pVID, hcp.Constants.teamA_LayerName);
-            }
-            else
-            {
+                Teams[pVID] = hcp.Constants.teamA_LayerName;
+                break;
+            case "B":
                 Debug.Log("Assigned B");
-                Teams.Add(pVID, hcp.Constants.teamB_LayerName);
-            }
+                Teams[pVID] = hcp.Constants.teamB_LayerName;
+                break;
+            default:
+                break;
         }
+        
     }
 
     [PunRPC]
@@ -209,6 +214,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 myID = pVID;
             Players.Add(pVID, false);
             Debug.Log(" ID : " + pVID + " Joined");
+        }
+        if (!Teams.ContainsKey(pVID))
+        {
+
+            if ((pVID % 2 == 0))
+            {
+                Debug.Log("Assigned A");
+                Teams.Add(pVID, hcp.Constants.teamA_LayerName);
+            }
+            else
+            {
+                Debug.Log("Assigned B");
+                Teams.Add(pVID, hcp.Constants.teamB_LayerName);
+            }
         }
     }
     [PunRPC]
@@ -243,6 +262,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
                 if (photonPlayers.Length == ReadyCount)
                 {
+                    buttons = null;
+                    PhotonNetwork.CurrentRoom.IsVisible = false;
+                    PhotonNetwork.CurrentRoom.IsOpen = false;
                     PhotonNetwork.LoadLevel(1);
                 }
             }
