@@ -16,25 +16,27 @@ public class PlayerTeam : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        NetworkManager.instance.buttons.SetActive(true);
-        BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button>();
-        BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
-        BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
-        BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
-        BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
-        if (PhotonNetwork.IsMasterClient)
-        {
-            BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
-            BtnReady.GetComponentInChildren<Text>().text = "Play";
-        }
-        else
-            BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
+        
         photonView = GetComponent<PhotonView>();
         Debug.Log(photonView.ViewID);
 
         foreach (MonoBehaviour m in LobbyControlscripts)
         {
-            if (photonView.IsMine) { }
+            if (photonView.IsMine) {
+                NetworkManager.instance.buttons.SetActive(true);
+                BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button>();
+                BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
+                BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
+                BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
+                BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
+                    BtnReady.GetComponentInChildren<Text>().text = "Play";
+                }
+                else
+                    BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
+            }
             else
             {
                 m.enabled = false;

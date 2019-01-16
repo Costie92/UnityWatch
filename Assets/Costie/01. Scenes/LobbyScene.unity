@@ -227,31 +227,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 114379222123637768, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
-        type: 2}
-      propertyPath: buttons
-      value: 
-      objectReference: {fileID: 1809390173}
     - target: {fileID: 114488559401381148, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
         type: 2}
       propertyPath: viewIdField
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114379222123637768, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
-        type: 2}
-      propertyPath: BtnTeamA
-      value: 
-      objectReference: {fileID: 1807191695}
-    - target: {fileID: 114379222123637768, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
-        type: 2}
-      propertyPath: BtnTeamB
-      value: 
-      objectReference: {fileID: 920956150}
-    - target: {fileID: 114379222123637768, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
-        type: 2}
-      propertyPath: BtnReady
-      value: 
-      objectReference: {fileID: 558509091}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e62e323c9a4227d4d9ae75a7f16cb72c, type: 2}
   m_IsPrefabAsset: 0

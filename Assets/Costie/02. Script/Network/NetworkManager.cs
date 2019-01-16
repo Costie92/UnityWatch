@@ -73,6 +73,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Use this for initialization
     void Start()
     {
+        buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
         myID = 0;
         Players = new Dictionary<int, bool>();
@@ -191,11 +192,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         int pVID = pViewID / 1000;
         switch (TeamString) {
             case "A":
-                Debug.Log("Assigned A");
+                Debug.Log(pVID + " : Assigned A");
                 Teams[pVID] = hcp.Constants.teamA_LayerName;
                 break;
             case "B":
-                Debug.Log("Assigned B");
+                Debug.Log(pVID + " : Assigned B");
                 Teams[pVID] = hcp.Constants.teamB_LayerName;
                 break;
             default:
