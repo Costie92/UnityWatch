@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 namespace hcp
 {
-    public abstract class Hero : MonoBehaviourPun, IConnectionCallbacks
+    public abstract class Hero : MonoBehaviourPun
     {
         
         protected IBadState badState = NoneBadState.instance;
@@ -14,6 +14,11 @@ namespace hcp
 
         [Header("Hero's Property")]
         [Space(10)]
+        [SerializeField]
+        protected float moveSpeed;
+        [SerializeField]
+        protected float rotateSpeed;
+
         [SerializeField]
         protected float maxHP;
         [SerializeField]
@@ -67,6 +72,8 @@ namespace hcp
         [SerializeField]
         protected float centerOffset;
 
+        System.Action dieAction;
+
         /*
          center position for apply this hero's center
              */
@@ -92,6 +99,8 @@ namespace hcp
         
         protected virtual void Awake()
         {
+            dieAction = new System.Action(DieCallBack);
+
             rb = this.gameObject.GetComponent<Rigidbody>();
             maxShotLengthDiv = 1 / maxShotLength;
             screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
@@ -153,12 +162,19 @@ namespace hcp
         [PunRPC]
         public virtual void GetDamaged(float damage)
         {
+            if (IsDie) return;
             currHP -= damage;
             Debug.Log("겟 데미지드"+damage);
+            if (currHP <= 0)
+            {
+                Debug.Log("겟데미지드 - 데미지 받아 사망.");
+                dieAction();
+            }
         }
         [PunRPC]
         public virtual void GetHealed(float heal)
         {
+            if (IsDie) return;
             currHP += heal;
             Debug.Log("겟 힐"+heal);
         }
@@ -185,44 +201,7 @@ namespace hcp
         {
             return activeCtrlDic[param].ReUseRemainingTime;
         }
-
-
-
-
-        //테스트용도. 
-        public void OnConnected()
-        {
-            Debug.Log(photonView + "의 결과는? 온커넥트에서 = " + photonView.IsMine + "시간은 = " + Time.time);
-            if (!photonView.IsMine)
-                rb.isKinematic = true;
-        }
-
-        public void OnDisconnected(DisconnectCause cause)
-        {
-            //throw new System.NotImplementedException();
-        }
-
-        public void OnRegionListReceived(RegionHandler regionHandler)
-        {
-            // throw new System.NotImplementedException();
-        }
-
-        public void OnCustomAuthenticationResponse(Dictionary<string, object> data)
-        {
-            // throw new System.NotImplementedException();
-        }
-
-        public void OnCustomAuthenticationFailed(string debugMessage)
-        {
-            //  throw new System.NotImplementedException();
-        }
-
-        public void OnConnectedToMaster()
-        {
-            Debug.Log(photonView + "의 결과는? OnConnectedToMaster = " + photonView.IsMine + "시간은 = " + Time.time);
-            if (!photonView.IsMine)
-                rb.isKinematic = true;
-        }
+        
         public bool IsCannotMoveState()
         {
             if (badState.GetType().IsAssignableFrom(typeof(ICanNotMove)))
@@ -345,6 +324,23 @@ namespace hcp
             transform.SetPositionAndRotation(hookedDestWorldPos, destRot);
         }
 
-        
+        protected virtual void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag(Constants.outLineTag))
+            {
+                Debug.Log("아웃 라인 접촉. 낙사. 사망.");
+                dieAction();
+            }
+        }
+
+        protected virtual void DieCallBack()
+        {
+            if (IsDie)
+                return;
+            Debug.Log("죽음 콜백 받음.");
+
+            IsDie = true;
+
+        }
     }
 }

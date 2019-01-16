@@ -18,6 +18,8 @@ namespace hcp
         public static readonly string teamD_LayerName = "TEAM D";
         public static readonly int teamD_LayerMask = LayerMask.NameToLayer(teamD_LayerName);
 
+        public static readonly string outLineTag = "OutLine";
+
         public static readonly string hero_SoldierPath = "hcp/HeroSoldier";
         public static readonly string hero_HookPath = "hcp/HeroHook";
 

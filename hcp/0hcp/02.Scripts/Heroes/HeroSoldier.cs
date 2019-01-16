@@ -111,6 +111,10 @@ namespace hcp
         {
             correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
             correctionRangeSqr = correctionRange * correctionRange;
+
+            moveSpeed = 3f;
+            rotateSpeed = 2f;
+
             base.Awake();
 
             centerOffset = 1.0f;
@@ -162,7 +166,7 @@ namespace hcp
                 Debug.Log("무브히어로가 묵살되었음." + moveV + "포톤이 내것인지? = " + photonView.IsMine);
                 return;
             }
-            transform.Translate(moveV, Space.Self);
+            transform.Translate(moveV*moveSpeed , Space.Self);
 
             E_MoveDir dir = GetMostMoveDir(moveV);
 
@@ -201,7 +205,7 @@ namespace hcp
                 return;
             }
            // Debug.Log("RotateHero" + rotateV);
-            transform.Rotate(rotateV, Space.Self);
+            transform.Rotate(rotateV*rotateSpeed, Space.Self);
         }
 
         public override void ControlHero(E_ControlParam param)
