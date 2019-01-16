@@ -140,11 +140,13 @@ namespace hcp
         public virtual void ControlHero(E_ControlParam param)
         {
         }
+        [PunRPC]
         public virtual void GetDamaged(float damage)
         {
             currHP -= damage;
             Debug.Log("겟 데미지드");
         }
+        [PunRPC]
         public virtual void GetHealed(float heal)
         {
             currHP += heal;

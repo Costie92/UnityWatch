@@ -430,10 +430,10 @@ namespace hcp
         {
             healDrone.DisAppear();
         }
-        [PunRPC]
-        void DroneHeal(Hero hero, float healAmount)
+       
+        public void DroneHeal(Hero healedHero, float healAmount)
         {
-            hero.GetHealed(healAmount);
+            healedHero.photonView.RPC("GetHealed",RpcTarget.All,  healAmount);
         }
 
 

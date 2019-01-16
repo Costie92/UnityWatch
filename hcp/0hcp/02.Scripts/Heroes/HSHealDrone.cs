@@ -150,15 +150,17 @@ namespace hcp
             Debug.Log("힐드론 액티베이트 시간 =" + activateTime);
             while (true)
             {
+                
                 List<Hero> sameSideHeroes = TeamInfo.GetInstance().MyTeamHeroes;
 
                 for (int i = 0; i < sameSideHeroes.Count; i++)
                 {
                     if (SqrHealRange >= (sameSideHeroes[i].transform.position - transform.position).sqrMagnitude)   //힐 범위에 아군이 있으면
                     {
-                        attachingHero.photonView.RPC("DroneHeal", RpcTarget.All, sameSideHeroes[i], healAmount);
+                        attachingHero.DroneHeal( sameSideHeroes[i], healAmount);
                     }
                 }
+                
                 if (activateTime + activeMaxTime < Time.time)
                 {
                     break;
