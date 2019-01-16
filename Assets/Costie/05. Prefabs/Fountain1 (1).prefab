@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33758562804949182}
   - component: {fileID: 23405305980295216}
   - component: {fileID: 64261168095368000}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Fountain1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ MeshFilter:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1483965119321724}
-  m_Mesh: {fileID: 4300056, guid: 72e643619fa32984785527a0c110a313, type: 3}
+  m_Mesh: {fileID: 4300056, guid: 52b31e1520bff6242a48b31a41ee307e, type: 3}
 --- !u!64 &64261168095368000
 MeshCollider:
   m_ObjectHideFlags: 1
