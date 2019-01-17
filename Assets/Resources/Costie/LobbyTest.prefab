@@ -130,5 +130,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca8db4ee26f90e4185684fcd3311e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mycolor: {fileID: 2100000, guid: 364b5241669fd224fa2fe1a437d79b83, type: 2}
+  BtnTeamA: {fileID: 0}
+  BtnTeamB: {fileID: 0}
+  BtnReady: {fileID: 0}
   LobbyControlscripts:
   - {fileID: 114327185847004640}
