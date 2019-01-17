@@ -31,8 +31,8 @@ public class PlayerTeam : MonoBehaviour
                 BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
                 BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
                 BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
-                BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton("Soldier"); }); 
-                BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton("Hook"); });
+                BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); }); 
+                BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
                 {
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
@@ -88,8 +88,8 @@ public class PlayerTeam : MonoBehaviour
         PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
-    public void onClickHeroButton(string HeroName) {
-        NetworkManager.instance.photonView.RPC("SelectHero", RpcTarget.All, photonView.ViewID, HeroName);
+    public void onClickHeroButton(hcp.E_HeroType heroType) {
+        NetworkManager.instance.photonView.RPC("SelectHero", RpcTarget.All, photonView.ViewID, heroType);
     }
     public void onClickReady()
     {

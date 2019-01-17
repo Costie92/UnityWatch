@@ -217,20 +217,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         
     }
     [PunRPC]
-    public void SelectHero(int pViewID, string HeroName) {
+    public void SelectHero(int pViewID, hcp.E_HeroType heroType) {
         int pVID = pViewID / 1000;
-        switch (HeroName) {
-            case "Soldier":
+        switch (heroType) {
+            case hcp.E_HeroType.Soldier:
                 Debug.Log(pVID + " : Select Soldier");
-                Heros[pVID] = hcp.E_HeroType.Soldier;
                 break;
-            case "Hook":
+            case hcp.E_HeroType.Hook:
                 Debug.Log(pVID + " : Select Hook");
-                Heros[pVID] = hcp.E_HeroType.Hook;
                 break;
             default:
                 break;
         }
+        Heros[pVID] = heroType;
     }
 
     [PunRPC]
