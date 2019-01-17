@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class PlayerTeam : MonoBehaviour
 {
     [SerializeField] private Material Mycolor;
-    [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady;
+    [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     private PhotonView photonView;
 
@@ -27,8 +27,12 @@ public class PlayerTeam : MonoBehaviour
                 BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button>();
                 BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
                 BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
+                BtnSoldier = NetworkManager.instance.buttons.transform.GetChild(3).GetComponent<Button>();
+                BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
                 BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
                 BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton("Soldier"); }); 
+                BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton("Hook"); });
                 if (PhotonNetwork.IsMasterClient)
                 {
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
@@ -83,6 +87,9 @@ public class PlayerTeam : MonoBehaviour
     {
         PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
+    }
+    public void onClickHeroButton(string HeroName) {
+        NetworkManager.instance.photonView.RPC("SelectHero", RpcTarget.All, photonView.ViewID, HeroName);
     }
     public void onClickReady()
     {

@@ -18,8 +18,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject buttons;
     //[SerializeField] private GameObject lobbycamera;
 
-    [SerializeField] private Dictionary<int, bool> players;
-    [SerializeField] private Dictionary<int, string> teams;
+    private Dictionary<int, bool> players;
+    private Dictionary<int, string> teams;
+    private Dictionary<int, hcp.E_HeroType> heros;
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
     [SerializeField] private int RandomNumber;
@@ -61,6 +62,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public Dictionary<int, hcp.E_HeroType> Heros
+    {
+        get
+        {
+            return heros;
+        }
+
+        set
+        {
+            heros = value;
+        }
+    }
+
     private void Awake()
     {
         _instance = this;
@@ -73,6 +87,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         myID = 0;
         Players = new Dictionary<int, bool>();
         Teams = new Dictionary<int, string>();
+        Heros = new Dictionary<int, hcp.E_HeroType>();
         ReadyCount = 0;
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
@@ -109,7 +124,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //if (lobbycamera)
         //    lobbycamera.SetActive(false);
 
-        string playerpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
+        string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
+        string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
         Destroy(photonView);
         Debug.Log(myID);
         Debug.Log(Teams[myID]);
@@ -135,7 +151,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             SpawnPoint = MapInfo.instance.DSpawnPoint;
             Debug.Log(myID + " : Create at D");
         }
-        PhotonNetwork.Instantiate(playerpath, SpawnPoint.position, SpawnPoint.rotation, 0);
+        if (Heros[myID] == hcp.E_HeroType.Soldier)
+        {
+            PhotonNetwork.Instantiate(Soldierpath, SpawnPoint.position, SpawnPoint.rotation, 0);
+        }
+        else {
+            PhotonNetwork.Instantiate(Hookpath, SpawnPoint.position, SpawnPoint.rotation, 0);
+        }
     }
 
     // Update is called once per frame
@@ -194,6 +216,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         
     }
+    [PunRPC]
+    public void SelectHero(int pViewID, string HeroName) {
+        int pVID = pViewID / 1000;
+        switch (HeroName) {
+            case "Soldier":
+                Debug.Log(pVID + " : Select Soldier");
+                Heros[pVID] = hcp.E_HeroType.Soldier;
+                break;
+            case "Hook":
+                Debug.Log(pVID + " : Select Hook");
+                Heros[pVID] = hcp.E_HeroType.Hook;
+                break;
+            default:
+                break;
+        }
+    }
 
     [PunRPC]
     public void Join(int pViewID)
@@ -205,6 +243,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 myID = pVID;
             Players.Add(pVID, false);
             Debug.Log(" ID : " + pVID + " Joined");
+        }
+        if (!Heros.ContainsKey(pVID)) {
+            Heros.Add(pVID, hcp.E_HeroType.Soldier);
+            Debug.Log("My Hero is Soldier");
         }
         if (!Teams.ContainsKey(pVID))
         {
