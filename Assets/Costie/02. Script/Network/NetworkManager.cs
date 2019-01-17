@@ -243,6 +243,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Photon.Realtime.Player[] photonPlayers = PhotonNetwork.PlayerListOthers;
             Debug.Log("Plyaer Count : " + photonPlayers.Length);
             var enumerator = Players.GetEnumerator();
+            ReadyCount = 0;
             while (enumerator.MoveNext())
             {
                 KeyValuePair<int, bool> items = enumerator.Current;
@@ -268,6 +269,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 }
                 Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
             }
+            Debug.Log(photonPlayers.Length == ReadyCount);
+            Debug.Log(TeamACount == TeamBCount);
+            Debug.Log((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0);
             if ((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0)
             {
                 buttons = null;
