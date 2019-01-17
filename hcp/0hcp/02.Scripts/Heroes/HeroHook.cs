@@ -67,10 +67,6 @@ namespace hcp
             neededUltAmount = 10000f;
             nowUltAmount = 0f;
         }
-        private void Start()
-        {
-            hookProjectile.DeActivate();
-        }
         protected override void SetActiveCtrls()
         {
             base.SetActiveCtrls();
@@ -210,7 +206,7 @@ namespace hcp
             state = E_HeroHookState.Hooking;
             //자가 정지 시키기.
             Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-            hookOriginPos.transform.LookAt(ray.direction * maxShotLength);
+            hookOriginPos.transform.LookAt(ray.origin +( ray.direction * maxShotLength));
             photonView.RPC("ActivateHook", RpcTarget.All , hookOriginPos.transform.rotation);
         }
         [PunRPC]
@@ -221,18 +217,12 @@ namespace hcp
             hookProjectile.Activate();
         }
         [PunRPC]
-        public void HookFailed()
+        public void HookRetrieve()
         {
             //후킹 실패로 훅이 돌아오는 타이밍일뿐
-            hookProjectile.HookFail();
+            hookProjectile.Retrieve();
         }
-        [PunRPC]
-        public void HookingSuccessed()
-        {
-            //후킹 성공으로 훅이 돌아오는 타이밍일뿐
-            hookProjectile.HookSuccess();
-        }
-        [PunRPC]    //후크가 제자리로 돌아오면 알피씨를 쏨.
+        [PunRPC]    //후크 쪽에서 알아서 제자리로 돌아오면 이 알피씨를 쏨.
         public void HookIsDone()
         {
             hookProjectile.DeActivate();

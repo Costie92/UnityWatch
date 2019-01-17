@@ -7,8 +7,7 @@ namespace hcp {
         enum HookState
         {
             Activate,
-            HookFail,
-            HookSuccess,
+            Retrieve,
             DeActivate,
             MAX
         }
@@ -24,8 +23,14 @@ namespace hcp {
         Transform originPosFromheroHook;
         [SerializeField]
         float withDrawTime = 5f;
+
         [SerializeField]
-        float withDrawVelocity = 0.5f;
+        float retrieveVelocity = 0.5f;
+
+        [SerializeField]
+        float withDrawHookedDuration = 3f;
+
+
         [SerializeField]
         Transform rope;
         [SerializeField]
@@ -40,12 +45,10 @@ namespace hcp {
         [Tooltip("갈고리가 처음 뻗어나오는 위치에서 갈고리 까지의 z 차에 따른 로프의 스케일 조정값.. 5f 도출값.")]
         [SerializeField]
         float disToRopeScaleFactor = 5f;
-
+        [Tooltip("적이 갈고리에 걸렸을 때 슈터와 끌려진 적 사이 거리")]
         [SerializeField]
         float hookedDestDis = 1f;
 
-        [SerializeField]
-        float withDrawHookedDuration = 3f;
 
 
         protected override void Awake()
@@ -53,9 +56,9 @@ namespace hcp {
             base.Awake();
             ropeMat = new Material(ropeRenderer.material);
             ropeRenderer.material = ropeMat;
+            DeActivate();
         }
-
-
+        
         public void Activate()
         {
             gameObject.SetActive(true);
@@ -68,13 +71,10 @@ namespace hcp {
             transform.SetPositionAndRotation(originPosFromheroHook.position, originPosFromheroHook.rotation);
             gameObject.SetActive(false);
         }
-        public void HookFail()
+        public void Retrieve()
         {
-            state = HookState.HookFail;
-        }
-        public void HookSuccess()
-        {
-            state = HookState.HookSuccess;
+            velocity = retrieveVelocity;
+            state = HookState.Retrieve;
         }
 
         private void Update()
@@ -82,26 +82,30 @@ namespace hcp {
             switch (state)
             {
                 case HookState.Activate:
-                    transform.Translate(Vector3.back * velocity * Time.deltaTime , Space.Self);
+                    transform.Translate(Vector3.forward * velocity * Time.deltaTime , Space.Self);
                     MakeRope();
                     if (attachingHero.photonView.IsMine)
                     {
                         if (transform.localPosition.z > maxLength)
                         {
-                            attachingHero.photonView.RPC("HookFailed", Photon.Pun.RpcTarget.All);
+                            state = HookState.Retrieve;
+                            velocity = 0f;
+                            attachingHero.photonView.RPC("HookRetrieve", Photon.Pun.RpcTarget.All);
                         }
                     }
                   
                     break;
-                case HookState.HookFail:
-                case HookState.HookSuccess:
-                    transform.Translate(Vector3.back * withDrawVelocity * Time.deltaTime , Space.Self);
+                case HookState.Retrieve:
+                    transform.Translate(Vector3.back * velocity * Time.deltaTime , Space.Self);
                     MakeRope();
-                    if (transform.localPosition.z + Mathf.Epsilon < originPosFromheroHook.localPosition.z)
+
+                    if (attachingHero.photonView.IsMine)
                     {
-                        state = HookState.DeActivate;
-                        if(attachingHero.photonView.IsMine)
-                        attachingHero.photonView.RPC("HookIsDone", Photon.Pun.RpcTarget.All);
+                        if (transform.localPosition.z < Mathf.Epsilon)
+                        {
+                            state = HookState.DeActivate;
+                            attachingHero.photonView.RPC("HookIsDone", Photon.Pun.RpcTarget.All);
+                        }
                     }
                     break;
             }
@@ -114,22 +118,30 @@ namespace hcp {
             int layer = other.gameObject.layer;
             if (layer == Constants.mapLayerMask)
             {
-                attachingHero.photonView.RPC("HookFailed", Photon.Pun.RpcTarget.All);
+                state = HookState.Retrieve;
+                velocity = 0f;
+                attachingHero.photonView.RPC("HookRetrieve", Photon.Pun.RpcTarget.All);
+                return;
             }
+
             if (TeamInfo.GetInstance().IsThisLayerEnemy(layer))
             {
+                state = HookState.Retrieve;
+                    velocity = 0f;
+
                 Hero enemy = other.gameObject.GetComponent<Hero>();
                 if (enemy == null)
                 {
                     Debug.Log("갈고리로 끌었으나 적이 히어로가 아님");
-                    attachingHero.photonView.RPC("HookFailed", Photon.Pun.RpcTarget.All);
+                  
+                    attachingHero.photonView.RPC("HookRetrieve", Photon.Pun.RpcTarget.All);
                     return;
                 }
 
                 Vector3 enemyPos = enemy.transform.position;
-                Vector3 destPos =  (enemyPos - attachingHero. transform.position).normalized * hookedDestDis;
+                Vector3 destPos = attachingHero.transform.position + attachingHero. transform.TransformDirection(Vector3.forward)* hookedDestDis;
                 enemy.photonView.RPC("Hooked", Photon.Pun.RpcTarget.All, enemyPos, destPos, withDrawHookedDuration);
-                attachingHero.photonView.RPC("HookingSuccessed", Photon.Pun.RpcTarget.All);
+                attachingHero.photonView.RPC("HookRetrieve", Photon.Pun.RpcTarget.All);
             }
         }
         void MakeRope()
