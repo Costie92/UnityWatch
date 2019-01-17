@@ -129,7 +129,7 @@ namespace hcp {
                 Vector3 enemyPos = enemy.transform.position;
                 Vector3 destPos =  (enemyPos - attachingHero. transform.position).normalized * hookedDestDis;
                 enemy.photonView.RPC("Hooked", Photon.Pun.RpcTarget.All, enemyPos, destPos, withDrawHookedDuration);
-                attachingHero.photonView.RPC("HookSucessed", Photon.Pun.RpcTarget.All);
+                attachingHero.photonView.RPC("HookingSuccessed", Photon.Pun.RpcTarget.All);
             }
         }
         void MakeRope()

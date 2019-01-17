@@ -227,7 +227,7 @@ namespace hcp
             hookProjectile.HookFail();
         }
         [PunRPC]
-        public void HookSucessed()
+        public void HookingSuccessed()
         {
             //후킹 성공으로 훅이 돌아오는 타이밍일뿐
             hookProjectile.HookSuccess();
