@@ -11,22 +11,17 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-
-    [SerializeField] private Text connectText;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject Lobby;
-    [SerializeField] private Transform AspawnPoint;
-    [SerializeField] private Transform BspawnPoint;
-    [SerializeField] private Transform CspawnPoint;
-    [SerializeField] private Transform DspawnPoint;
     [SerializeField] private GameObject TeamInfo;
+    [SerializeField] private Transform SpawnPoint;
     public GameObject buttons;
     //[SerializeField] private GameObject lobbycamera;
 
     [SerializeField] private Dictionary<int, bool> players;
     [SerializeField] private Dictionary<int, string> teams;
     [SerializeField] private int myID;
-    [SerializeField] private int ReadyCount;
+    [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
     [SerializeField] private int RandomNumber;
 
     private static NetworkManager _instance = null;
@@ -120,32 +115,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(Teams[myID]);
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
-            AspawnPoint = GameObject.Find("AspawnPoint").transform;
-            PhotonNetwork.Instantiate(playerpath, AspawnPoint.position, AspawnPoint.rotation, 0);
-
+            SpawnPoint = MapInfo.instance.ASpawnPoint;
             Debug.Log(myID + " : Create at A");
 
         }
         else if (Teams[myID] == hcp.Constants.teamB_LayerName)
         {
-            BspawnPoint = GameObject.Find("BspawnPoint").transform;
-            PhotonNetwork.Instantiate(playerpath, BspawnPoint.position, BspawnPoint.rotation, 0);
+            SpawnPoint = MapInfo.instance.BSpawnPoint;
 
             Debug.Log(myID + " : Create at B");
         }
         else if (Teams[myID] == hcp.Constants.teamC_LayerName)
         {
-            CspawnPoint = GameObject.Find("CspawnPoint").transform;
-            GameObject obj = PhotonNetwork.Instantiate(playerpath, CspawnPoint.position, CspawnPoint.rotation, 0);
+            SpawnPoint = MapInfo.instance.CSpawnPoint;
             Debug.Log(myID + " : Create at C");
         }
         else if (Teams[myID] == hcp.Constants.teamD_LayerName)
         {
-            DspawnPoint = GameObject.Find("DspawnPoint").transform;
-            GameObject obj = PhotonNetwork.Instantiate(playerpath, DspawnPoint.position, DspawnPoint.rotation, 0);
+            SpawnPoint = MapInfo.instance.DSpawnPoint;
             Debug.Log(myID + " : Create at D");
         }
-        
+        PhotonNetwork.Instantiate(playerpath, SpawnPoint.position, SpawnPoint.rotation, 0);
     }
 
     // Update is called once per frame
@@ -168,7 +158,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Joined Lobby");
         //PhotonNetwork.JoinRandomRoom();
         //RoomOptions roomOptions = new RoomOptions();
-            PhotonNetwork.JoinOrCreateRoom("Test", null, null);
+        PhotonNetwork.JoinRandomRoom();
     }
     public override void OnJoinedRoom()
     {
@@ -219,7 +209,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Teams.ContainsKey(pVID))
         {
 
-            if ((pVID % 2 == 0))
+            if ((pVID % 2 == 1))
             {
                 Debug.Log("Assigned A");
                 Teams.Add(pVID, hcp.Constants.teamA_LayerName);
@@ -261,13 +251,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                     ReadyCount++;
                 }
                 Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
-                if (photonPlayers.Length == ReadyCount)
+            }
+            var Teamenumerator = Teams.GetEnumerator();
+
+            TeamACount = 0;
+            TeamBCount = 0;
+            while (Teamenumerator.MoveNext())
+            {
+                KeyValuePair<int, string> items = Teamenumerator.Current;
+                if (items.Value == hcp.Constants.teamA_LayerName)
                 {
-                    buttons = null;
-                    PhotonNetwork.CurrentRoom.IsVisible = false;
-                    PhotonNetwork.CurrentRoom.IsOpen = false;
-                    PhotonNetwork.LoadLevel(1);
+                    TeamACount++;
                 }
+                else {
+                    TeamBCount++;
+                }
+                Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
+            }
+            if ((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0)
+            {
+                buttons = null;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.LoadLevel(1);
             }
         }
     }

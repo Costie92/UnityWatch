@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PhotonView))]
 public class PlayerTeam : MonoBehaviour
 {
+    [SerializeField] private Material Mycolor;
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     private PhotonView photonView;
@@ -18,7 +19,6 @@ public class PlayerTeam : MonoBehaviour
     {
         
         photonView = GetComponent<PhotonView>();
-        Debug.Log(photonView.ViewID);
 
         foreach (MonoBehaviour m in LobbyControlscripts)
         {
@@ -36,6 +36,7 @@ public class PlayerTeam : MonoBehaviour
                 }
                 else
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
+                this.GetComponent<MeshRenderer>().material = Mycolor;
             }
             else
             {
@@ -43,6 +44,7 @@ public class PlayerTeam : MonoBehaviour
             }
         }
         NetworkManager.instance.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
+        PosTeam((photonView.ViewID / 1000) % 2 == 1);
     }
 
     // Update is called once per frame
@@ -69,8 +71,17 @@ public class PlayerTeam : MonoBehaviour
         //    }
         //}
     }
+    public void PosTeam(bool isTeamA) {
+        int Pos = photonView.ViewID / 1000;
+        if (isTeamA)
+            this.transform.position = new Vector3(-5, 2 - Pos, 0);
+        else {
+            this.transform.position = new Vector3(5, 2 - Pos, 0);
+        }
+    }
     public void onClicKTeamButton(string TeamString)
     {
+        PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
     public void onClickReady()
