@@ -508,6 +508,8 @@ GameObject:
   - component: {fileID: 114575720229568262}
   - component: {fileID: 114195794767487070}
   - component: {fileID: 54628822331042610}
+  - component: {fileID: 114669283055727748}
+  - component: {fileID: 114072174595127188}
   m_Layer: 0
   m_Name: HeroHook
   m_TagString: Untagged
@@ -1952,7 +1954,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!65 &65176026464033696
 BoxCollider:
@@ -1984,6 +1986,40 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114072174595127188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1598019305254866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 1
+    Name: idle
+  - Type: 9
+    SynchronizeType: 1
+    Name: HookStart
+  - Type: 9
+    SynchronizeType: 1
+    Name: HookEnd
+  - Type: 9
+    SynchronizeType: 1
+    Name: Attack
+  - Type: 9
+    SynchronizeType: 1
+    Name: Run
+  m_SynchronizeLayers:
+  - SynchronizeType: 1
+    LayerIndex: 0
+  - SynchronizeType: 1
+    LayerIndex: 1
 --- !u!114 &114195794767487070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2196,7 +2232,8 @@ MonoBehaviour:
   nowUltAmount: 0
   screenCenterPoint: {x: 0, y: 0, z: 0}
   maxShotLength: 5000
-  crossHairs: []
+  crossHairs:
+  - {fileID: 21300000, guid: 608c8661cd2cac8448a004d7febcf96c, type: 3}
   headShotOffset: 0
   camPos: {fileID: 4929850338029874}
   FPSCamPerHeroGO: {fileID: 1587995430455682, guid: 3cbd3592684d41a46a2468c1a88be67a,
@@ -2215,6 +2252,20 @@ MonoBehaviour:
   hookOriginPos: {fileID: 4595586315193600}
   hookFireRate: 0
   ultFireRate: 0
+--- !u!114 &114669283055727748
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1598019305254866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!114 &114748978929187698
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2309,7 +2360,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1598019305254866}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.35
   m_Height: 2
