@@ -20,8 +20,8 @@ namespace hcp
 
         public static readonly string outLineTag = "OutLine";
 
-        public static readonly string hero_SoldierPath = "hcp/HeroSoldier";
-        public static readonly string hero_HookPath = "hcp/HeroHook";
+        public static readonly string hero_SoldierPath =    "hcp/HeroSoldier";
+        public static readonly string hero_HookPath =       "hcp/HeroHook";
 
         public static string GetHeroPhotonNetworkInstanciatePath(E_HeroType type)
         {

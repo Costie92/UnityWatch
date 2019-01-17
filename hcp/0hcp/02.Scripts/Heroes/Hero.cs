@@ -202,13 +202,13 @@ namespace hcp
             return activeCtrlDic[param].ReUseRemainingTime;
         }
         
-        public bool IsCannotMoveState()
+        public virtual bool IsCannotMoveState()
         {
             if (badState.GetType().IsAssignableFrom(typeof(ICanNotMove)))
                 return true;
             return false;
         }
-        public bool IsCannotActiveState()
+        public virtual bool IsCannotActiveState()
         {
             if (badState.GetType().IsAssignableFrom(typeof(ICanNotActive)))
                 return true;
