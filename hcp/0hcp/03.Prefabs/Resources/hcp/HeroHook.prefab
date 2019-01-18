@@ -4493,7 +4493,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114669283055727748}
   - {fileID: 114072174595127188}
-  viewIdField: 0
+  viewIdField: 2
   InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114499251692302190
@@ -4828,7 +4828,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1057756833051854}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.2
