@@ -2211,7 +2211,7 @@ MonoBehaviour:
   playerName: 
   playerNameTextMesh: {fileID: 114503120128773496}
   hpBar: {fileID: 114499251692302190}
-  attachingHero: {fileID: 0}
+  attachingHero: {fileID: 114575720229568262}
 --- !u!114 &114575720229568262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2285,14 +2285,14 @@ MonoBehaviour:
   hookVelocity: 0
   originPosFromheroHook: {fileID: 4595586315193600}
   withDrawTime: 0
-  withDrawVelocity: 0
+  retrieveVelocity: 0.5
+  withDrawHookedDuration: 0
   rope: {fileID: 4593226226884688}
   ropeRenderer: {fileID: 23227290105702378}
   ropeMat: {fileID: 0}
   ropeToMaterialTileScaleFactor: 1
   disToRopeScaleFactor: 5
   hookedDestDis: 0
-  withDrawHookedDuration: 0
 --- !u!114 &114811091832860678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2348,7 +2348,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1462774301938990}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.3
@@ -2360,7 +2360,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1598019305254866}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.35
   m_Height: 2
