@@ -14,21 +14,21 @@ namespace hcp {
         [SerializeField]
         HookState state = HookState.DeActivate;
         [SerializeField]
-        float maxLength=20f;
+        float maxLength;
         [SerializeField]
-        float hookVelocity = 1f;
+        float hookVelocity;
 
         [Tooltip("same with HeroHook's hookOriginPos property")]
         [SerializeField]
         Transform originPosFromheroHook;
         [SerializeField]
-        float withDrawTime = 5f;
+        float withDrawTime;
 
         [SerializeField]
-        float retrieveVelocity = 0.5f;
+        float retrieveVelocity;
 
         [SerializeField]
-        float withDrawHookedDuration = 3f;
+        float withDrawHookedDuration;
 
 
         [SerializeField]
@@ -54,6 +54,13 @@ namespace hcp {
         protected override void Awake()
         {
             base.Awake();
+            maxLength = 20f;
+            hookVelocity = 1f;
+            withDrawTime = 5f;
+            retrieveVelocity = 0.5f;
+            withDrawHookedDuration = 3f;
+
+
             ropeMat = new Material(ropeRenderer.material);
             ropeRenderer.material = ropeMat;
             DeActivate();
