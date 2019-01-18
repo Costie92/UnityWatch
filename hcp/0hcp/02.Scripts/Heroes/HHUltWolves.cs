@@ -29,7 +29,7 @@ namespace hcp
         {
             base.Awake();
             amount = 20f;
-            velocity = 5f;
+            velocity = 1f;
             distance = 1.8f;
         }
 
