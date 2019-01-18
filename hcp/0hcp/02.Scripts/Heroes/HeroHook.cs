@@ -22,17 +22,17 @@ namespace hcp
         [SerializeField]
         E_HeroHookState state = E_HeroHookState.Idle;
         [SerializeField]
-        float normalAttackLength = 5f;
+        float normalAttackLength ;
         [SerializeField]
         float normalAttackLengthDiv;
         [SerializeField]
-        float correctionRange = 3f;
+        float correctionRange;
         [SerializeField]
         float correctionRangeSqr;
         [SerializeField]
-        float normalAttackDamage = 30f;
+        float normalAttackDamage ;
         [SerializeField]
-        float normalAttackFireRate = 1f;
+        float normalAttackFireRate;
 
         [Space(10)]
         [Header("   Hero - Hook - First Skill Hook")]
@@ -41,32 +41,54 @@ namespace hcp
         [SerializeField]
         Transform hookOriginPos;
         [SerializeField]
-        float hookFireRate;
+        float hookFireRate = 5f;
 
         [Space(10)]
         [Header("   Hero - Hook - Ultimate")]
         [SerializeField]
-        float ultFireRate;
+        GameObject ultParent;
+        [SerializeField]
+        HHUltWolves ult;
+        [SerializeField]
+        float ultStartPosFactor;
 
 
 
         protected override void Awake()
         {
             base.Awake();
-            normalAttackLengthDiv = 1 / normalAttackLength;
-            correctionRangeSqr = correctionRange * correctionRange;
+           
 
             moveSpeed = 3f;
             rotateSpeed = 2f;
 
 
             centerOffset = 1.0f;
-            
+
+            normalAttackLength = 5f;
+            correctionRange = 3f;
+            normalAttackDamage = 30f;
+            normalAttackFireRate = 1f;
+
+            normalAttackLengthDiv = 1 / normalAttackLength;
+            correctionRangeSqr = correctionRange * correctionRange;
+            ult = ultParent.GetComponentInChildren<HHUltWolves>();
+
+
             maxHP = 100f;
             currHP = maxHP;
             neededUltAmount = 10000f;
             nowUltAmount = 0f;
         }
+        private void Start()
+        {
+            ultParent.transform.position = Vector3.zero + Vector3.down * 10f;
+            if (ultParent.transform.parent != null)
+                ultParent.transform.parent = null;
+            
+        }
+
+
         protected override void SetActiveCtrls()
         {
             base.SetActiveCtrls();
@@ -74,8 +96,7 @@ namespace hcp
               NormalAttackMeetCondition));
             activeCtrlDic.Add(E_ControlParam.FirstSkill, new DelegateCtrl(E_ControlParam.FirstSkill, hookFireRate, DoHook, HookMeetCondition));
             activeCtrlDic.Add(E_ControlParam.Reload, new DelegateCtrl(E_ControlParam.Reload, 1f, Reload, ()=> { return true; }));
-            activeCtrlDic.Add(E_ControlParam.Ultimate, new DelegateCtrl(E_ControlParam.Ultimate, ultFireRate, HHUlt, UltMeetCondition));
-
+            activeCtrlDic.Add(E_ControlParam.Ultimate, new DelegateCtrl(E_ControlParam.Ultimate, 1f, HHUlt, UltMeetCondition));
         }
 
         #region Basic Control
@@ -163,6 +184,18 @@ namespace hcp
             {
                 Hero enemy = enemyHeroes[i];
                 Vector3 enemyPosition = enemy.CenterPos - ray.origin;
+
+                Debug.DrawLine(ray.origin,
+                        ray.origin + normalAttackVector,
+                        Color.blue,
+                        3f
+                        );
+                    Debug.DrawLine(ray.origin,
+                        ray.origin + enemyPosition,
+                        Color.red,
+                        3f
+                        );
+
                 float dot = Vector3.Dot(enemyPosition, normalAttackVector);
                 if (dot < Mathf.Epsilon)
                 {
@@ -170,6 +203,21 @@ namespace hcp
                     continue;
                 }
                 float projectedDis = dot * normalAttackLengthDiv;
+
+                Debug.DrawLine(
+                    ray.origin + Vector3.right*0.1f,
+
+                    ray.origin + Vector3.right * 0.1f + ray.direction * projectedDis,
+                    Color.white, 3f
+                    );
+                Debug.DrawLine(
+                    ray.origin+Vector3.left*0.1f,
+
+                    ray.origin + Vector3.left * 0.1f + ray.direction * normalAttackLength,
+                    Color.green, 3f
+                    );
+
+
                 if (projectedDis > normalAttackLength)
                 {
                     Debug.Log(enemy.photonView.ViewID + "HH NA enemy too far, no attack");
@@ -177,11 +225,36 @@ namespace hcp
                 }
                 float projectedDisSqr = projectedDis * projectedDis;
                 float orthogonalDisSqr = enemyPosition.sqrMagnitude - projectedDisSqr;
+
+                Debug.DrawLine(
+                    ray.origin + ray.direction * projectedDis,
+                    ray.origin + ray.direction * projectedDis +
+                    (enemy.CenterPos - (ray.origin + ray.direction * projectedDis))
+                    .normalized
+                    *Mathf.Sqrt (orthogonalDisSqr),
+                    Color.magenta, 3f
+                    );
+
+                Debug.DrawLine(
+                    ray.origin + ray.direction * projectedDis + ray.direction * 0.1f,
+                    ray.origin + ray.direction * projectedDis + ray.direction * 0.1f +
+                    (enemy.CenterPos + ray.direction * 0.1f - (ray.origin + ray.direction * projectedDis + ray.direction * 0.1f))
+                    .normalized
+                    * Mathf.Sqrt(correctionRangeSqr),
+                   Color.green, 3f
+                   );
+
+
+
                 if (orthogonalDisSqr > correctionRangeSqr)
                 {
                     Debug.Log(enemy.photonView.ViewID + "HH NA enemy orthogonalDis too far, no attack");
                     continue;
                 }
+
+              
+
+
                 enemy.photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, normalAttackDamage);
             }
         }
@@ -206,7 +279,14 @@ namespace hcp
             state = E_HeroHookState.Hooking;
             //자가 정지 시키기.
             Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-            hookOriginPos.transform.LookAt(ray.origin +( ray.direction * maxShotLength));
+            Vector3 hookDestPos = ray.origin + ray.direction * maxShotLength;
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, maxShotLength, TeamInfo.GetInstance().MapAndEnemyMaskedLayer))
+            {
+                hookDestPos = hit.point;
+            }
+
+            hookOriginPos.transform.LookAt(hookDestPos);
             photonView.RPC("ActivateHook", RpcTarget.All , hookOriginPos.transform.rotation);
         }
         [PunRPC]
@@ -232,6 +312,7 @@ namespace hcp
         #endregion
 
         #region Ultimate
+
         bool UltMeetCondition()
         {
             return true;
@@ -239,11 +320,25 @@ namespace hcp
 
         void HHUlt()
         {
+            Ray ray = Camera.main.ScreenPointToRay (screenCenterPoint);
+            Vector3 ultStartPos = ray.origin + ray.direction * ultStartPosFactor;
+            Quaternion ultStartRot = Quaternion.LookRotation(ray.direction);
 
+            photonView.RPC("HHUltActivate", RpcTarget.All, ultStartPos, ultStartRot);
         }
 
+        [PunRPC]
+        public void HHUltActivate(Vector3 ultStartPos, Quaternion ultStartRot)
+        {
+            ult.Activate(ultStartPos, ultStartRot);
+        }
 
-
+        [PunRPC]
+        public void HHUltDeActivate()
+        {
+            ult.DeActivate();
+        }
+        
         #endregion
 
 
