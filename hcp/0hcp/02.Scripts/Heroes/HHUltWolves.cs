@@ -31,6 +31,7 @@ namespace hcp
             amount = 20f;
             velocity = 1f;
             distance = 1.8f;
+            distanceSqr = distance * distance;
         }
 
         private void Start()
@@ -93,7 +94,7 @@ namespace hcp
             if (other.gameObject.CompareTag(Constants.outLineTag))
             {
                 state = E_HHUltState.DeActivate;
-                attachingHero.photonView.RPC("HHUltDeActivate", Photon.Pun.RpcTarget.All);
+                attachingHero.photonView.RPC("HHHUltDeActivate", Photon.Pun.RpcTarget.All);
             }
         }
 

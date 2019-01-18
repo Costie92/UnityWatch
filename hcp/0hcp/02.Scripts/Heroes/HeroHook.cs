@@ -82,13 +82,11 @@ namespace hcp
         }
         private void Start()
         {
-            ultParent.transform.position = Vector3.zero + Vector3.down * 10f;
+            ultParent.transform.position = Vector3.zero;
             if (ultParent.transform.parent != null)
                 ultParent.transform.parent = null;
-            
         }
-
-
+        
         protected override void SetActiveCtrls()
         {
             base.SetActiveCtrls();
@@ -107,6 +105,14 @@ namespace hcp
                 Debug.Log("무브히어로가 묵살되었음." + moveV + "포톤이 내것인지? = " + photonView.IsMine);
                 return;
             }
+            if (GetMostMoveDir(moveV) == E_MoveDir.NONE)
+            {
+                anim.SetTrigger("idle");
+            }
+            else{
+                anim.SetTrigger("Run");
+            }
+
             transform.Translate(moveV * moveSpeed, Space.Self);
         }
 
@@ -162,11 +168,7 @@ namespace hcp
 
             activeCtrlDic[param].Activate();
         }
-
-
-
-
-
+        
         #endregion
 
         #region NormalAttack
@@ -176,6 +178,8 @@ namespace hcp
         }
         void NormalAttack()
         {
+            anim.SetTrigger("Attack");
+
             List<Hero> enemyHeroes = TeamInfo.GetInstance().EnemyHeroes;
             Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
             Vector3 normalAttackVector = ray.direction * normalAttackLength;
@@ -276,6 +280,7 @@ namespace hcp
         }
         void DoHook()
         {
+            anim.SetTrigger("HookStart");
             state = E_HeroHookState.Hooking;
             //자가 정지 시키기.
             Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
@@ -305,6 +310,7 @@ namespace hcp
         [PunRPC]    //후크 쪽에서 알아서 제자리로 돌아오면 이 알피씨를 쏨.
         public void HookIsDone()
         {
+            anim.SetTrigger("HookEnd");
             hookProjectile.DeActivate();
             state = E_HeroHookState.Idle;
         }
@@ -320,21 +326,23 @@ namespace hcp
 
         void HHUlt()
         {
+            if (!photonView.IsMine) return;
+
             Ray ray = Camera.main.ScreenPointToRay (screenCenterPoint);
             Vector3 ultStartPos = ray.origin + ray.direction * ultStartPosFactor;
             Quaternion ultStartRot = Quaternion.LookRotation(ray.direction);
 
-            photonView.RPC("HHUltActivate", RpcTarget.All, ultStartPos, ultStartRot);
+            photonView.RPC("HHHUltActivate", RpcTarget.All, ultStartPos, ultStartRot);
         }
 
         [PunRPC]
-        public void HHUltActivate(Vector3 ultStartPos, Quaternion ultStartRot)
+        public void HHHUltActivate(Vector3 ultStartPos, Quaternion ultStartRot)
         {
             ult.Activate(ultStartPos, ultStartRot);
         }
 
         [PunRPC]
-        public void HHUltDeActivate()
+        public void HHHUltDeActivate()
         {
             ult.DeActivate();
         }
