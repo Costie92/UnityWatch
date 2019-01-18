@@ -89,7 +89,7 @@ public class PlayerTeam : MonoBehaviour
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
     public void onClickHeroButton(hcp.E_HeroType heroType) {
-        NetworkManager.instance.photonView.RPC("SelectHero", RpcTarget.All, photonView.ViewID, heroType);
+        NetworkManager.instance.photonView.RPC("SelectHeroo", RpcTarget.All, photonView.ViewID, heroType);
     }
     public void onClickReady()
     {
