@@ -204,8 +204,26 @@ namespace hcp
             {
                 return;
             }
-           // Debug.Log("RotateHero" + rotateV);
-            transform.Rotate(rotateV*rotateSpeed, Space.Self);
+            float nowCamRotX = Camera.main.transform.localRotation.eulerAngles.x;
+            float nextCamRotX = nowCamRotX + rotateV.y * rotateSpeed;
+
+            if (rotateYDownLimit < nextCamRotX && nextCamRotX < 360 - rotateYUpLimit) //절삭 구간
+            {
+                if (nowCamRotX < nextCamRotX)
+                {
+                    Camera.main.transform.localRotation = Quaternion.Euler(rotateYDownLimit, 0, 0);
+                }
+                else if(nowCamRotX > nextCamRotX)
+                {
+                    Camera.main.transform.localRotation = Quaternion.Euler(360 - rotateYUpLimit, 0, 0);
+                }
+            }
+            else
+            {
+                Camera.main.transform.Rotate(new Vector3(rotateV.y * rotateSpeed, 0, 0), Space.Self);
+            }
+
+            transform.Rotate(new Vector3( 0, rotateV.x*rotateSpeed,0), Space.Self);
         }
 
         public override void ControlHero(E_ControlParam param)

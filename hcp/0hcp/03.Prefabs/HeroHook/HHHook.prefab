@@ -410,12 +410,14 @@ MonoBehaviour:
   hookVelocity: 0
   originPosFromheroHook: {fileID: 0}
   withDrawTime: 0
-  withDrawVelocity: 0
+  retrieveVelocity: 0.5
+  withDrawHookedDuration: 3
   rope: {fileID: 4467956152169964}
   ropeRenderer: {fileID: 23187077861970426}
   ropeMat: {fileID: 0}
   ropeToMaterialTileScaleFactor: 1
   disToRopeScaleFactor: 5
+  hookedDestDis: 1
 --- !u!135 &135488411823006022
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -423,7 +425,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1946085413526032}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.3

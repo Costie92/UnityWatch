@@ -14,22 +14,20 @@ namespace hcp {
         [SerializeField]
         HookState state = HookState.DeActivate;
         [SerializeField]
-        float maxLength=20f;
+        float maxLength;
         [SerializeField]
-        float hookVelocity = 1f;
+        float hookVelocity;
 
         [Tooltip("same with HeroHook's hookOriginPos property")]
         [SerializeField]
         Transform originPosFromheroHook;
+        [Tooltip("최대 거리만큼 뻗어나갔을 때 회수되는데 걸리는 시간")]
         [SerializeField]
-        float withDrawTime = 5f;
-
+        float retrieveMaxTime;
+        [Tooltip("회수 속력")]
         [SerializeField]
-        float retrieveVelocity = 0.5f;
-
-        [SerializeField]
-        float withDrawHookedDuration = 3f;
-
+        float retrieveVelocity;
+        float retrieveVelocityDiv;
 
         [SerializeField]
         Transform rope;
@@ -54,6 +52,12 @@ namespace hcp {
         protected override void Awake()
         {
             base.Awake();
+            maxLength = 20f;
+            hookVelocity = 5f;
+            retrieveMaxTime = 3f;   //최대 거리 까지 가서 허탕을 치면 이 시간 만큼 걸려서 다시 돌아옴.
+            retrieveVelocity = maxLength / retrieveMaxTime; //회수 속력.
+            retrieveVelocityDiv = 1 / retrieveVelocity;
+
             ropeMat = new Material(ropeRenderer.material);
             ropeRenderer.material = ropeMat;
             DeActivate();
@@ -140,7 +144,9 @@ namespace hcp {
 
                 Vector3 enemyPos = enemy.transform.position;
                 Vector3 destPos = attachingHero.transform.position + attachingHero. transform.TransformDirection(Vector3.forward)* hookedDestDis;
-                enemy.photonView.RPC("Hooked", Photon.Pun.RpcTarget.All, enemyPos, destPos, withDrawHookedDuration);
+                enemy.photonView.RPC("Hooked", Photon.Pun.RpcTarget.All, enemyPos, destPos, 
+                    transform.localPosition.z * retrieveVelocityDiv //후크가 원래 자리로 돌아오는데 걸리는 시간이 곧 사람이 끌리는 총 시간임.
+                    );
                 attachingHero.photonView.RPC("HookRetrieve", Photon.Pun.RpcTarget.All);
             }
         }

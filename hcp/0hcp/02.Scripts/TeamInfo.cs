@@ -183,7 +183,7 @@ namespace hcp
                 }
                 if (layer == -1)
                 {
-                    Debug.LogError("에너미 레이어에 설정오류 존재.");
+                 //   Debug.LogError("에너미 레이어에 설정오류 존재.");
                 }
                 return layer;
             }

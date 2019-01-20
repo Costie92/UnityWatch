@@ -86,7 +86,7 @@ namespace hcp
                 Vector3 mousePos = Input.mousePosition;
                 Vector3 rotateV = mousePos - mouseTouched;
                 // targetHero.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
-                targetHero.RotateHero(new Vector3(rotateV.y/Screen.height, rotateV.x / Screen.width, 0));
+                targetHero.RotateHero(new Vector3(rotateV.x/Screen.width, rotateV.y / Screen.height, 0));
             }
 
 

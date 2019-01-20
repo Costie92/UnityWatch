@@ -15,6 +15,12 @@ namespace hcp
         [Header("Hero's Property")]
         [Space(10)]
         [SerializeField]
+        protected float rotateYUpLimit = 80f;
+
+        [SerializeField]
+        protected float rotateYDownLimit = 10f;
+
+        [SerializeField]
         protected float moveSpeed;
         [SerializeField]
         protected float rotateSpeed;
