@@ -168,7 +168,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //connectText.text = PhotonNetwork.connectionStateDetailed.ToString();
 
     }
-
+    
 
     public override void OnConnectedToMaster()
     {
@@ -199,6 +199,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
+    public void HookSucessed(int a, int b, PhotonMessageInfo info)
+    {
+        Debug.Log("Arg 1 : " + a + ", Arg 2 : " + b);
+        Debug.Log(info.Sender.UserId);
+        Debug.Log(info.Sender.ActorNumber);
+    }
+
+    [PunRPC]
     public void SelectTeam(int pViewID,string TeamString)
     {
         int pVID = pViewID / 1000;
@@ -217,7 +225,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         
     }
     [PunRPC]
-    public void SelectHero(int pViewID, hcp.E_HeroType heroType) {
+    public void SelectHeroo(int pViewID, hcp.E_HeroType heroType) {
         int pVID = pViewID / 1000;
         switch (heroType) {
             case hcp.E_HeroType.Soldier:

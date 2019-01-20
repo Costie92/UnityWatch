@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 65033722171522454}
   - component: {fileID: 114136155785699236}
   - component: {fileID: 114327185847004640}
+  - component: {fileID: 114630134075023118}
   m_Layer: 0
   m_Name: LobbyTest
   m_TagString: Untagged
@@ -112,10 +113,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 114630134075023118}
   viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
@@ -134,5 +135,21 @@ MonoBehaviour:
   BtnTeamA: {fileID: 0}
   BtnTeamB: {fileID: 0}
   BtnReady: {fileID: 0}
+  BtnSoldier: {fileID: 0}
+  BtnHook: {fileID: 0}
   LobbyControlscripts:
   - {fileID: 114327185847004640}
+--- !u!114 &114630134075023118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1380293930047288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
