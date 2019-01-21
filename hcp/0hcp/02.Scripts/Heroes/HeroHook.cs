@@ -23,11 +23,9 @@ namespace hcp
         E_HeroHookState state = E_HeroHookState.Idle;
         [SerializeField]
         float normalAttackLength ;
-        [SerializeField]
         float normalAttackLengthDiv;
         [SerializeField]
         float correctionRange;
-        [SerializeField]
         float correctionRangeSqr;
         [SerializeField]
         float normalAttackDamage ;
@@ -41,7 +39,7 @@ namespace hcp
         [SerializeField]
         Transform hookOriginPos;
         [SerializeField]
-        float hookFireRate = 5f;
+        float hookFireRate;
 
         [Space(10)]
         [Header("   Hero - Hook - Ultimate")]
@@ -51,33 +49,15 @@ namespace hcp
         HHUltWolves ult;
         [SerializeField]
         float ultStartPosFactor;
-
-
-
+        
         protected override void Awake()
         {
-            
-           
-
-            moveSpeed = 3f;
-            rotateSpeed = 2f;
-
-
-            centerOffset = 1.0f;
-
-            normalAttackLength = 5f;
-            correctionRange = 3f;
-            normalAttackDamage = 30f;
-            normalAttackFireRate = 3f;
-
             normalAttackLengthDiv = 1 / normalAttackLength;
             correctionRangeSqr = correctionRange * correctionRange;
+
             ult = ultParent.GetComponentInChildren<HHUltWolves>();
-
-
-            maxHP = 100f;
             currHP = maxHP;
-            neededUltAmount = 10000f;
+            
             nowUltAmount = 0f;
 
             base.Awake();
@@ -107,6 +87,10 @@ namespace hcp
                 Debug.Log("무브히어로가 묵살되었음." + moveV + "포톤이 내것인지? = " + photonView.IsMine);
                 return;
             }
+
+            base.MoveHero(moveV);
+
+
             if (GetMostMoveDir(moveV) == E_MoveDir.NONE)
             {
                 anim.SetBool("walk",false);
@@ -114,8 +98,6 @@ namespace hcp
             else{
                 anim.SetBool("walk", true);
             }
-
-            transform.Translate(moveV * moveSpeed, Space.Self);
         }
 
         public override void RotateHero(Vector3 rotateV)
@@ -125,63 +107,21 @@ namespace hcp
                 return;
             }
 
-            float nowCamRotX = Camera.main.transform.localRotation.eulerAngles.x;
-            float nextCamRotX = nowCamRotX + rotateV.y * rotateSpeed;
-
-            if (rotateYDownLimit < nextCamRotX && nextCamRotX < 360 - rotateYUpLimit) //절삭 구간
-            {
-                if (nowCamRotX < nextCamRotX)
-                {
-                    Camera.main.transform.localRotation = Quaternion.Euler(rotateYDownLimit, 0, 0);
-                }
-                else if(nowCamRotX > nextCamRotX)
-                {
-                    Camera.main.transform.localRotation = Quaternion.Euler(360 - rotateYUpLimit, 0, 0);
-                }
-            }
-            else {
-                Camera.main.transform.Rotate(new Vector3(rotateV.y * rotateSpeed, 0, 0), Space.Self);
-            }
-
-            transform.Rotate(new Vector3(0, rotateV.x * rotateSpeed, 0), Space.Self);
+            base.RotateHero(rotateV);
         }
-
-
+        
         public override void ControlHero(E_ControlParam param)
         {
             if (!photonView.IsMine || IsCannotActiveState() || IsDie )
             {
                 return;
             }
-            Debug.Log("ControlHero" + param);
-            /*
+
             if (param == E_ControlParam.Ultimate)
             {
-                if (UltAmountPercent < 1 && !isUltOn)
-                    return;
-
-                if (isUltOn)
-                {
-                    if (!activeCtrlDic[E_ControlParam.Ultimate].IsCoolTimeOver() || ultShootCount >= ultMissilesMaxCount)
-                        return;
-
-                    //궁 유지중인 부분.
-                    activeCtrlDic[param].Activate();
-                    return;
-                }
-                else
-                {
-                    //궁 처음 쏘는 초기화 부분.
-                    nowUltAmount = 0f;
-                    isUltOn = true;
-                    ultShootCount = 0;
-                    ultActivateTime = 0f;
-                    activeCtrlDic[param].Activate();
-                    return;
-                }
+                if (UltAmountPercent < 1) return;
             }
-            */
-
+            
             if (!activeCtrlDic[param].IsCoolTimeOver())
                 return;
             Debug.Log(param + "입력 - 쿨타임 검사통과");
@@ -402,7 +342,7 @@ namespace hcp
         {
             if (!photonView.IsMine) return;
             
-                PlusUltAmount(100 * Time.deltaTime);//1초에 100씩 차게.
+                PlusUltAmount(ultPlusPerSec * Time.deltaTime);
         }
     }
 }

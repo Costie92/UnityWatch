@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 4145231122096290}
   - component: {fileID: 198451275729900052}
   - component: {fileID: 199497639470859464}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalShotParticle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 4608920347448856}
   - component: {fileID: 33284762987026044}
   - component: {fileID: 23817241920868090}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_right_lower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 4811630203488582}
   - component: {fileID: 33859938193947494}
   - component: {fileID: 23398115986872258}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: landinggear_b
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 4760845833318784}
   - component: {fileID: 33772399349962688}
   - component: {fileID: 23538157871369702}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: landinggear_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 4336379957694984}
   - component: {fileID: 33422729863330592}
   - component: {fileID: 23369010604943962}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_f_downleft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,7 +658,7 @@ GameObject:
   - component: {fileID: 4153741972538874}
   - component: {fileID: 33565769020904522}
   - component: {fileID: 23502835848148796}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_l_small
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,7 +690,7 @@ GameObject:
   - component: {fileID: 4488156563269856}
   - component: {fileID: 198202870441144170}
   - component: {fileID: 199728950492958592}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalShotParticle (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1072,7 +1072,7 @@ GameObject:
   - component: {fileID: 4855636340960390}
   - component: {fileID: 33639403379888982}
   - component: {fileID: 23650161630757648}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_r_lock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1089,7 +1089,7 @@ GameObject:
   - component: {fileID: 4195346812440358}
   - component: {fileID: 33242743602616846}
   - component: {fileID: 23540257066081534}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_l_lock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1104,7 +1104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4524277992573452}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1136,7 +1136,7 @@ GameObject:
   - component: {fileID: 4526186791556776}
   - component: {fileID: 33098551686447700}
   - component: {fileID: 23886872738332984}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_f_upright
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1183,7 +1183,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4971609844508192}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSUltMissiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1298,7 +1298,7 @@ GameObject:
   - component: {fileID: 4733774604729960}
   - component: {fileID: 33652728104111032}
   - component: {fileID: 23890790053179380}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_f_downright
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1345,7 +1345,7 @@ GameObject:
   - component: {fileID: 4390149916404606}
   - component: {fileID: 33691950083679988}
   - component: {fileID: 23662993112658060}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_left_finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1362,7 +1362,7 @@ GameObject:
   - component: {fileID: 4274639847220502}
   - component: {fileID: 95507009240398296}
   - component: {fileID: 114106299794873186}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HealDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1429,7 +1429,7 @@ GameObject:
   - component: {fileID: 4593004125188376}
   - component: {fileID: 33694510715084280}
   - component: {fileID: 23027471160284258}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_r_small
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1446,7 +1446,7 @@ GameObject:
   - component: {fileID: 4430051945310464}
   - component: {fileID: 33875574582388318}
   - component: {fileID: 23288936364476050}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_left_lower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1578,7 +1578,7 @@ GameObject:
   - component: {fileID: 4375058166341224}
   - component: {fileID: 198429783075101184}
   - component: {fileID: 199655934242681202}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalShotParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1661,7 +1661,7 @@ GameObject:
   - component: {fileID: 4930969126051266}
   - component: {fileID: 198294482071201330}
   - component: {fileID: 199279383185656004}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalShotParticle (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1693,7 +1693,7 @@ GameObject:
   - component: {fileID: 4540443464580222}
   - component: {fileID: 33596546576228352}
   - component: {fileID: 23592290554299892}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: lens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1710,7 +1710,7 @@ GameObject:
   - component: {fileID: 4709940927374390}
   - component: {fileID: 33024245656476906}
   - component: {fileID: 23558910948674384}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: landinggear_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1761,7 +1761,7 @@ GameObject:
   - component: {fileID: 4854274438797198}
   - component: {fileID: 33050883359215322}
   - component: {fileID: 23387300570468714}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1889,7 +1889,7 @@ GameObject:
   - component: {fileID: 4903710027358804}
   - component: {fileID: 33241482424661000}
   - component: {fileID: 23695587256686450}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_right_finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1968,7 +1968,7 @@ GameObject:
   - component: {fileID: 4629143165017920}
   - component: {fileID: 33203397624342516}
   - component: {fileID: 23855103107563280}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_left_upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2164,7 +2164,7 @@ GameObject:
   - component: {fileID: 4202420201686138}
   - component: {fileID: 33240992940434634}
   - component: {fileID: 23074076821664770}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_f_upleft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2312,7 +2312,7 @@ GameObject:
   - component: {fileID: 4342186367027130}
   - component: {fileID: 33284140636419384}
   - component: {fileID: 23100916069857560}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: hook_back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2344,7 +2344,7 @@ GameObject:
   - component: {fileID: 4398956059670240}
   - component: {fileID: 33944107846020406}
   - component: {fileID: 23724782217248510}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: arm_right_upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2536,7 +2536,7 @@ GameObject:
   - component: {fileID: 4142141753671766}
   - component: {fileID: 33104367078770702}
   - component: {fileID: 23623142523331460}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2568,7 +2568,7 @@ GameObject:
   - component: {fileID: 4274148424308878}
   - component: {fileID: 33678596481208858}
   - component: {fileID: 23035016831004868}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: nozzle_back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2602,7 +2602,7 @@ GameObject:
   - component: {fileID: 4075814216303252}
   - component: {fileID: 33663432937250292}
   - component: {fileID: 23584148997572498}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: hook_up
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2669,7 +2669,7 @@ GameObject:
   - component: {fileID: 4546662734081128}
   - component: {fileID: 198179395656728098}
   - component: {fileID: 199267330608971724}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: HSNormalShotParticle (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2686,7 +2686,7 @@ GameObject:
   - component: {fileID: 4877877277259264}
   - component: {fileID: 33781698513115300}
   - component: {fileID: 23194219034379820}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7696,13 +7696,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attachingHero: {fileID: 114337771741393930}
   healAmount: 10
-  healCoolTime: 0.3
-  healRange: 40
+  healCoolTime: 0.5
+  healRange: 7
   moveUpAmount: 0
   moveDownAmount: 0
   originLocalPos: {x: 0, y: 0, z: 0}
   activeMaxTime: 7
-  anim: {fileID: 0}
+  anim: {fileID: 95507009240398296}
   droneDissolveMat: {fileID: 2100000, guid: f5548b8949ccd9741aa7b7cea48dabbf, type: 2}
 --- !u!114 &114171302416772874
 MonoBehaviour:
@@ -7739,7 +7739,7 @@ MonoBehaviour:
   - {fileID: 114421732369849136}
   - {fileID: 114294148763764470}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114294148763764470
 MonoBehaviour:
@@ -7766,15 +7766,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57f388e35fcf744b8521d4d1979ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
+  amount: 50
   velocity: 0
   attachingHero: {fileID: 114337771741393930}
   boomEffect: {fileID: 198587871943974866}
-  knockBackPower: 5
-  explosionRange: 5
+  knockBackPower: 5000
+  explosionRange: 7
   isActivated: 0
-  maxVelocity: 3
-  startVelocity: 1
+  maxVelocity: 10
+  startVelocity: 5
   coll: {fileID: 0}
   attachedNumber: 0
 --- !u!114 &114319570704163482
@@ -7809,13 +7809,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedc37ec71f306e46b3e77c4e529524f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  rotateSpeed: 0
-  maxHP: 0
+  rotateYUpLimit: 45
+  rotateYDownLimit: 10
+  moveSpeed: 30
+  rotateSpeed: 30
+  maxHP: 100
   currHP: 0
   IsDie: 0
-  neededUltAmount: 0
+  neededUltAmount: 10000
   nowUltAmount: 0
+  ultPlusPerSec: 1000
   screenCenterPoint: {x: 0, y: 0, z: 0}
   maxShotLength: 5000
   crossHairs:
@@ -7827,29 +7830,30 @@ MonoBehaviour:
     type: 2}
   FPSCamPerHero: {fileID: 0}
   hpBar: {fileID: 114171302416772874}
-  centerOffset: 0
+  centerOffset: 1
+  lastDir: 0
   firePos: {fileID: 4876097736563572}
   healDrone: {fileID: 114106299794873186}
   normalMuzzleFlash: {fileID: 198268648169206662}
   normalAttackParticleParent: {fileID: 1428504385503060}
   normalAttackParticles: []
   normalFireDamage: 5
-  fireRate: 0.2
+  fireRate: 0.3
   currBullet: 0
-  maxBullet: 0
+  maxBullet: 25
   correctionRange: 1
-  correctionMaxLength: 100
+  correctionMaxLength: 20
   reloading: 0
   reloadClip: {fileID: 7400000, guid: e842d52bbeb5a7244ae4a58f71607353, type: 2}
+  healDroneCoolTime: 15
   ultMissileParent: {fileID: 1462190042639724}
   ultMissiles: []
   ultMissilesMaxCount: 5
   ultShootCount: 0
-  ultMaxTime: 10
-  ultFireRate: 0.7
+  ultMaxTime: 7
+  ultFireRate: 1
   isUltOn: 0
   ultActivateTime: 0
-  lastDir: 0
 --- !u!114 &114355412253598030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7861,15 +7865,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57f388e35fcf744b8521d4d1979ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
+  amount: 50
   velocity: 0
   attachingHero: {fileID: 114337771741393930}
   boomEffect: {fileID: 198161977556925260}
-  knockBackPower: 5
-  explosionRange: 5
+  knockBackPower: 5000
+  explosionRange: 7
   isActivated: 0
-  maxVelocity: 3
-  startVelocity: 1
+  maxVelocity: 10
+  startVelocity: 5
   coll: {fileID: 0}
   attachedNumber: 0
 --- !u!114 &114359221316147454
@@ -7883,15 +7887,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57f388e35fcf744b8521d4d1979ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
+  amount: 50
   velocity: 0
   attachingHero: {fileID: 114337771741393930}
   boomEffect: {fileID: 198069541972571606}
-  knockBackPower: 5
-  explosionRange: 5
+  knockBackPower: 5000
+  explosionRange: 7
   isActivated: 0
-  maxVelocity: 3
-  startVelocity: 1
+  maxVelocity: 10
+  startVelocity: 5
   coll: {fileID: 0}
   attachedNumber: 0
 --- !u!114 &114403102854692568
@@ -7972,15 +7976,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57f388e35fcf744b8521d4d1979ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
+  amount: 50
   velocity: 0
   attachingHero: {fileID: 114337771741393930}
   boomEffect: {fileID: 198601904881153966}
-  knockBackPower: 5
-  explosionRange: 5
+  knockBackPower: 5000
+  explosionRange: 7
   isActivated: 0
-  maxVelocity: 3
-  startVelocity: 1
+  maxVelocity: 10
+  startVelocity: 5
   coll: {fileID: 0}
   attachedNumber: 0
 --- !u!114 &114582120562313418
@@ -8150,15 +8154,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57f388e35fcf744b8521d4d1979ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
+  amount: 50
   velocity: 0
   attachingHero: {fileID: 114337771741393930}
   boomEffect: {fileID: 198740294610039444}
-  knockBackPower: 5
-  explosionRange: 5
+  knockBackPower: 5000
+  explosionRange: 7
   isActivated: 0
-  maxVelocity: 3
-  startVelocity: 1
+  maxVelocity: 10
+  startVelocity: 5
   coll: {fileID: 0}
   attachedNumber: 0
 --- !u!135 &135244377788520860

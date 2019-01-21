@@ -2178,8 +2178,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1435613630391406}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8, y: -1.5, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalPosition: {x: -1.7, y: -2.4, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4578769969423394}
   - {fileID: 4755353295353936}
@@ -2234,7 +2234,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1057756833051854}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.21}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4323982073183300}
@@ -2814,8 +2814,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1195597047677932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8, y: -1.5, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalPosition: {x: 1.7, y: -2.4, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4598354226565966}
   - {fileID: 4367212056507978}
@@ -3517,7 +3517,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1355827417151520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2.4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4067064172521552}
@@ -4678,39 +4678,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e38bf95c86aafce4b84fa0ce3655911d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateYUpLimit: 80
+  rotateYUpLimit: 45
   rotateYDownLimit: 10
-  moveSpeed: 0
-  rotateSpeed: 0
-  maxHP: 0
+  moveSpeed: 45
+  rotateSpeed: 30
+  maxHP: 200
   currHP: 0
   IsDie: 0
-  neededUltAmount: 0
+  neededUltAmount: 10000
   nowUltAmount: 0
+  ultPlusPerSec: 500
   screenCenterPoint: {x: 0, y: 0, z: 0}
   maxShotLength: 5000
   crossHairs:
   - {fileID: 21300000, guid: 608c8661cd2cac8448a004d7febcf96c, type: 3}
-  headShotOffset: 0
+  headShotOffset: 1.6
   camPos: {fileID: 4929850338029874}
   FPSCamPerHeroGO: {fileID: 1836357495929872, guid: cc07dda5afff1fb4bb6aa73bd07c5822,
     type: 2}
   FPSCamPerHero: {fileID: 0}
   hpBar: {fileID: 114545747653467788}
-  centerOffset: 0
+  centerOffset: 1
   state: 0
-  normalAttackLength: 0
-  normalAttackLengthDiv: 0
-  correctionRange: 0
-  correctionRangeSqr: 0
-  normalAttackDamage: 0
-  normalAttackFireRate: 0
+  normalAttackLength: 4
+  correctionRange: 2
+  normalAttackDamage: 30
+  normalAttackFireRate: 2
   hookProjectile: {fileID: 114748978929187698}
   hookOriginPos: {fileID: 4595586315193600}
-  hookFireRate: 0
+  hookFireRate: 10
   ultParent: {fileID: 1355827417151520}
   ult: {fileID: 0}
-  ultStartPosFactor: -2.4
+  ultStartPosFactor: 0
 --- !u!114 &114669283055727748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4740,17 +4739,15 @@ MonoBehaviour:
   velocity: 0
   attachingHero: {fileID: 114575720229568262}
   state: 3
-  maxLength: 0
-  hookVelocity: 0
+  maxLength: 20
+  hookVelocity: 15
   originPosFromheroHook: {fileID: 4595586315193600}
-  retrieveMaxTime: 0
+  retrieveMaxTime: 1
   retrieveVelocity: 0.5
   rope: {fileID: 4593226226884688}
   ropeRenderer: {fileID: 23227290105702378}
   ropeMat: {fileID: 0}
-  ropeToMaterialTileScaleFactor: 1
-  disToRopeScaleFactor: 5
-  hookedDestDis: 0
+  hookedDestDis: 1
 --- !u!114 &114811091832860678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4810,8 +4807,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdc472d4ca49a14fb542c54241941f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 0
-  velocity: 0
+  amount: 20
+  velocity: 12
   attachingHero: {fileID: 114575720229568262}
   wolvesAnimator:
   - {fileID: 95777750414751822}
@@ -4820,9 +4817,8 @@ MonoBehaviour:
   - {fileID: 1195597047677932}
   - {fileID: 1435613630391406}
   state: 0
-  distance: 0
-  distanceSqr: 0
-  damageTick: 0
+  distance: 3.5
+  damageTick: 0.2
 --- !u!135 &135409500289039358
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -4833,7 +4829,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 3.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135979291906290288
 SphereCollider:

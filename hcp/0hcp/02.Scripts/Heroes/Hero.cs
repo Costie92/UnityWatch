@@ -7,7 +7,16 @@ namespace hcp
 {
     public abstract class Hero : MonoBehaviourPun
     {
-        
+        protected enum E_MoveDir
+        {
+            NONE,
+            Forward,
+            Backward,
+            Left,
+            Right,
+            MAX
+        }
+
         protected IBadState badState = NoneBadState.instance;
 
         protected Animator anim;
@@ -15,10 +24,12 @@ namespace hcp
         [Header("Hero's Property")]
         [Space(10)]
         [SerializeField]
-        protected float rotateYUpLimit = 80f;
+        protected float rotateYUpLimit ;
+        protected float rotateYUpLimitBy360toQuarternion;
 
         [SerializeField]
-        protected float rotateYDownLimit = 10f;
+        protected float rotateYDownLimit;
+       
 
         [SerializeField]
         protected float moveSpeed;
@@ -31,14 +42,20 @@ namespace hcp
         protected float currHP;
         [SerializeField]
         protected bool IsDie = false;
+
         protected Dictionary<E_ControlParam, ActiveCtrl> activeCtrlDic = new Dictionary<E_ControlParam, ActiveCtrl>();
 
         [Tooltip("needed amount for Ult Activate")]
         [SerializeField]
         protected float neededUltAmount;
+        protected float neededUltAmountDiv;
         [Tooltip("now Amount for Ult Activate")]
         [SerializeField]
         protected float nowUltAmount;
+        [Tooltip("ult Amount up value per sec")]
+        [SerializeField]
+        protected float ultPlusPerSec;
+
 
         [Tooltip("Screen Center Point Vector")]
         [SerializeField]
@@ -92,7 +109,6 @@ namespace hcp
                 return v;
             }
         }
-
         
         Rigidbody rb;
         public Rigidbody GetRigidBody
@@ -109,6 +125,8 @@ namespace hcp
 
             rb = this.gameObject.GetComponent<Rigidbody>();
             maxShotLengthDiv = 1 / maxShotLength;
+            neededUltAmountDiv = 1 / neededUltAmount;
+            rotateYUpLimitBy360toQuarternion = 360 - rotateYUpLimit;
             screenCenterPoint = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, Camera.main.nearClipPlane);
             anim = this.gameObject.GetComponent<Animator>();
             SetActiveCtrls();
@@ -126,7 +144,6 @@ namespace hcp
                 {
                     Debug.LogError("fpsCam 자체가 리소스에서 읽어오기 불가능.");
                 }
-                Debug.Log(fpsCamIns.name);
 
                 FPSCamPerHeroGO = GameObject.Instantiate<GameObject>(FPSCamPerHeroGO);
                 if (FPSCamPerHeroGO == null)
@@ -149,7 +166,6 @@ namespace hcp
                 //내 것이 아님.
                 rb.isKinematic = true;
             }
-
         }
 
         protected virtual void SetActiveCtrls()//어웨이크 시 불러온다든지... 스킬들 세팅해주는 함수임.
@@ -158,9 +174,30 @@ namespace hcp
         }
         public virtual void MoveHero(Vector3 moveV)
         {
+            transform.Translate(moveV * moveSpeed * Time.deltaTime, Space.Self);
         }
         public virtual void RotateHero(Vector3 rotateV)
         {
+            float nowCamRotX = Camera.main.transform.localRotation.eulerAngles.x;
+            float nextCamRotX = nowCamRotX + rotateV.y * rotateSpeed * Time.deltaTime;
+
+            if (rotateYDownLimit < nextCamRotX && nextCamRotX < rotateYUpLimitBy360toQuarternion) //리밋 오버 구간
+            {
+                if (nowCamRotX < nextCamRotX)
+                {
+                    Camera.main.transform.localRotation = Quaternion.Euler(rotateYDownLimit, 0, 0);
+                }
+                else if (nowCamRotX > nextCamRotX)
+                {
+                    Camera.main.transform.localRotation = Quaternion.Euler(rotateYUpLimitBy360toQuarternion, 0, 0);
+                }
+            }
+            else
+            {
+                Camera.main.transform.Rotate(new Vector3(rotateV.y, 0, 0)*Time.deltaTime * rotateSpeed, Space.Self);
+            }
+            //실제 몸통 이동.
+            transform.Rotate(new Vector3(0, rotateV.x, 0) * Time.deltaTime * rotateSpeed, Space.Self);
         }
         public virtual void ControlHero(E_ControlParam param)
         {
@@ -170,10 +207,10 @@ namespace hcp
         {
             if (IsDie) return;
             currHP -= damage;
-            Debug.Log("겟 데미지드"+damage);
+            Debug.Log(photonView.ViewID+ "겟 데미지드"+damage);
             if (currHP <= 0)
             {
-                Debug.Log("겟데미지드 - 데미지 받아 사망.");
+                Debug.Log(photonView.ViewID + "겟데미지드 - 데미지 받아 사망.");
                 dieAction();
             }
         }
@@ -182,7 +219,11 @@ namespace hcp
         {
             if (IsDie) return;
             currHP += heal;
-            Debug.Log("겟 힐"+heal);
+            if (currHP > maxHP)
+            {
+                currHP = maxHP;
+            }
+            Debug.Log(photonView.ViewID + "겟 힐" +heal);
         }
         public virtual void PlusUltAmount(float value)
         {
@@ -199,7 +240,7 @@ namespace hcp
         {
             get
             {
-                return nowUltAmount / neededUltAmount;
+                return nowUltAmount * neededUltAmountDiv;
             }
         }
 
@@ -220,15 +261,7 @@ namespace hcp
                 return true;
             return false;
         }
-        protected enum E_MoveDir
-        {
-            NONE,
-            Forward,
-            Backward,
-            Left,
-            Right,
-            MAX
-        }
+        
         protected E_MoveDir GetMostMoveDir(Vector3 moveDir)
         {
             E_MoveDir dir = E_MoveDir.NONE;
@@ -278,12 +311,14 @@ namespace hcp
             */
             return dir;
         }
+
         public bool IsHeadShot(Vector3 worldHitPos)
         {
             if (transform.worldToLocalMatrix.MultiplyPoint3x4(worldHitPos).y > headShotOffset)
                 return true;
             return false;
         }
+
         /*
          넉백 등이 일어날 때 호출.
              */
@@ -291,10 +326,9 @@ namespace hcp
         public void Knock(Vector3 worldForceVector)
         {
             if (photonView.IsMine)
-
             {
-                Debug.Log("넉 받음");
-                rb.AddForce(worldForceVector*1000f, ForceMode.Force); //이 넉백 rpc 경우는 트랜스폼은 알아서 연결되니까
+                Debug.Log(photonView.ViewID+"넉 받음"+ worldForceVector);
+                rb.AddForce(worldForceVector, ForceMode.Force); //이 넉백 rpc 경우는 트랜스폼은 알아서 연결되니까
                                                                 //이즈마인을 체크하지만
                                                                 //데미지 같은 경우는 모든 클라이언트에서 다 닳아있어야함.
             }
@@ -314,7 +348,8 @@ namespace hcp
         IEnumerator HookedMove(Vector3 hookedStartWorldPos, Vector3 hookedDestWorldPos, float duration)
         {
             Quaternion startRot = transform.rotation;
-            Quaternion destRot = Quaternion.LookRotation(hookedStartWorldPos - hookedDestWorldPos);
+            Quaternion destRot = Quaternion.LookRotation(hookedDestWorldPos -  hookedStartWorldPos );
+            destRot = new Quaternion(0,destRot.y,0,destRot.w);
 
             float startTime = 0f;
             float durationDiv = 1 / duration;
@@ -334,7 +369,7 @@ namespace hcp
         {
             if (other.CompareTag(Constants.outLineTag))
             {
-                Debug.Log("아웃 라인 접촉. 낙사. 사망.");
+                Debug.Log(photonView.ViewID+ "아웃 라인 접촉. 낙사. 사망.");
                 dieAction();
             }
         }
@@ -343,7 +378,7 @@ namespace hcp
         {
             if (IsDie)
                 return;
-            Debug.Log("죽음 콜백 받음.");
+            Debug.Log(photonView.ViewID + "죽음 콜백 받음. 액션 통해서");
 
             IsDie = true;
 

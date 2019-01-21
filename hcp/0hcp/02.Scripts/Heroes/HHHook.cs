@@ -36,25 +36,23 @@ namespace hcp {
 
         [SerializeField]
         Material ropeMat;
-        [Tooltip("로프 머테리얼의 텍스쳐 타일링과 실제 로프 길이 사이 스케일 팩터. 1f를 도출해냈음. 길이*1f 를 머테리얼 타일링 y에 주면 됨.")]
-        [SerializeField]
+       // [Tooltip("로프 머테리얼의 텍스쳐 타일링과 실제 로프 길이 사이 스케일 팩터. 1f를 도출해냈음. 길이*1f 를 머테리얼 타일링 y에 주면 됨.")]
+       // [SerializeField]
         float ropeToMaterialTileScaleFactor=1f;
 
-        [Tooltip("갈고리가 처음 뻗어나오는 위치에서 갈고리 까지의 z 차에 따른 로프의 스케일 조정값.. 5f 도출값.")]
-        [SerializeField]
+     //   [Tooltip("갈고리가 처음 뻗어나오는 위치에서 갈고리 까지의 z 차에 따른 로프의 스케일 조정값.. 5f 도출값.")]
+      //  [SerializeField]
         float disToRopeScaleFactor = 5f;
+
         [Tooltip("적이 갈고리에 걸렸을 때 슈터와 끌려진 적 사이 거리")]
         [SerializeField]
-        float hookedDestDis = 1f;
+        float hookedDestDis ;
 
 
 
         protected override void Awake()
         {
             base.Awake();
-            maxLength = 20f;
-            hookVelocity = 5f;
-            retrieveMaxTime = 3f;   //최대 거리 까지 가서 허탕을 치면 이 시간 만큼 걸려서 다시 돌아옴.
             retrieveVelocity = maxLength / retrieveMaxTime; //회수 속력.
             retrieveVelocityDiv = 1 / retrieveVelocity;
 

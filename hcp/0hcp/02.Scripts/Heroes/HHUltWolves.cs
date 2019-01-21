@@ -20,17 +20,14 @@ namespace hcp
         E_HHUltState state;
         [SerializeField]
         float distance;
-        [SerializeField]
         float distanceSqr;
         [SerializeField]
         float damageTick;
+        int animParamRunHash = Animator.StringToHash("run");
 
         protected override void Awake()
         {
             base.Awake();
-            amount = 20f;
-            velocity = 1f;
-            distance = 1.8f;
             distanceSqr = distance * distance;
         }
 
@@ -63,7 +60,7 @@ namespace hcp
             while (state == E_HHUltState.Activate)
             {
                 time += Time.deltaTime;
-                transform.Translate(Vector3.forward * velocity, Space.Self);
+                transform.Translate(Vector3.forward * velocity*Time.deltaTime, Space.Self);
                 if (time > damageTick)
                 {
                     time = 0f;
@@ -81,8 +78,7 @@ namespace hcp
             for (int i = 0; i < enemyHeroes.Count; i++)
             {
                 Vector3 enemyPosition = enemyHeroes[i].CenterPos - transform.position;
-                float disSqr = enemyPosition.sqrMagnitude;
-                if (disSqr < distanceSqr)
+                if ( enemyPosition.sqrMagnitude< distanceSqr)
                 {
                     enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount);
                 }
@@ -103,7 +99,7 @@ namespace hcp
         {
             for (int i = 0; i < wolvesAnimator.Length; i++)
             {
-                wolvesAnimator[i].SetBool("run", run);
+                wolvesAnimator[i].SetBool(animParamRunHash, run);
             }
         }
     }

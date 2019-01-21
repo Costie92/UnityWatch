@@ -11,6 +11,9 @@ namespace hcp
         [Space(20)]
         [Header("Hero - Soldier's Property")]
         [Space(10)]
+
+        [SerializeField]
+        E_MoveDir lastDir = E_MoveDir.NONE;
         [SerializeField]
         Transform firePos;
 
@@ -32,21 +35,21 @@ namespace hcp
         WaitForSeconds normalParticleDuration;
 
         [SerializeField]
-        float normalFireDamage = 5f;
+        float normalFireDamage;
         [Tooltip("fireRate for normal attack")]
         [SerializeField]
-        float fireRate = 0.2f;
+        float fireRate;
         [SerializeField]
         int currBullet;
         [SerializeField]
         int maxBullet;
 
         [SerializeField]
-        float correctionRange = 1f;
+        float correctionRange ;
         float correctionRangeSqr;
 
         [SerializeField]
-        float correctionMaxLength = 100;
+        float correctionMaxLength ;
         float correctionMaxLengthSqr;
 
         [Space(10)]
@@ -58,6 +61,12 @@ namespace hcp
 
         [SerializeField]
         AnimationClip reloadClip;
+
+        [Space(10)]
+        [Header("   Hero-Soldier-First Skill Heal Drone")]
+        [Space(10)]
+        [SerializeField]
+        float healDroneCoolTime;
 
 
 
@@ -73,18 +82,18 @@ namespace hcp
 
         [Tooltip("Hero- Soldier Ultimate, max Missile Counts.")]
         [SerializeField]
-        int ultMissilesMaxCount = 5;
+        int ultMissilesMaxCount ;
 
         [SerializeField]
         int ultShootCount = 0;
 
         [Tooltip("Hero- Soldier Ultimate, max Missile Shot Time.")]
         [SerializeField]
-        float ultMaxTime = 10f;
+        float ultMaxTime ;
 
         [Tooltip("Hero- Soldier Ultimate, fire rate.")]
         [SerializeField]
-        float ultFireRate = 0.7f;
+        float ultFireRate;
         
         [SerializeField]
         bool isUltOn = false;
@@ -111,13 +120,9 @@ namespace hcp
         {
             correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
             correctionRangeSqr = correctionRange * correctionRange;
-
-            moveSpeed = 3f;
-            rotateSpeed = 2f;
-
+            
             base.Awake();
-
-            centerOffset = 1.0f;
+            
 
             normalAttackParticles = new ParticleSystem[normalAttackParticleParent.transform.childCount];
 
@@ -129,12 +134,9 @@ namespace hcp
             normalParticleDuration = new WaitForSeconds(normalAttackParticles[0].main.duration);
             normalAttackParticleParent.transform.SetParent(null);//파티클 관리만을 위한 애니까.
             normalAttackParticleParent.transform.position = Vector3.zero + Vector3.down * 5f; //원점의 바닥 밑으로 숨겨버림.
-
-            maxHP = 100f;
+            
             currHP = maxHP;
-            maxBullet = 25;
             currBullet = maxBullet;
-            neededUltAmount = 10000f;
             nowUltAmount = 0f;
         }
         private void OnDestroy()
@@ -151,14 +153,12 @@ namespace hcp
             base.SetActiveCtrls();
             activeCtrlDic.Add(E_ControlParam.NormalAttack, new DelegateCtrl(E_ControlParam.NormalAttack, fireRate, NormalAttack,
                NormalAttackMeetCondition));
-            activeCtrlDic.Add(E_ControlParam.FirstSkill, new DelegateCtrl(E_ControlParam.FirstSkill, 10f, FirstSkill_HealDrone, () => { return true; }));
+            activeCtrlDic.Add(E_ControlParam.FirstSkill, new DelegateCtrl(E_ControlParam.FirstSkill, healDroneCoolTime, FirstSkill_HealDrone, () => { return true; }));
             activeCtrlDic.Add(E_ControlParam.Reload, new DelegateCtrl(E_ControlParam.Reload, 1f, Reloading, ReloadingMeetCondition));
             activeCtrlDic.Add(E_ControlParam.Ultimate, new DelegateCtrl(E_ControlParam.Ultimate, ultFireRate, Ult_ShotMissile, () => { return true; }));
         }
 
         #region basic control 
-        [SerializeField]
-        E_MoveDir lastDir = E_MoveDir.NONE;
         public override void MoveHero(Vector3 moveV)
         {
             if (!photonView.IsMine || IsCannotMoveState() || IsDie)
@@ -166,7 +166,9 @@ namespace hcp
                 Debug.Log("무브히어로가 묵살되었음." + moveV + "포톤이 내것인지? = " + photonView.IsMine);
                 return;
             }
-            transform.Translate(moveV*moveSpeed , Space.Self);
+
+            base.MoveHero(moveV);
+            
 
             E_MoveDir dir = GetMostMoveDir(moveV);
 
@@ -204,26 +206,7 @@ namespace hcp
             {
                 return;
             }
-            float nowCamRotX = Camera.main.transform.localRotation.eulerAngles.x;
-            float nextCamRotX = nowCamRotX + rotateV.y * rotateSpeed;
-
-            if (rotateYDownLimit < nextCamRotX && nextCamRotX < 360 - rotateYUpLimit) //절삭 구간
-            {
-                if (nowCamRotX < nextCamRotX)
-                {
-                    Camera.main.transform.localRotation = Quaternion.Euler(rotateYDownLimit, 0, 0);
-                }
-                else if(nowCamRotX > nextCamRotX)
-                {
-                    Camera.main.transform.localRotation = Quaternion.Euler(360 - rotateYUpLimit, 0, 0);
-                }
-            }
-            else
-            {
-                Camera.main.transform.Rotate(new Vector3(rotateV.y * rotateSpeed, 0, 0), Space.Self);
-            }
-
-            transform.Rotate(new Vector3( 0, rotateV.x*rotateSpeed,0), Space.Self);
+            base.RotateHero(rotateV);
         }
 
         public override void ControlHero(E_ControlParam param)
@@ -232,7 +215,6 @@ namespace hcp
             {
                 return;
             }
-            Debug.Log("ControlHero" + param);
 
             if (param == E_ControlParam.Ultimate)
             {
@@ -625,7 +607,7 @@ namespace hcp
 
             if (!isUltOn)
             {
-                PlusUltAmount(100 * Time.deltaTime);//1초에 100씩 차게.
+                PlusUltAmount(ultPlusPerSec * Time.deltaTime);//1초에 100씩 차게.
             }
             else
             {

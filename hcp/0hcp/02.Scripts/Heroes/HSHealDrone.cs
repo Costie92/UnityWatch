@@ -12,11 +12,11 @@ namespace hcp
         HeroSoldier attachingHero;
 
         [SerializeField]
-        float healAmount = 10f;
+        float healAmount;
         [SerializeField]
-        float healCoolTime = 0.3f;
+        float healCoolTime ;
         [SerializeField]
-        float healRange = 40f;
+        float healRange ;
         [SerializeField]
         float moveUpAmount;
         [SerializeField]
@@ -26,7 +26,7 @@ namespace hcp
 
         [Tooltip("heal drone activating Time")]
         [SerializeField]
-        float activeMaxTime = 7f;
+        float activeMaxTime;
 
         [SerializeField]
         Animator anim;
@@ -46,7 +46,6 @@ namespace hcp
         private void Awake()
         {
             originLocalPos = transform.localPosition;
-            anim = GetComponent<Animator>();
             SqrHealRange = healRange * healRange;
             ws = new WaitForSeconds(healCoolTime);
 

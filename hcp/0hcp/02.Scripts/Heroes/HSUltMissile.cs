@@ -10,10 +10,10 @@ namespace hcp
         float boomEffectLength;
 
         [SerializeField]
-        float knockBackPower = 5f;
+        float knockBackPower;
 
         [SerializeField]
-        float explosionRange = 5f;
+        float explosionRange;
 
         float explosionRangeDiv;
         float explosionRangeSqr;
@@ -23,9 +23,9 @@ namespace hcp
         bool isActivated = false;
 
         [SerializeField]
-        float maxVelocity = 3f;
+        float maxVelocity ;
         [SerializeField]
-        float startVelocity = 1f;
+        float startVelocity ;
 
         [SerializeField]
         Collider coll;
@@ -49,7 +49,6 @@ namespace hcp
             knockBackPowerInterValue = knockBackPower / explosionRange;
             explosionRangeDiv = 1 / explosionRange;
             explosionRangeSqr = explosionRange * explosionRange;
-            amount = 50f;   //솔져 궁의 데미지 양
             velocity = 1f;
         }
 
