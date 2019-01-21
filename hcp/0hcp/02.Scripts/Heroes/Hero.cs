@@ -38,10 +38,27 @@ namespace hcp
 
         [SerializeField]
         protected float maxHP;
+        public float MaxHP {
+            get {
+                return maxHP;
+            }
+        }
+
         [SerializeField]
         protected float currHP;
+        public float CurrHP
+        {
+            get
+            {
+                return currHP;
+            }
+        }
         [SerializeField]
         protected bool IsDie = false;
+        public bool Die
+        {
+            get { return IsDie; }
+        }
 
         protected Dictionary<E_ControlParam, ActiveCtrl> activeCtrlDic = new Dictionary<E_ControlParam, ActiveCtrl>();
 

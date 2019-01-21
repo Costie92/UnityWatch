@@ -7718,6 +7718,7 @@ MonoBehaviour:
   playerName: 
   playerNameTextMesh: {fileID: 114582120562313418}
   hpBar: {fileID: 114754305824041290}
+  teamSettingDone: 0
   attachingHero: {fileID: 114337771741393930}
 --- !u!114 &114224968967787610
 MonoBehaviour:

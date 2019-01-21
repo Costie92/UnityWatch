@@ -54,6 +54,8 @@ namespace hcp
             return _instance;
         }
 
+        public bool isTeamSettingDone=false;
+
         private void Awake()
         {
             if (_instance == null)
@@ -115,6 +117,8 @@ namespace hcp
                     Destroy(heroes[i].hpBar.gameObject);
                 }
             }
+
+            isTeamSettingDone = true;
 
             Debug.Log(" 팀인포 : 팀세팅과 관련된 처리 모두 끝.");
         }
