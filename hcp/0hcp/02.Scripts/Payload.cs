@@ -70,7 +70,12 @@ namespace hcp {
         [SerializeField]
         bool arrive = false;
 
-        
+        [SerializeField]
+        List<Hero> ATeamHeroes;
+        [SerializeField]
+        List<Hero> BTeamHeroes;
+
+
 
         IEnumerator Start() {
             if (!PhotonNetwork.IsMasterClient)
@@ -87,18 +92,43 @@ namespace hcp {
             cws = new WaitForSeconds(checkTime);
 
             while (!TeamInfo.GetInstance().isTeamSettingDone)
-            {
-                yield return new WaitForSeconds(2f);
-            }
+                yield return cws;
+            Debug.Log("팀 세팅 끝남 확인.");
+            
+            GetABHeroes();
             if (TeamInfo.GetInstance().EnemyTeamLayer.Count != 1 )
             {
                 Debug.LogError("이 게임은 2 팀 대결이 아님.");
             }
+        }
 
+        void GetABHeroes()
+        {
+            ATeamHeroes = new List<Hero>();
+            BTeamHeroes = new List<Hero>();
+            Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
+
+            for (int i = 0; i < heroes.Length; i++)
+            {
+                int photonKey = heroes[i].photonView.ViewID / 1000;
+                string teamName =  NetworkManager.instance.Teams[photonKey];
+                if (teamName == Constants.teamA_LayerName)
+                {
+                    ATeamHeroes.Add(heroes[i]);
+                }
+                else if (teamName == Constants.teamB_LayerName)
+                {
+                    BTeamHeroes.Add(heroes[i]);
+                }
+                else {
+                    Debug.LogError("GetABHeroes 양팀 대결이 아님.");
+                }
+            }
         }
 
         void Update()
         {
+            if (!TeamInfo.GetInstance().isTeamSettingDone) return;
             if (!PhotonNetwork.IsMasterClient) return;
 
             if (MoveSideCheck() == false || arrive) return;
@@ -110,17 +140,17 @@ namespace hcp {
 
         bool MoveSideCheck()
         {
-                int ATeamCount = GetCountOfCloseHeroes(TeamInfo.GetInstance().MyTeamHeroes);
-                int BTeamCount = GetCountOfCloseHeroes(TeamInfo.GetInstance().EnemyHeroes);
+                int ATeamCount = GetCountOfCloseHeroes(ATeamHeroes);
+                int BTeamCount = GetCountOfCloseHeroes(BTeamHeroes);
 
                 if (ATeamCount > 0 && BTeamCount == 0)
                 {
-                    PayloadMovePathSet(team.TeamA);
+                    PayloadMovePathSet(team.TeamB); //a팀이 우세하므로 b팀 쪽으로 밀음.
                     return true;
                 }
                 else if (ATeamCount == 0 && BTeamCount > 0)
                 {
-                    PayloadMovePathSet(team.TeamB);
+                    PayloadMovePathSet(team.TeamA);
                     return true;
                 }
                 return false;
@@ -296,6 +326,10 @@ namespace hcp {
             return IsLastWayPoint(path.nowMoveTeam, path.targetNum);
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.DrawWireSphere(transform.position, distance);
+        }
 
 
     }
