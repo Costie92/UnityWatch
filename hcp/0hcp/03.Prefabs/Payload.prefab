@@ -409,12 +409,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8deecc1ce79b6a43b22437038d66fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 30
+  nextPath:
+    nowMoveTeam: 0
+    targetNum: 0
+  moveSpeed: 7
+  startPoint: {fileID: 0}
   AWayPoints: []
   BWayPoints: []
-  nowSetDestWayPointNum: -1
-  movingTeam: 0
-  wayPointcloseEnough: 1
-  distance: 3
+  wholeWayPoints: []
+  nextTarget: {fileID: 0}
+  wayPointcloseEnough: 0.15
+  distance: 4
   checkTime: 1
   arrive: 0
+  ATeamHeroes: []
+  BTeamHeroes: []
+  nowTargetPoint: 0
+  ATeamCount: 0
+  BTeamCount: 0
+  judgedTeam: 0

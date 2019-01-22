@@ -44,11 +44,14 @@ namespace hcp {
 
         [SerializeField]
         float moveSpeed;
-
+        [SerializeField]
+        Transform startPoint;
         [SerializeField]
         List<Transform> AWayPoints;
         [SerializeField]
         List<Transform> BWayPoints;
+        [SerializeField]
+        List<Transform> wholeWayPoints;
         
 
         [SerializeField]
@@ -75,11 +78,16 @@ namespace hcp {
         [SerializeField]
         List<Hero> BTeamHeroes;
 
+        [SerializeField]
+        int nowTargetPoint;
+
 
 
         IEnumerator Start() {
             if (!PhotonNetwork.IsMasterClient)
                 yield break;
+            SetWholePath();
+
             wayPointcloseEnoughSqr = wayPointcloseEnough * wayPointcloseEnough;
             distanceSqr = distance * distance;
 
@@ -96,9 +104,28 @@ namespace hcp {
             Debug.Log("팀 세팅 끝남 확인.");
             
             GetABHeroes();
+
             if (TeamInfo.GetInstance().EnemyTeamLayer.Count != 1 )
             {
                 Debug.LogError("이 게임은 2 팀 대결이 아님.");
+            }
+        }
+
+        void SetWholePath()
+        {
+            wholeWayPoints = new List<Transform>();
+            for (int i =AWayPoints.Count-1;i >=0;i--)
+            {
+                wholeWayPoints.Add(AWayPoints[i]);
+            }
+
+            nowTargetPoint = wholeWayPoints.Count; //초기에 스타트 포인트로 넥스트 타겟 지정.
+
+            wholeWayPoints.Add(startPoint);
+
+            for (int i = 0; i < BWayPoints.Count; i++)
+            {
+                wholeWayPoints.Add(BWayPoints[i]);
             }
         }
 
@@ -131,39 +158,108 @@ namespace hcp {
             if (!TeamInfo.GetInstance().isTeamSettingDone) return;
             if (!PhotonNetwork.IsMasterClient) return;
 
-            if (MoveSideCheck() == false || arrive) return;
-
-            Vector3 dir = (GetNextMoveTarget(nextPath).position - transform.position).normalized;
+            Vector3 dir;
+            if (MoveSideCheck(out dir) == false || arrive) return;
+            
             transform.Translate(dir * Time.deltaTime * moveSpeed, Space.World);
         }
-        
+        //프로퍼티에서 볼려구 그냥 뻈음.
+        [SerializeField]
+        int ATeamCount;
+        [SerializeField]
+        int BTeamCount;
+        [SerializeField]
+        team judgedTeam;
 
-        bool MoveSideCheck()
+        bool MoveSideCheck(out Vector3 dir)
         {
-                int ATeamCount = GetCountOfCloseHeroes(ATeamHeroes);
-                int BTeamCount = GetCountOfCloseHeroes(BTeamHeroes);
+                 ATeamCount = GetCountOfCloseHeroes(ATeamHeroes);
+                 BTeamCount = GetCountOfCloseHeroes(BTeamHeroes);
 
-                if (ATeamCount > 0 && BTeamCount == 0)
+                if (ATeamCount > 0 && BTeamCount == 0)  //팀 b로 밀음.
                 {
-                    PayloadMovePathSet(team.TeamB); //a팀이 우세하므로 b팀 쪽으로 밀음.
+                dir = GetDir(team.TeamB);
+
+
+              //      PayloadMovePathSet(team.TeamB); //a팀이 우세하므로 b팀 쪽으로 밀음.
+                judgedTeam = team.TeamB;
                     return true;
                 }
                 else if (ATeamCount == 0 && BTeamCount > 0)
                 {
-                    PayloadMovePathSet(team.TeamA);
-                    return true;
+                dir = GetDir(team.TeamA);
+                   // PayloadMovePathSet(team.TeamA);
+                judgedTeam = team.TeamA;
+                return true;
                 }
-                return false;
+            judgedTeam = team.None;
+            dir = Vector3.zero;
+            return false;
         }
+
+        Vector3 GetDir(team teamDir)
+        {
+            Vector3 dir = Vector3.zero;
+            switch (teamDir)
+            {
+                case team.TeamA:
+                    if (nowTargetPoint == 0)
+                        return dir;
+                    if (WayPointClose(nowTargetPoint - 1))
+                    {
+                        nowTargetPoint = nowTargetPoint - 1;
+                    }
+                    if (nowTargetPoint == 0)
+                        return dir;
+
+                        return (wholeWayPoints[nowTargetPoint - 1].position - wholeWayPoints[nowTargetPoint].position).normalized;
+                case team.TeamB:
+                    if (nowTargetPoint == wholeWayPoints.Count - 1)
+                        return dir;
+                    if (WayPointClose(nowTargetPoint + 1))
+                    {
+                        nowTargetPoint = nowTargetPoint + 1;
+                    }
+                    if (nowTargetPoint == wholeWayPoints.Count - 1)
+                        return dir;
+
+                    return (wholeWayPoints[nowTargetPoint + 1].position - wholeWayPoints[nowTargetPoint].position).normalized;
+            }
+            return dir;
+        }
+        bool WayPointClose(int num)
+        {
+            if ((wholeWayPoints[num].position - transform.position).sqrMagnitude < wayPointcloseEnoughSqr)
+                return true;
+            return false;
+        }
+
+        //페이로드가 완전히 도착하면 델리게이트 호출하고 이게 불려짐.
+        void PayloadArrive()
+        {
+            arrive = true;
+        }
+
+
+
+
 
         void PayloadMovePathSet(team whichTeam)
         {
+            switch (whichTeam)
+            {
+
+            }
+
+
+
+            /*
             if (nextPath.nowMoveTeam == team.None && nextPath.targetNum == -1)  //맨처음
             {
                 nextPath.Set(whichTeam, 0);
                 return;
             }
-            if (nextPath.nowMoveTeam == whichTeam)  //똑같은 팀이 진행방향인 경우.
+            if (nextPath.nowMoveTeam == whichTeam)  //이건 현재 가고 있는 영역과 같냐지.
             {
                 if (WayPointClose(nextPath))
                 {
@@ -176,10 +272,39 @@ namespace hcp {
                         nextPath.targetNum++;
                     }
                 }
-                else return;
+                else
+                {
+                    //앞으로 가던 중이냐 뒤로 가던중이냐?
+                    return;
+                }
             }
             else
             {
+                //현재 영역은 다른 팀인데 새로 들어와서 경로 방향이 바뀌는 타이밍.
+                if (nextPath.targetNum == 0 || 
+                    (
+                    nextPath.targetNum==1 && WayPointClose(nextPath)
+                    )
+                    )
+                {
+                    nextPath.SwitchTeam();
+                    nextPath.targetNum = 0;
+                    if (WayPointClose(nextPath))
+                        nextPath.targetNum = 1;
+                    return;
+                }
+                else
+                {
+                    if (WayPointClose(nextPath.nowMoveTeam, nextPath.targetNum-1))
+                    {
+                        nextPath.targetNum = nextPath.targetNum - 2;
+                    }
+                    else
+                    nextPath.targetNum--;
+                }
+                
+
+                
                 //진행 방향이 다른 팀으로 변경된 경우
                 if (WayPointClose(nextPath))
                 {
@@ -193,11 +318,15 @@ namespace hcp {
                         nextPath.targetNum--;
                     }
                 }
-                else return;
-
+                else
+                {
+                    nextPath.targetNum--;
+                    return;
+                }
+                
             }
 
-            /*
+            
 
             if (nowSetDestWayPointNum == -1 && movingTeam == team.None)    //맨 처음.
             {
@@ -225,7 +354,7 @@ namespace hcp {
             transform.Translate(dir.normalized * Time.deltaTime * moveSpeed);
             */
         }
-
+        
 
 
 
@@ -241,11 +370,6 @@ namespace hcp {
         }
 
        
-        //페이로드가 완전히 도착하면 델리게이트 호출하고 이게 불려짐.
-        void PayloadArrive()
-        {
-            arrive = true;
-        }
 
         int GetCountOfCloseHeroes(List<Hero> heroes)
         {
