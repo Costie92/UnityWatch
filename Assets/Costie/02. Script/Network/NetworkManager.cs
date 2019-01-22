@@ -18,8 +18,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
     public GameObject buttons;
-    System.TimeSpan timeSpan;
-    System.DateTime TimeStarted;
+    [SerializeField] private System.TimeSpan timeSpan;
+    [SerializeField] private double PhotonTime;
     //[SerializeField] private GameObject lobbycamera;
 
     private Dictionary<int, bool> players;
@@ -132,8 +132,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             TimerStart = true;
-            TimeStarted = System.DateTime.UtcNow;
-            photonView.RPC("SendTimerSetting", RpcTarget.All, TimeStarted.ToString(), true);
+            PhotonTime = PhotonNetwork.Time;
+            photonView.RPC("SendTimerSetting", RpcTarget.All, PhotonTime, true);
         }
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
@@ -176,14 +176,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (TimerStart)
             {
-                System.TimeSpan nowTime = (timeSpan - (System.DateTime.UtcNow - TimeStarted));
+                System.TimeSpan nowTime = (timeSpan - System.TimeSpan.FromSeconds(PhotonNetwork.Time - PhotonTime));
                 string DisplayText = string.Format("{0}:{1:00}", (int)nowTime.TotalMinutes, nowTime.Seconds);
                 TimerText.text = DisplayText;
             }
         }
-        //Debug.Log(PhotonNetwork.connectionStateDetailed.ToString());
-        //connectText.text = PhotonNetwork.connectionStateDetailed.ToString();
-
     }
     
 
@@ -215,8 +212,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void SendTimerSetting(string date,bool Start) {
-        TimeStarted = System.DateTime.Parse(date);
+    public void SendTimerSetting(double time,bool Start) {
+        PhotonTime = time;
+        //TimeStarted = System.DateTime.Parse(date);
         TimerStart = Start;
     }
 
