@@ -1672,7 +1672,8 @@ Prefab:
   m_IsPrefabAsset: 0
 --- !u!4 &72799567 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 408914, guid: 3aea2b1d4d0db3542af1e9d3474cf6fe,
+    type: 2}
   m_PrefabInternal: {fileID: 72799566}
 --- !u!1001 &72802795
 Prefab:
@@ -53980,11 +53981,6 @@ Prefab:
     m_Modifications:
     - target: {fileID: 224526434943546024, guid: 3e4132c9bf3126849ac56b2573a97f73,
         type: 2}
-      propertyPath: m_RootOrder
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 224526434943546024, guid: 3e4132c9bf3126849ac56b2573a97f73,
-        type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -54073,19 +54069,15 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 223165061971566474, guid: 3e4132c9bf3126849ac56b2573a97f73,
+    - target: {fileID: 114713108459580684, guid: 3e4132c9bf3126849ac56b2573a97f73,
         type: 2}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
+      propertyPath: m_Text
+      value: 5:00
       objectReference: {fileID: 0}
-    - target: {fileID: 114450294016885228, guid: 3e4132c9bf3126849ac56b2573a97f73,
+    - target: {fileID: 224046174957323368, guid: 3e4132c9bf3126849ac56b2573a97f73,
         type: 2}
-      propertyPath: Speed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1529729519174856, guid: 3e4132c9bf3126849ac56b2573a97f73, type: 2}
-      propertyPath: m_IsActive
-      value: 1
+      propertyPath: m_AnchoredPosition.x
+      value: 36.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e4132c9bf3126849ac56b2573a97f73, type: 2}

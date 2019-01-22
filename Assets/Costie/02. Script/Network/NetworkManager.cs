@@ -15,7 +15,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject Lobby;
     [SerializeField] private GameObject TeamInfo;
     [SerializeField] private Transform SpawnPoint;
+    [SerializeField] private bool TimerStart;
+    [SerializeField] private Text TimerText;
     public GameObject buttons;
+    System.TimeSpan timeSpan;
+    System.DateTime TimeStarted;
     //[SerializeField] private GameObject lobbycamera;
 
     private Dictionary<int, bool> players;
@@ -82,6 +86,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Use this for initialization
     void Start()
     {
+        TimerStart = false;
+        timeSpan = new System.TimeSpan(0, 5, 0);
         buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
         myID = 0;
@@ -97,12 +103,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
     {
-        Debug.Log(myID + " SceneManagement");
         if (arg1.name == "MultiScenes")
         {
             if (PhotonNetwork.InRoom)
             {
-                Debug.Log(myID + " : StartCoroutine");
+                TimerText = GameObject.Find("Timer").GetComponent<Text>();
                 StartCoroutine(CreatePlayer());
             }
         }
@@ -119,16 +124,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     IEnumerator CreatePlayer()
     {
+        
         yield return new WaitForSeconds(1.0f);
         //lobbycamera = GameObject.Find("LobbyCamera");
         //if (lobbycamera)
         //    lobbycamera.SetActive(false);
-
+        if (PhotonNetwork.IsMasterClient)
+        {
+            TimerStart = true;
+            TimeStarted = System.DateTime.UtcNow;
+            photonView.RPC("SendTimerSetting", RpcTarget.All, TimeStarted.ToString(), true);
+        }
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
         Destroy(photonView);
-        Debug.Log(myID);
-        Debug.Log(Teams[myID]);
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             SpawnPoint = MapInfo.instance.ASpawnPoint;
@@ -163,7 +172,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            if (TimerStart)
+            {
+                System.TimeSpan nowTime = (timeSpan - (System.DateTime.UtcNow - TimeStarted));
+                string DisplayText = string.Format("{0}:{1:00}", (int)nowTime.TotalMinutes, nowTime.Seconds);
+                TimerText.text = DisplayText;
+            }
+        }
         //Debug.Log(PhotonNetwork.connectionStateDetailed.ToString());
         //connectText.text = PhotonNetwork.connectionStateDetailed.ToString();
 
@@ -185,7 +202,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Hashtable hashTable = new Hashtable();
-        Debug.Log(" Player Count : " + PhotonNetwork.CurrentRoom.PlayerCount);
         PhotonNetwork.Instantiate(Lobby.name, this.transform.position, this.transform.rotation, 0);
         Debug.Log("Joined Room");
     }
@@ -196,6 +212,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)4 };
         RandomNumber = Random.Range(0, 10000);
         PhotonNetwork.CreateRoom(RandomNumber.ToString("N"));
+    }
+
+    [PunRPC]
+    public void SendTimerSetting(string date,bool Start) {
+        TimeStarted = System.DateTime.Parse(date);
+        TimerStart = Start;
     }
 
     [PunRPC]
@@ -318,9 +340,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 }
                 Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
             }
-            Debug.Log(photonPlayers.Length == ReadyCount);
-            Debug.Log(TeamACount == TeamBCount);
-            Debug.Log((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0);
             if ((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0)
             {
                 buttons = null;
