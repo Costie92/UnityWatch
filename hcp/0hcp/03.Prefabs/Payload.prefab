@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4455393921580448}
   - component: {fileID: 33309242061327432}
   - component: {fileID: 23447646647904666}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: aluminum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4301977720130370}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PayloadModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 4831469737476760}
   - component: {fileID: 33316745536114680}
   - component: {fileID: 23574955863900928}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: aluminum2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 4546461598328536}
   - component: {fileID: 33582611937804006}
   - component: {fileID: 23816589606569636}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: dish_etc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4573468513467610}
   - component: {fileID: 33559143026391482}
   - component: {fileID: 23264888115585332}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: korpus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 114425492029395306}
   - component: {fileID: 114571292336476194}
   - component: {fileID: 65516599516766084}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Payload
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,7 +394,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114571292336476194}
-  viewIdField: 2
+  viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114571292336476194

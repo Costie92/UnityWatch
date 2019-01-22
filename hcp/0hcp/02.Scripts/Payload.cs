@@ -162,6 +162,7 @@ namespace hcp {
             
             transform.Translate(dir * Time.deltaTime * moveSpeed, Space.World);
         }
+
         //프로퍼티에서 볼려구 그냥 뻈음.
         [SerializeField]
         int ATeamCount;
@@ -255,6 +256,11 @@ namespace hcp {
         {
             Gizmos.DrawWireSphere(transform.position, distance);
             Gizmos.DrawWireSphere(transform.position, wayPointcloseEnough);
+        }
+
+        public void AddListenerPayloadArrive(System.Action ac)
+        {
+            payLoadArrive += ac;
         }
     }
 }

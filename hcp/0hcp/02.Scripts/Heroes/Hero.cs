@@ -24,6 +24,9 @@ namespace hcp
         [Header("Hero's Property")]
         [Space(10)]
         [SerializeField]
+        float respawnTime = 5f;
+
+        [SerializeField]
         protected float rotateYUpLimit ;
         protected float rotateYUpLimitBy360toQuarternion;
 
@@ -135,12 +138,19 @@ namespace hcp
                 return rb;
             }
         }
-        
+        Collider coll;
+        public Collider GetCollider
+        {
+            get {
+                return coll;
+            }
+        }
         protected virtual void Awake()
         {
             dieAction = new System.Action(DieCallBack);
 
             rb = this.gameObject.GetComponent<Rigidbody>();
+            coll = GetComponent<Collider>();
             maxShotLengthDiv = 1 / maxShotLength;
             neededUltAmountDiv = 1 / neededUltAmount;
             rotateYUpLimitBy360toQuarternion = 360 - rotateYUpLimit;
@@ -393,12 +403,79 @@ namespace hcp
 
         protected virtual void DieCallBack()
         {
-            if (IsDie)
+            if (IsDie || !photonView.IsMine)
                 return;
             Debug.Log(photonView.ViewID + "죽음 콜백 받음. 액션 통해서");
 
             IsDie = true;
+            photonView.RPC("RPCIsDie", RpcTarget.Others, IsDie);
 
+            anim.SetTrigger("die");
+            Camera.main.transform.Translate(Vector3.up * 2.0f, Space.World);
+            Camera.main.transform.LookAt(transform.position);
+
+            coll.enabled = false;
+            photonView.RPC("ColliderOnOff", RpcTarget.Others, false);
+
+            GetRigidBody.isKinematic = true;
+
+            Invoke("Respawn", respawnTime);
+        }
+
+        [PunRPC]
+        public void ColliderOnOff(bool on)
+        {
+            coll.enabled = on;
+        }
+        [PunRPC]
+        public void RPCIsDie(bool die)
+        {
+            IsDie = die;
+        }
+
+        protected virtual void Respawn()
+        {
+            anim.SetTrigger("alive");
+            coll.enabled = true;
+            photonView.RPC("ColliderOnOff", RpcTarget.Others, true);
+
+            currHP = maxHP;
+            photonView.RPC("GetHealed", RpcTarget.Others, maxHP);
+
+            GetRigidBody.isKinematic = false;
+
+            Camera.main.transform.SetPositionAndRotation(camPos.position, camPos.rotation);
+            IsDie = false;
+
+            photonView.RPC("RPCIsDie", RpcTarget.Others, IsDie);
+            
+
+            int photonKey = photonView.ViewID / 1000;
+            string teamName = NetworkManager.instance.Teams[photonKey];
+            Transform spawnPoint = null;
+
+            if (teamName == Constants.teamA_LayerName)
+            {
+                spawnPoint = MapInfo.instance.ASpawnPoint;
+            }
+            else if (teamName == Constants.teamB_LayerName)
+            {
+                spawnPoint = MapInfo.instance.BSpawnPoint;
+            }
+            else if (teamName == Constants.teamC_LayerName)
+            {
+                spawnPoint = MapInfo.instance.CSpawnPoint;
+            }
+            else if (teamName == Constants.teamD_LayerName)
+            {
+                spawnPoint = MapInfo.instance.DSpawnPoint;
+            }
+                if (spawnPoint == null)
+                {
+                    Debug.LogError("스폰포인트를 찾을 수 없어.");
+                }
+            transform.position = spawnPoint.position + Vector3.up * 2f;
+                transform.rotation = spawnPoint.rotation;
         }
     }
 }

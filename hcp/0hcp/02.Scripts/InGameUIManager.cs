@@ -31,6 +31,14 @@ namespace hcp
         [SerializeField]
         Hero targetHero;
 
+        [SerializeField]
+        Image hpBarUI;
+        float maxHPDiv;
+        [SerializeField]
+        Text heroName;
+
+
+
         public Text[] ct;
 
         static InGameUIManager instance;
@@ -60,6 +68,8 @@ namespace hcp
             {
                 ct[i].text = targetHero.GetReUseRemainTime((E_ControlParam)i).ToString();
             }
+
+            hpBarUI.fillAmount = targetHero.CurrHP * maxHPDiv;
 
 
             targetHero.MoveHero(charactorMoveV * Time.deltaTime * 5);
@@ -143,6 +153,7 @@ namespace hcp
         {
             targetHero = hero;
             CrossHairChange(targetHero.crossHairs[0]);
+            maxHPDiv = 1 / targetHero.MaxHP;
         }
     }
 }
