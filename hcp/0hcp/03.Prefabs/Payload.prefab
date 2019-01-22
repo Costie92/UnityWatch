@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 114973692330625046}
   - component: {fileID: 114425492029395306}
   - component: {fileID: 114571292336476194}
+  - component: {fileID: 65516599516766084}
   m_Layer: 0
   m_Name: Payload
   m_TagString: Untagged
@@ -363,6 +364,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1488098645281560}
   m_Mesh: {fileID: 4300004, guid: 7678e6a79514b324da40efaadafd0d16, type: 3}
+--- !u!65 &65516599516766084
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1830572804297348}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.6, z: 1}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &114425492029395306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -381,8 +394,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114571292336476194}
-  viewIdField: 0
-  InstantiationId: 0
+  viewIdField: 2
+  InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114571292336476194
 MonoBehaviour:
@@ -409,16 +422,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8deecc1ce79b6a43b22437038d66fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextPath:
-    nowMoveTeam: 0
-    targetNum: 0
-  moveSpeed: 7
+  nowRange:
+    Aside: 0
+    Bside: 0
+  moveSpeed: 2
   startPoint: {fileID: 0}
   AWayPoints: []
   BWayPoints: []
   wholeWayPoints: []
   nextTarget: {fileID: 0}
-  wayPointcloseEnough: 0.15
+  wayPointcloseEnough: 0.7
   distance: 4
   checkTime: 1
   arrive: 0

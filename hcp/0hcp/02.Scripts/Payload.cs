@@ -4,7 +4,9 @@ using UnityEngine;
 using Photon.Pun;
 namespace hcp {
     public class Payload : MonoBehaviourPun {
+
         System.Action payLoadArrive;
+
         [System.Serializable]
         enum team
         {
@@ -13,34 +15,37 @@ namespace hcp {
             TeamB,
             MAX
         }
-
         [System.Serializable]
-        struct OnGoingPath
+        struct WPRange
         {
-            public team nowMoveTeam;
-            public int targetNum;
-
-            public void Set(team team, int num)
+            public int Aside;
+            public int Bside;
+            public WPRange(int a, int b )
             {
-                nowMoveTeam = team;
-                targetNum = num;
+                Aside = a;
+                Bside = b;
             }
-            public void SwitchTeam()
+
+            public void MoveSide(team team)
             {
-                switch (nowMoveTeam)
+                switch (team)
                 {
                     case team.TeamA:
-                        nowMoveTeam = team.TeamB;
+                        Aside--;
+                        Bside--;
                         break;
+
                     case team.TeamB:
-                        nowMoveTeam = team.TeamA;
+                        Aside++;
+                        Bside++;
                         break;
                 }
             }
         }
+        
 
         [SerializeField]
-        OnGoingPath nextPath;
+        WPRange nowRange;
 
         [SerializeField]
         float moveSpeed;
@@ -90,11 +95,7 @@ namespace hcp {
 
             wayPointcloseEnoughSqr = wayPointcloseEnough * wayPointcloseEnough;
             distanceSqr = distance * distance;
-
-            nextPath = new OnGoingPath();
-            nextPath.nowMoveTeam = team.None;
-            nextPath.targetNum = -1;
-
+            
             payLoadArrive += PayloadArrive;
 
             cws = new WaitForSeconds(checkTime);
@@ -119,10 +120,8 @@ namespace hcp {
                 wholeWayPoints.Add(AWayPoints[i]);
             }
 
-            nowTargetPoint = wholeWayPoints.Count; //초기에 스타트 포인트로 넥스트 타겟 지정.
-
-            wholeWayPoints.Add(startPoint);
-
+            nowRange = new WPRange(wholeWayPoints.Count-1 , wholeWayPoints.Count);
+            
             for (int i = 0; i < BWayPoints.Count; i++)
             {
                 wholeWayPoints.Add(BWayPoints[i]);
@@ -157,9 +156,9 @@ namespace hcp {
         {
             if (!TeamInfo.GetInstance().isTeamSettingDone) return;
             if (!PhotonNetwork.IsMasterClient) return;
-
+            if (arrive) return;
             Vector3 dir;
-            if (MoveSideCheck(out dir) == false || arrive) return;
+            if (MoveSideCheck(out dir) == false ) return;
             
             transform.Translate(dir * Time.deltaTime * moveSpeed, Space.World);
         }
@@ -173,60 +172,49 @@ namespace hcp {
 
         bool MoveSideCheck(out Vector3 dir)
         {
+            dir = Vector3.zero;
                  ATeamCount = GetCountOfCloseHeroes(ATeamHeroes);
                  BTeamCount = GetCountOfCloseHeroes(BTeamHeroes);
 
-                if (ATeamCount > 0 && BTeamCount == 0)  //팀 b로 밀음.
+            if (ATeamCount > 0 && BTeamCount == 0)  //팀 b로 밀음.
+            {
+                if (nowRange.Bside == wholeWayPoints.Count - 1 && WayPointClose(nowRange.Bside))
                 {
-                dir = GetDir(team.TeamB);
+                    payLoadArrive();
+                    return false;
+                }
 
-
-              //      PayloadMovePathSet(team.TeamB); //a팀이 우세하므로 b팀 쪽으로 밀음.
+                if (WayPointClose(nowRange.Bside) )
+                {
+                    nowRange.MoveSide(team.TeamB);
+                }
+                dir = (wholeWayPoints[nowRange.Bside].position - transform.position).normalized;
+                
                 judgedTeam = team.TeamB;
                     return true;
-                }
+            }
+
                 else if (ATeamCount == 0 && BTeamCount > 0)
+            {
+                if (nowRange.Aside == 0 && WayPointClose(nowRange.Aside))
                 {
-                dir = GetDir(team.TeamA);
-                   // PayloadMovePathSet(team.TeamA);
+                    payLoadArrive();
+                    return false;
+                }
+
+                if (WayPointClose(nowRange.Aside))
+                {
+                    nowRange.MoveSide(team.TeamA);
+                }
+                dir = (wholeWayPoints[nowRange.Aside].position - transform.position).normalized;
                 judgedTeam = team.TeamA;
                 return true;
-                }
+            }
             judgedTeam = team.None;
             dir = Vector3.zero;
             return false;
         }
-
-        Vector3 GetDir(team teamDir)
-        {
-            Vector3 dir = Vector3.zero;
-            switch (teamDir)
-            {
-                case team.TeamA:
-                    if (nowTargetPoint == 0)
-                        return dir;
-                    if (WayPointClose(nowTargetPoint - 1))
-                    {
-                        nowTargetPoint = nowTargetPoint - 1;
-                    }
-                    if (nowTargetPoint == 0)
-                        return dir;
-
-                        return (wholeWayPoints[nowTargetPoint - 1].position - wholeWayPoints[nowTargetPoint].position).normalized;
-                case team.TeamB:
-                    if (nowTargetPoint == wholeWayPoints.Count - 1)
-                        return dir;
-                    if (WayPointClose(nowTargetPoint + 1))
-                    {
-                        nowTargetPoint = nowTargetPoint + 1;
-                    }
-                    if (nowTargetPoint == wholeWayPoints.Count - 1)
-                        return dir;
-
-                    return (wholeWayPoints[nowTargetPoint + 1].position - wholeWayPoints[nowTargetPoint].position).normalized;
-            }
-            return dir;
-        }
+        
         bool WayPointClose(int num)
         {
             if ((wholeWayPoints[num].position - transform.position).sqrMagnitude < wayPointcloseEnoughSqr)
@@ -238,126 +226,9 @@ namespace hcp {
         void PayloadArrive()
         {
             arrive = true;
-        }
-
-
-
-
-
-        void PayloadMovePathSet(team whichTeam)
-        {
-            switch (whichTeam)
-            {
-
-            }
-
-
-
-            /*
-            if (nextPath.nowMoveTeam == team.None && nextPath.targetNum == -1)  //맨처음
-            {
-                nextPath.Set(whichTeam, 0);
-                return;
-            }
-            if (nextPath.nowMoveTeam == whichTeam)  //이건 현재 가고 있는 영역과 같냐지.
-            {
-                if (WayPointClose(nextPath))
-                {
-                    if (IsLastWayPoint(nextPath))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        nextPath.targetNum++;
-                    }
-                }
-                else
-                {
-                    //앞으로 가던 중이냐 뒤로 가던중이냐?
-                    return;
-                }
-            }
-            else
-            {
-                //현재 영역은 다른 팀인데 새로 들어와서 경로 방향이 바뀌는 타이밍.
-                if (nextPath.targetNum == 0 || 
-                    (
-                    nextPath.targetNum==1 && WayPointClose(nextPath)
-                    )
-                    )
-                {
-                    nextPath.SwitchTeam();
-                    nextPath.targetNum = 0;
-                    if (WayPointClose(nextPath))
-                        nextPath.targetNum = 1;
-                    return;
-                }
-                else
-                {
-                    if (WayPointClose(nextPath.nowMoveTeam, nextPath.targetNum-1))
-                    {
-                        nextPath.targetNum = nextPath.targetNum - 2;
-                    }
-                    else
-                    nextPath.targetNum--;
-                }
-                
-
-                
-                //진행 방향이 다른 팀으로 변경된 경우
-                if (WayPointClose(nextPath))
-                {
-                    if (nextPath.targetNum == 0)    //다른팀으로 완전히 넘어가는 시기.
-                    {
-                        nextPath.SwitchTeam();
-
-                    }
-                    else
-                    {
-                        nextPath.targetNum--;
-                    }
-                }
-                else
-                {
-                    nextPath.targetNum--;
-                    return;
-                }
-                
-            }
-
-            
-
-            if (nowSetDestWayPointNum == -1 && movingTeam == team.None)    //맨 처음.
-            {
-                movingTeam = whichTeam;
-                nowSetDestWayPointNum = 0;
-            }
-            else {
-                if (movingTeam == whichTeam)
-                {
-                    nowSetDestWayPointNum = GetNextNumberOfWayPoint(true, nowSetDestWayPointNum);
-                }
-                else
-                {
-                    nowSetDestWayPointNum = GetNextNumberOfWayPoint(false, nowSetDestWayPointNum);
-                    if (nowSetDestWayPointNum == 0) //완전히 이동경로가 바뀌는 타이밍
-                    {
-                        movingTeam = whichTeam;
-                    }
-                }
-            }
-
-            Transform target = GetNextMoveTarget(whichTeam, nowSetDestWayPointNum);
-            Vector3 dir = target.position - transform.position;
-            
-            transform.Translate(dir.normalized * Time.deltaTime * moveSpeed);
-            */
+            Debug.Log("화물이 종단점에 도착했습니다.");
         }
         
-
-
-
         bool IsHeroClose(Hero hero)
         {
             if (hero.Die) return false;
@@ -368,9 +239,7 @@ namespace hcp {
             }
             return false;
         }
-
-       
-
+        
         int GetCountOfCloseHeroes(List<Hero> heroes)
         {
             int result = 0;
@@ -381,80 +250,11 @@ namespace hcp {
             }
             return result;
         }
-
-        Transform GetNextMoveTarget(team team, int num)
-        {
-            Transform tr = null;
-            switch (team)
-            {
-                case team.TeamA:
-                    tr= AWayPoints[num];
-                    break;
-                case team.TeamB:
-                    tr= BWayPoints[num];
-                    break;
-            }
-            return tr;
-        }
-        Transform GetNextMoveTarget(OnGoingPath path)
-        {
-            Transform tr = null;
-            
-            switch (path.nowMoveTeam)
-            {
-                case team.TeamA:
-                    tr = AWayPoints[path.targetNum];
-                    break;
-                case team.TeamB:
-                    tr = BWayPoints[path.targetNum];
-                    break;
-            }
-            return tr;
-        }
         
-
-        bool WayPointClose(team whichTeam, int num)
-        {
-            Transform target =  GetNextMoveTarget(whichTeam, num);
-            if ((target.position - transform.position).sqrMagnitude < wayPointcloseEnoughSqr)   //충분히 가까움.
-            {
-                return true;
-            }
-            return false;
-        }
-        bool WayPointClose(OnGoingPath path)
-        {
-            return WayPointClose(path.nowMoveTeam, path.targetNum);
-        }
-        bool IsLastWayPoint(team team, int num)
-        {
-            switch (team)
-            {
-                case team.TeamA:
-                    if (num == AWayPoints.Count - 1)
-                    {
-                        return true;
-                    }
-                    return false;
-                case team.TeamB:
-                    if (num == BWayPoints.Count - 1)
-                    {
-                        return true;
-                    }
-                    return false;
-            }
-            return false;
-        }
-        bool IsLastWayPoint(OnGoingPath path)
-        {
-            return IsLastWayPoint(path.nowMoveTeam, path.targetNum);
-        }
-
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawWireSphere(transform.position, distance);
+            Gizmos.DrawWireSphere(transform.position, wayPointcloseEnough);
         }
-
-
     }
 }
