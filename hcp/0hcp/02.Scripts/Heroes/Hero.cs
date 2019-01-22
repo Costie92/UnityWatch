@@ -440,7 +440,7 @@ namespace hcp
             photonView.RPC("ColliderOnOff", RpcTarget.Others, true);
 
             currHP = maxHP;
-            photonView.RPC("GetHealed", RpcTarget.Others, maxHP);
+            photonView.RPC("GetHealed", RpcTarget.Others, 999999f);
 
             GetRigidBody.isKinematic = false;
 

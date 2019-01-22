@@ -4679,6 +4679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e38bf95c86aafce4b84fa0ce3655911d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  respawnTime: 5
   rotateYUpLimit: 45
   rotateYDownLimit: 10
   moveSpeed: 45
