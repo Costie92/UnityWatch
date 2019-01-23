@@ -5439,6 +5439,11 @@ Prefab:
       propertyPath: BWayPoints.Array.size
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 114425492029395306, guid: e36f0a5c77583be47826d1a30435f7e2,
+        type: 2}
+      propertyPath: ObservedComponents.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4125980735498414, guid: e36f0a5c77583be47826d1a30435f7e2, type: 2}
       propertyPath: m_LocalPosition.x
       value: 28
@@ -5638,9 +5643,30 @@ Prefab:
       propertyPath: FarFromBText
       value: 
       objectReference: {fileID: 1552833295}
+    - target: {fileID: 114425492029395306, guid: e36f0a5c77583be47826d1a30435f7e2,
+        type: 2}
+      propertyPath: ObservedComponents.Array.data[1]
+      value: 
+      objectReference: {fileID: 165291769}
+    - target: {fileID: 114973692330625046, guid: e36f0a5c77583be47826d1a30435f7e2,
+        type: 2}
+      propertyPath: progressStart
+      value: 
+      objectReference: {fileID: 1962790090}
+    - target: {fileID: 114973692330625046, guid: e36f0a5c77583be47826d1a30435f7e2,
+        type: 2}
+      propertyPath: progressEnd
+      value: 
+      objectReference: {fileID: 1807883696}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e36f0a5c77583be47826d1a30435f7e2, type: 2}
   m_IsPrefabAsset: 0
+--- !u!114 &165291769 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114973692330625046, guid: e36f0a5c77583be47826d1a30435f7e2,
+    type: 2}
+  m_PrefabInternal: {fileID: 165291768}
+  m_Script: {fileID: 11500000, guid: d8deecc1ce79b6a43b22437038d66fa5, type: 3}
 --- !u!1001 &166436349
 Prefab:
   m_ObjectHideFlags: 0
@@ -50812,6 +50838,8 @@ RectTransform:
   - {fileID: 1762943010}
   - {fileID: 17788255}
   - {fileID: 1552833294}
+  - {fileID: 1962790090}
+  - {fileID: 1807883696}
   m_Father: {fileID: 1107098668}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -54152,7 +54180,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 45.94995, y: -0.000061035156}
+  m_AnchoredPosition: {x: 25, y: 0}
   m_SizeDelta: {x: -751.63, y: 43.15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1762943011
@@ -55829,6 +55857,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4607235120965022, guid: ef730a8e060ff56459f34d5a70fdb70c,
     type: 2}
   m_PrefabInternal: {fileID: 1807126517}
+--- !u!1 &1807883695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1807883696}
+  m_Layer: 5
+  m_Name: progressEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1807883696
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1807883695}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1641521229}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1813755868
 Prefab:
   m_ObjectHideFlags: 0
@@ -60194,6 +60255,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4607235120965022, guid: ef730a8e060ff56459f34d5a70fdb70c,
     type: 2}
   m_PrefabInternal: {fileID: 1961896500}
+--- !u!1 &1962790089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1962790090}
+  m_Layer: 5
+  m_Name: progressStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1962790090
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1962790089}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1641521229}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 1, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1965657431
 Prefab:
   m_ObjectHideFlags: 0

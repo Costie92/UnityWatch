@@ -87,6 +87,15 @@ namespace hcp {
         float fillAmountForProgress;
         [SerializeField]
         float payLoadIconX;
+        [SerializeField]
+        Transform progressStart;
+        [SerializeField]
+        Transform progressEnd;
+        [SerializeField]
+        float progressPosStart;
+        [SerializeField]
+        float progressPosEnd;
+
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -95,18 +104,21 @@ namespace hcp {
                 if (PhotonNetwork.IsMasterClient)
                 {
                     HowFarFromA = GetHowFarFromTeamA();
-                    FarFromAText.text = HowFarFromA.ToString();
+                    FarFromAText.text = HowFarFromA.ToString("000");
 
                     fillAmountForProgress = HowFarFromA * wholeWPLengthDiv;
                     TeamAProgress.fillAmount = fillAmountForProgress;
 
-                    payLoadIconX= TeamAProgress.rectTransform.anchorMin.x+ (TeamAProgress.rectTransform.anchorMax.x - TeamAProgress.rectTransform.anchorMin.x) * fillAmountForProgress;
+                    payLoadIconX = progressPosStart + ((progressPosEnd - progressPosStart) * fillAmountForProgress);
+
+
+                      //  TeamAProgress.rectTransform.anchorMin.x+ (TeamAProgress.rectTransform.anchorMax.x - TeamAProgress.rectTransform.anchorMin.x) * fillAmountForProgress;
                     Vector2 iconPos= PayloadIcon.rectTransform.position;
                     iconPos.x = payLoadIconX;
                     PayloadIcon.rectTransform.position = iconPos;
 
                     HowFarFromB = GetHowFarFromTeamB();
-                    FarFromBText.text = HowFarFromB.ToString();
+                    FarFromBText.text = HowFarFromB.ToString("000");
 
                     stream.SendNext(HowFarFromA);
                     stream.SendNext(fillAmountForProgress);
@@ -121,12 +133,12 @@ namespace hcp {
                 payLoadIconX = (float)stream.ReceiveNext();
                 HowFarFromB = (float)stream.ReceiveNext();
 
-                FarFromAText.text = HowFarFromA.ToString();
+                FarFromAText.text = HowFarFromA.ToString("000");
                 TeamAProgress.fillAmount = fillAmountForProgress;
                 Vector2 iconPos = PayloadIcon.rectTransform.position;
                 iconPos.x = payLoadIconX;
                 PayloadIcon.rectTransform.position = iconPos;
-                FarFromBText.text = HowFarFromB.ToString();
+                FarFromBText.text = HowFarFromB.ToString("000");
 
             }
         }
@@ -183,7 +195,9 @@ namespace hcp {
         
 
         IEnumerator Start() {
-            
+            progressPosStart = progressStart.position.x;
+            progressPosEnd = progressEnd.position.x;
+
             if (!PhotonNetwork.IsMasterClient)
                 yield break;
 
