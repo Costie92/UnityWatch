@@ -120,6 +120,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         if (arg1.name == "MultiScenes")
         {
+            foreach (KeyValuePair<int, string> pair in Names) {
+                Debug.Log("IDs : " + pair.Key + "Names : " + pair.Value);
+            }
             if (PhotonNetwork.InRoom)
             {
                 TimerText = GameObject.Find("Timer").GetComponent<Text>();
@@ -317,9 +320,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             Names.Add(pVID, name);
             Debug.Log(" ID : " + pVID + "Name is : " + name);
-        }
-        if (myID != 1) {
-            Names[pVID] = name;
         }
     }
     [PunRPC]
