@@ -17,9 +17,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform SpawnPoint;
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
+    [SerializeField] private bool GameEnd;
     public GameObject buttons;
-    [SerializeField] private System.TimeSpan timeSpan;
-    [SerializeField] private double PhotonTime;
+    private System.TimeSpan timeSpan;
+    private double PhotonTime;
+    private System.TimeSpan nowTime;
     //[SerializeField] private GameObject lobbycamera;
 
     private Dictionary<int, bool> players;
@@ -100,8 +102,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Use this for initialization
     void Start()
     {
+        GameEnd = false;
         TimerStart = false;
         timeSpan = new System.TimeSpan(0, 5, 0);
+        nowTime = new System.TimeSpan(0, 5, 0);
         buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
         myID = 0;
@@ -194,7 +198,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (TimerStart)
             {
-                System.TimeSpan nowTime = (timeSpan - System.TimeSpan.FromSeconds(PhotonNetwork.Time - PhotonTime));
+                if (nowTime.TotalSeconds > 0)
+                {
+                    nowTime = (timeSpan - System.TimeSpan.FromSeconds(PhotonNetwork.Time - PhotonTime));
+                }
+                else {
+                    if (!GameEnd) {
+                        //do victory check;
+                        Debug.Log(nowTime.TotalSeconds);
+                        GameEnd = true;
+                    }
+                }
                 string DisplayText = string.Format("{0}:{1:00}", (int)nowTime.TotalMinutes, nowTime.Seconds);
                 TimerText.text = DisplayText;
             }
