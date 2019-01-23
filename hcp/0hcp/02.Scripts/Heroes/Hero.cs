@@ -448,6 +448,7 @@ namespace hcp
 
         protected virtual void Respawn()
         {
+            if (!photonView.IsMine|| IsDie==false) return;
             anim.SetTrigger("alive");
             coll.enabled = true;
             photonView.RPC("ColliderOnOff", RpcTarget.Others, true);
