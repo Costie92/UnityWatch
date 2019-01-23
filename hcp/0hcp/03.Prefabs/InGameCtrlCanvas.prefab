@@ -427,7 +427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1735887514309124
 GameObject:
   m_ObjectHideFlags: 1
@@ -477,7 +477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1818663934273492
 GameObject:
   m_ObjectHideFlags: 1
@@ -1112,6 +1112,9 @@ MonoBehaviour:
   targetHero: {fileID: 0}
   hpBarUI: {fileID: 114095884956408284}
   heroName: {fileID: 114962262231098782}
+  controlPanelPerHero:
+  - {fileID: 1734522332859784}
+  - {fileID: 1755097469818294}
   ct:
   - {fileID: 114232689445770106}
   - {fileID: 114140712356148670}
@@ -2096,7 +2099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -0.000030517578, y: 88.020004}
+  m_AnchoredPosition: {x: 0, y: 88.020004}
   m_SizeDelta: {x: -105.2, y: 34}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224071464810752384
