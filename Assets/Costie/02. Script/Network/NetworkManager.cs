@@ -235,6 +235,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonTime = time;
         //TimeStarted = System.DateTime.Parse(date);
         TimerStart = Start;
+        Debug.Log(PhotonTime + " " + TimerStart);
     }
 
     [PunRPC]
@@ -287,9 +288,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (myID == 0)
                 myID = pVID;
-            Names.Add(pVID, MyName);
             Players.Add(pVID, false);
             Debug.Log(" ID : " + pVID + " Joined");
+        }
+        if (!Names.ContainsKey(pVID)) {
+            Names.Add(pVID, MyName);
+            Debug.Log(" ID : " + pVID + "Name is : " + MyName);
         }
         if (!Heros.ContainsKey(pVID)) {
             Heros.Add(pVID, hcp.E_HeroType.Soldier);
