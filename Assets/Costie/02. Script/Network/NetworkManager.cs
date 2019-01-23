@@ -18,7 +18,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
     public GameObject buttons;
-    public string MyName;
     [SerializeField] private System.TimeSpan timeSpan;
     [SerializeField] private double PhotonTime;
     //[SerializeField] private GameObject lobbycamera;
@@ -317,7 +316,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Names.ContainsKey(pVID))
         {
             Names.Add(pVID, name);
-            Debug.Log(" ID : " + pVID + "Name is : " + MyName);
+            Debug.Log(" ID : " + pVID + "Name is : " + name);
+        }
+        if (myID != 1) {
+            Names[pVID] = name;
         }
     }
     [PunRPC]

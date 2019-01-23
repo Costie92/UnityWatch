@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine.UI;
 public class PlayerName : MonoBehaviour {
     public bool HaveName;
-
+    public string MyName;
     public static string path;
     public static string Filepath;
     [SerializeField] private GameObject InputField;
@@ -55,7 +55,7 @@ public class PlayerName : MonoBehaviour {
                         StreamReader sr = new StreamReader(path + "/" + Filepath);
                         string fileContext = sr.ReadToEnd();
                         sr.Close();
-                        NetworkManager.instance.MyName = fileContext;
+                        MyName = fileContext;
                         return true;
                     }
                 }
@@ -97,7 +97,7 @@ public class PlayerName : MonoBehaviour {
                 sw1.Close();
                 Debug.Log("Write Successed");
                 InputField.SetActive(false);
-                NetworkManager.instance.MyName = arg;
+                MyName = arg;
                 NetworkManager.instance.TryJoinRandomRoom();
             }
             catch (Exception e)
