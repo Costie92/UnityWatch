@@ -27,7 +27,7 @@ namespace hcp
     [System.Serializable]
     public enum E_HeroType
     {
-        Soldier,
+        Soldier=0,
         Hook,
         MAX
     }

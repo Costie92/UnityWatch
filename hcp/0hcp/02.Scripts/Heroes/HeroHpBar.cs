@@ -29,9 +29,13 @@ namespace hcp {
                 playerNameTextMesh.color = Color.blue;
                 hpBar.color = Color.white;
             }
+           
+            if (attachingHero != null)
+            {
+                playerNameTextMesh.text = attachingHero.PlayerName;
+                attachingHeroMaxHPDiv = 1 / attachingHero.MaxHP;
+            }
             teamSettingDone = true;
-            if(attachingHero!=null)
-            attachingHeroMaxHPDiv = 1 / attachingHero.MaxHP;
         }
         private void LateUpdate()
         {

@@ -37,6 +37,9 @@ namespace hcp
         [SerializeField]
         Text heroName;
 
+        [SerializeField]
+        GameObject[] controlPanelPerHero;
+
 
 
         public Text[] ct;
@@ -154,6 +157,13 @@ namespace hcp
             targetHero = hero;
             CrossHairChange(targetHero.crossHairs[0]);
             maxHPDiv = 1 / targetHero.MaxHP;
+            ShowControlPanel(targetHero.HeroType);
+            heroName.text = targetHero.PlayerName;
+
+        }
+        void ShowControlPanel(E_HeroType heroType)
+        {
+            controlPanelPerHero[(int)heroType].SetActive(true);
         }
     }
 }

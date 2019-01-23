@@ -24,6 +24,19 @@ namespace hcp
         [Header("Hero's Property")]
         [Space(10)]
         [SerializeField]
+        protected E_HeroType heroType;
+        public E_HeroType HeroType
+        {
+            get { return heroType; }
+        }
+        [SerializeField]
+        string playerName;
+        public string PlayerName
+        {
+            set; get;
+        }
+
+        [SerializeField]
         float respawnTime = 5f;
 
         [SerializeField]

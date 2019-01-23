@@ -118,6 +118,7 @@ namespace hcp
 
         protected override void Awake()
         {
+            heroType = E_HeroType.Soldier;
             correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
             correctionRangeSqr = correctionRange * correctionRange;
             

@@ -52,6 +52,7 @@ namespace hcp
         
         protected override void Awake()
         {
+            heroType = E_HeroType.Hook;
             normalAttackLengthDiv = 1 / normalAttackLength;
             correctionRangeSqr = correctionRange * correctionRange;
 
