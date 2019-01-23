@@ -33,7 +33,12 @@ namespace hcp
         string playerName;
         public string PlayerName
         {
-            set; get;
+            set {
+                playerName = value;
+            }
+            get {
+                return playerName;
+            }
         }
 
         [SerializeField]
@@ -173,6 +178,9 @@ namespace hcp
 
             if (photonView.IsMine)
             {
+                Debug.Log(photonView.ViewID+"네트워크 매니저에서 받아온 이름은 = "+NetworkManager.instance.Names[photonView.ViewID / 1000]);
+                playerName = NetworkManager.instance.Names[photonView.ViewID/1000];
+
                 InGameUIManager.Instance.SetTargetHero(this);
                 Camera mainCam = Camera.main;
                 mainCam.transform.SetParent(transform);
