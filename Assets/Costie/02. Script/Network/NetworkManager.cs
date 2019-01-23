@@ -291,10 +291,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Players.Add(pVID, false);
             Debug.Log(" ID : " + pVID + " Joined");
         }
-        if (!Names.ContainsKey(pVID)) {
-            Names.Add(pVID, MyName);
-            Debug.Log(" ID : " + pVID + "Name is : " + MyName);
-        }
         if (!Heros.ContainsKey(pVID)) {
             Heros.Add(pVID, hcp.E_HeroType.Soldier);
             Debug.Log("My Hero is Soldier");
@@ -312,6 +308,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 Debug.Log("Assigned B");
                 Teams.Add(pVID, hcp.Constants.teamB_LayerName);
             }
+        }
+    }
+    [PunRPC]
+    public void Named(int pViewID, string name)
+    {
+        int pVID = pViewID / 1000;
+        if (!Names.ContainsKey(pVID))
+        {
+            Names.Add(pVID, name);
+            Debug.Log(" ID : " + pVID + "Name is : " + MyName);
         }
     }
     [PunRPC]
