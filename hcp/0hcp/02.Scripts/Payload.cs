@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 namespace hcp {
-    public class Payload : MonoBehaviourPun {
+    public class Payload : MonoBehaviourPun ,IPunObservable{
 
         System.Action payLoadArrive;
 
@@ -42,10 +43,103 @@ namespace hcp {
                 }
             }
         }
+
         
+
+        [System.Serializable]
+        struct TransitionDistance
+        {
+            int startWPNum;
+            int endWPNum;
+            float distance;
+            public float Distance { get { return distance; } }
+            public TransitionDistance(int sn, int en, float dis)
+            {
+                startWPNum = sn;
+                endWPNum = en;
+                distance = dis;
+            }
+            bool IsThisTransition(int sn, int en)
+            {
+                if (startWPNum == sn && endWPNum == en)
+                    return true;
+                return false;
+            }
+        }
+
+        [SerializeField]
+        Canvas PayloadShowCanvas;
+        [SerializeField]
+        Image TeamBProgress;
+        [SerializeField]
+        Image TeamAProgress;
+        [SerializeField]
+        Image PayloadIcon;
+        [SerializeField]
+        Text FarFromAText;
+        [SerializeField]
+        Text FarFromBText;
+        [SerializeField]
+        float HowFarFromA;
+        [SerializeField]
+        float HowFarFromB;
+        [SerializeField]
+        float fillAmountForProgress;
+        [SerializeField]
+        float payLoadIconX;
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    HowFarFromA = GetHowFarFromTeamA();
+                    FarFromAText.text = HowFarFromA.ToString();
+
+                    fillAmountForProgress = HowFarFromA * wholeWPLengthDiv;
+                    TeamAProgress.fillAmount = fillAmountForProgress;
+
+                    payLoadIconX= TeamAProgress.rectTransform.anchorMin.x+ (TeamAProgress.rectTransform.anchorMax.x - TeamAProgress.rectTransform.anchorMin.x) * fillAmountForProgress;
+                    Vector2 iconPos= PayloadIcon.rectTransform.position;
+                    iconPos.x = payLoadIconX;
+                    PayloadIcon.rectTransform.position = iconPos;
+
+                    HowFarFromB = GetHowFarFromTeamB();
+                    FarFromBText.text = HowFarFromB.ToString();
+
+                    stream.SendNext(HowFarFromA);
+                    stream.SendNext(fillAmountForProgress);
+                    stream.SendNext(payLoadIconX);
+                    stream.SendNext(HowFarFromB);
+                }
+            }
+            if (stream.IsReading)
+            {
+                HowFarFromA = (float)stream.ReceiveNext() ;
+                fillAmountForProgress = (float)stream.ReceiveNext();
+                payLoadIconX = (float)stream.ReceiveNext();
+                HowFarFromB = (float)stream.ReceiveNext();
+
+                FarFromAText.text = HowFarFromA.ToString();
+                TeamAProgress.fillAmount = fillAmountForProgress;
+                Vector2 iconPos = PayloadIcon.rectTransform.position;
+                iconPos.x = payLoadIconX;
+                PayloadIcon.rectTransform.position = iconPos;
+                FarFromBText.text = HowFarFromB.ToString();
+
+            }
+        }
+
 
         [SerializeField]
         WPRange nowRange;
+        [SerializeField]
+        List<TransitionDistance> transitionDises;
+        [SerializeField]
+        float wholeWPLength=-1f;
+        [SerializeField]
+        float wholeWPLengthDiv;
 
         [SerializeField]
         float moveSpeed;
@@ -86,13 +180,15 @@ namespace hcp {
         [SerializeField]
         int nowTargetPoint;
 
-
+        
 
         IEnumerator Start() {
+            
             if (!PhotonNetwork.IsMasterClient)
                 yield break;
-            SetWholePath();
 
+            SetWholePath();
+            
             wayPointcloseEnoughSqr = wayPointcloseEnough * wayPointcloseEnough;
             distanceSqr = distance * distance;
             
@@ -126,6 +222,45 @@ namespace hcp {
             {
                 wholeWayPoints.Add(BWayPoints[i]);
             }
+            transitionDises = new List<TransitionDistance>();
+            wholeWPLength = 0f;
+
+            for (int i = 0; i < wholeWayPoints.Count; i++)
+            {
+                int sn = i;
+                int en = i + 1;
+                if (en > wholeWayPoints.Count - 1)
+                {
+                    break;
+                }
+                float distance = Vector3.Distance(wholeWayPoints[sn].position, wholeWayPoints[en].position);
+                transitionDises.Add(new TransitionDistance(sn, en, distance));
+
+                wholeWPLength += distance;
+            }
+            wholeWPLengthDiv = 1 / wholeWPLength;
+        }
+        float GetHowFarFromTeamA()
+        {
+            float basicDis = Vector3.Distance (wholeWayPoints[nowRange.Aside].position , transform.position);
+            if (nowRange.Aside == 0)
+                return basicDis;
+            for (int i = 0; i < nowRange.Aside; i++)
+            {
+                basicDis += transitionDises[i].Distance;
+            }
+            return basicDis;
+        }
+        float GetHowFarFromTeamB()
+        {
+            float basicDis = Vector3.Distance(wholeWayPoints[nowRange.Bside].position, transform.position);
+            if (nowRange.Bside == wholeWayPoints.Count-1)
+                return basicDis;
+            for (int i = wholeWayPoints.Count-1; i >nowRange.Bside; i--)
+            {
+                basicDis += transitionDises[i-1].Distance;
+            }
+            return basicDis;
         }
 
         void GetABHeroes()
@@ -262,5 +397,7 @@ namespace hcp {
         {
             payLoadArrive += ac;
         }
+
+     
     }
 }
