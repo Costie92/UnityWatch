@@ -45,6 +45,7 @@ namespace hcp {
             hpBar.fillAmount = attachingHero.CurrHP* attachingHeroMaxHPDiv;
            
             transform.LookAt(Camera.main.transform);
+            transform.Rotate(Vector3.up * 180f, Space.Self);
         }
     }
 }

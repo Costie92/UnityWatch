@@ -54,6 +54,14 @@ namespace hcp
             return _instance;
         }
 
+        Dictionary<int, Hero> heroPhotonIDDic = new Dictionary<int, Hero>();
+        public Dictionary<int, Hero> HeroPhotonIDDic
+        {
+            get {
+                return heroPhotonIDDic;
+            }
+        }
+
         public bool isTeamSettingDone=false;
 
         private void Awake()
@@ -86,9 +94,10 @@ namespace hcp
             Hero[] heroes = GameObject.FindObjectsOfType<Hero>();
             myTeamHeroes.Clear();
             enemyHeroes.Clear();
-
+            heroPhotonIDDic.Clear();
             for (int i = 0; i < heroes.Length; i++)
             {
+                heroPhotonIDDic.Add(heroes[i].photonView.ViewID, heroes[i]);
                 int heroPhotonID = heroes[i].photonView.ViewID / 1000;  //이 영웅의 포톤뷰 키
 
 

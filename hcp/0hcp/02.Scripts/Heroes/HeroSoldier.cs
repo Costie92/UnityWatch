@@ -310,7 +310,7 @@ namespace hcp
                         Debug.Log("HS-NormalAttack 헤드샷.");
                         damage *= 2f;
                     }
-                    hitEnemyHero.photonView.RPC("GetDamaged", RpcTarget.All, damage);
+                    hitEnemyHero.photonView.RPC("GetDamaged", RpcTarget.All, damage,photonView.ViewID);
 
                     return;
                 }
@@ -439,7 +439,7 @@ namespace hcp
                 //보정에서도 피격된 놈이 없음.
                 return;
             }
-            hitEnemy.photonView.RPC("GetDamaged", RpcTarget.All, normalFireDamage);
+            hitEnemy.photonView.RPC("GetDamaged", RpcTarget.All, normalFireDamage, photonView.ViewID);
             #endregion
         }
 

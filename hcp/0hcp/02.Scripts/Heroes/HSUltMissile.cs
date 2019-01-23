@@ -119,7 +119,7 @@ namespace hcp
                     Debug.Log(enemyHeroes[i].photonView.ViewID + "는 솔져 궁 영향 입음. 넉백 = " + dir + "피해량=" + amount * (explosionRange - dis) * explosionRangeDiv);
 
                     enemyHeroes[i].photonView.RPC("Knock", Photon.Pun.RpcTarget.All, dir);
-                    enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount * (explosionRange - dis) * explosionRangeDiv);
+                    enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount * (explosionRange - dis) * explosionRangeDiv, attachingHero. photonView.ViewID);
                 }
             }
         }

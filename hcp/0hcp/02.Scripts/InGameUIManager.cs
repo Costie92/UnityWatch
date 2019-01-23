@@ -40,6 +40,11 @@ namespace hcp
         [SerializeField]
         GameObject[] controlPanelPerHero;
 
+        [SerializeField]
+        Transform killLogPanel;
+        [SerializeField]
+        GameObject killLog;
+
 
 
         public Text[] ct;
@@ -159,11 +164,15 @@ namespace hcp
             maxHPDiv = 1 / targetHero.MaxHP;
             ShowControlPanel(targetHero.HeroType);
             heroName.text = targetHero.PlayerName;
-
         }
         void ShowControlPanel(E_HeroType heroType)
         {
             controlPanelPerHero[(int)heroType].SetActive(true);
+        }
+        public void ShowKillLog(string killerName, E_HeroType killerHeroType, string victimName, E_HeroType victimHeroType)
+        {
+            GameObject temp =  GameObject.Instantiate(killLog, killLogPanel);
+            temp.GetComponent<KillLog>().SetKillLog(killerName, killerHeroType, victimName, victimHeroType);
         }
     }
 }

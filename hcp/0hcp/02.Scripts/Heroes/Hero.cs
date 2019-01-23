@@ -253,7 +253,7 @@ namespace hcp
         {
         }
         [PunRPC]
-        public virtual void GetDamaged(float damage)
+        public virtual void GetDamaged(float damage , int attackerPhotonViewID)
         {
             if (IsDie) return;
             currHP -= damage;
@@ -261,9 +261,25 @@ namespace hcp
             if (currHP <= 0)
             {
                 Debug.Log(photonView.ViewID + "겟데미지드 - 데미지 받아 사망.");
+                Hero attacker = TeamInfo.GetInstance().HeroPhotonIDDic[attackerPhotonViewID];
+                if (attacker == null)
+                {
+                    Debug.Log(photonView.ViewID + "겟 데미지드" + damage + "어태커가 존재하지 않음." + attackerPhotonViewID);
+                }
+                else
+                {
+                    ShowKillLog(attacker.PlayerName,attacker.HeroType);
+                }
                 dieAction();
             }
         }
+
+        public void ShowKillLog(string kn, E_HeroType kt)
+        {
+            InGameUIManager.Instance.ShowKillLog(kn,kt,playerName,heroType);
+        }
+
+
         [PunRPC]
         public virtual void GetHealed(float heal)
         {
@@ -462,16 +478,15 @@ namespace hcp
             anim.SetTrigger("alive");
             coll.enabled = true;
             photonView.RPC("ColliderOnOff", RpcTarget.Others, true);
-
-            currHP = maxHP;
-            photonView.RPC("GetHealed", RpcTarget.Others, 999999f);
-
+            
             GetRigidBody.isKinematic = false;
 
             Camera.main.transform.SetPositionAndRotation(camPos.position, camPos.rotation);
             IsDie = false;
-
             photonView.RPC("RPCIsDie", RpcTarget.Others, IsDie);
+
+            currHP = maxHP;
+            photonView.RPC("GetHealed", RpcTarget.Others, 999999f);
             
 
             int photonKey = photonView.ViewID / 1000;

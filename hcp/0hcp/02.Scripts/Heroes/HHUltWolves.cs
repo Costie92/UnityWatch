@@ -80,7 +80,7 @@ namespace hcp
                 Vector3 enemyPosition = enemyHeroes[i].CenterPos - transform.position;
                 if ( enemyPosition.sqrMagnitude< distanceSqr)
                 {
-                    enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount);
+                    enemyHeroes[i].photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, amount,attachingHero.photonView.ViewID);
                 }
             }
         }

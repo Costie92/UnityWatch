@@ -221,7 +221,7 @@ namespace hcp
               
 
 
-                enemy.photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, normalAttackDamage);
+                enemy.photonView.RPC("GetDamaged", Photon.Pun.RpcTarget.All, normalAttackDamage,photonView.ViewID);
             }
         }
         #endregion
