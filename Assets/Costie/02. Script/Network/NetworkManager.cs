@@ -18,6 +18,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
     public GameObject buttons;
+    public string MyName;
     [SerializeField] private System.TimeSpan timeSpan;
     [SerializeField] private double PhotonTime;
     //[SerializeField] private GameObject lobbycamera;
@@ -25,6 +26,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private Dictionary<int, bool> players;
     private Dictionary<int, string> teams;
     private Dictionary<int, hcp.E_HeroType> heros;
+    private Dictionary<int, string> names;
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
     [SerializeField] private int RandomNumber;
@@ -79,6 +81,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public Dictionary<int, string> Names
+    {
+        get
+        {
+            return names;
+        }
+
+        set
+        {
+            names = value;
+        }
+    }
+
     private void Awake()
     {
         _instance = this;
@@ -94,6 +109,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Players = new Dictionary<int, bool>();
         Teams = new Dictionary<int, string>();
         Heros = new Dictionary<int, hcp.E_HeroType>();
+        names = new Dictionary<int, string>();
         ReadyCount = 0;
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
@@ -194,7 +210,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Joined Lobby");
         //PhotonNetwork.JoinRandomRoom();
         //RoomOptions roomOptions = new RoomOptions();
-        PhotonNetwork.JoinRandomRoom();
+        if (PlayerName.instance.HaveName)
+        {
+            PhotonNetwork.JoinRandomRoom();
+        }
     }
     public override void OnJoinedRoom()
     {
@@ -268,6 +287,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (myID == 0)
                 myID = pVID;
+            Names.Add(pVID, MyName);
             Players.Add(pVID, false);
             Debug.Log(" ID : " + pVID + " Joined");
         }
@@ -346,5 +366,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.LoadLevel(1);
             }
         }
+    }
+
+    public void TryJoinRandomRoom() {
+        PhotonNetwork.JoinRandomRoom();
     }
 }

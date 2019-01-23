@@ -48,6 +48,7 @@ public class PlayerTeam : MonoBehaviour
             }
         }
         NetworkManager.instance.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
+        
         PosTeam((photonView.ViewID / 1000) % 2 == 1);
     }
 
