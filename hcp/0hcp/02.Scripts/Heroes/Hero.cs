@@ -268,6 +268,11 @@ namespace hcp
                 }
                 else
                 {
+                    if (attackerPhotonViewID == photonView.ViewID)  //내가 나를 공격자로 두고 겟 데미지를 부름 - 낙사한 경우임.
+                    {
+                        ShowKillLog(null, HeroType);
+                    }
+                    else
                     ShowKillLog(attacker.PlayerName,attacker.HeroType);
                 }
                 dieAction();
@@ -433,12 +438,14 @@ namespace hcp
 
         protected virtual void OnTriggerEnter(Collider other)
         {
+            if (!photonView.IsMine) return;
             if (other.CompareTag(Constants.outLineTag))
             {
                 Debug.Log(photonView.ViewID+ "아웃 라인 접촉. 낙사. 사망.");
-                ShowKillLog(null, this.HeroType);
+                
 
-                dieAction();
+
+                //dieAction();
             }
         }
 
