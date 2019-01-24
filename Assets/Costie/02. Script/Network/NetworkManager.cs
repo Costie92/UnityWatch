@@ -12,7 +12,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject Lobby;
+    [SerializeField] private GameObject LobbyPlyaers;
     [SerializeField] private GameObject TeamInfo;
     [SerializeField] private Transform SpawnPoint;
     [SerializeField] private bool TimerStart;
@@ -214,8 +214,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
     }
-    
+    System.Action onClientLeft;
+    public void AddListenerOnClientLeft(System.Action ac)
+    {
+        onClientLeft += ac;
+    }
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log(otherPlayer.ActorNumber);
 
+        if (onClientLeft != null)
+        {
+            onClientLeft();
+        }
+    }
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        Debug.Log(newMasterClient.UserId);
+    }
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -234,7 +250,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Hashtable hashTable = new Hashtable();
-        PhotonNetwork.Instantiate(Lobby.name, this.transform.position, this.transform.rotation, 0);
+        PhotonNetwork.Instantiate(LobbyPlyaers.name, this.transform.position, this.transform.rotation, 0);
         Debug.Log("Joined Room");
     }
 

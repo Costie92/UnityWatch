@@ -53,9 +53,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  Lobby: {fileID: 1380293930047288, guid: 77d2bdd7eaf855742b0efc513d8ab9d4, type: 2}
+  LobbyPlyaers: {fileID: 1008296765297528, guid: 01dde095aa5d31f4c9fd55614e4d4d86,
+    type: 2}
   TeamInfo: {fileID: 0}
   SpawnPoint: {fileID: 0}
+  TimerStart: 0
+  TimerText: {fileID: 0}
+  GameEnd: 0
   buttons: {fileID: 0}
   myID: 0
   ReadyCount: 0

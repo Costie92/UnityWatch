@@ -9,15 +9,20 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PhotonView))]
 public class PlayerTeam : MonoBehaviour
 {
-    [SerializeField] private Material Mycolor;
+    //[SerializeField] private Material Mycolor;
+    public Image MyHeroImage;
+    [SerializeField] private Sprite imageSoldier, imageHook;
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     private PhotonView photonView;
 
+    private void Awake()
+    {
+        this.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>());
+    }
     // Use this for initialization
     void Start()
     {
-        
         photonView = GetComponent<PhotonView>();
 
         foreach (MonoBehaviour m in LobbyControlscripts)
@@ -29,8 +34,8 @@ public class PlayerTeam : MonoBehaviour
                 BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
                 BtnSoldier = NetworkManager.instance.buttons.transform.GetChild(3).GetComponent<Button>();
                 BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
-                BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
-                BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                //BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
+                //BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
                 BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); }); 
                 BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
@@ -40,7 +45,7 @@ public class PlayerTeam : MonoBehaviour
                 }
                 else
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
-                this.GetComponent<MeshRenderer>().material = Mycolor;
+                //this.GetComponent<MeshRenderer>().material = Mycolor;
             }
             else
             {
@@ -76,12 +81,16 @@ public class PlayerTeam : MonoBehaviour
         //    }
         //}
     }
-    public void PosTeam(bool isTeamA) {
+    public void PosTeam(bool isTeamA)
+    {
         int Pos = photonView.ViewID / 1000;
         if (isTeamA)
-            this.transform.position = new Vector3(-5, 2 - Pos, 0);
-        else {
-            this.transform.position = new Vector3(5, 2 - Pos, 0);
+        {
+            this.transform.localPosition = new Vector3(-750, 350 - Pos * 250, 0);
+        }
+        else
+        {
+            this.transform.localPosition = new Vector3(750, 350 - Pos * 250, 0);
         }
     }
     public void onClicKTeamButton(string TeamString)
@@ -90,6 +99,13 @@ public class PlayerTeam : MonoBehaviour
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
     public void onClickHeroButton(hcp.E_HeroType heroType) {
+        if (heroType == hcp.E_HeroType.Soldier)
+        {
+            MyHeroImage.sprite = imageSoldier;
+        }
+        else {
+            MyHeroImage.sprite = imageHook;
+        }
         NetworkManager.instance.photonView.RPC("SelectHeroo", RpcTarget.All, photonView.ViewID, heroType);
     }
     public void onClickReady()

@@ -232,11 +232,6 @@ Prefab:
       propertyPath: viewIdField
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114379222123637768, guid: e62e323c9a4227d4d9ae75a7f16cb72c,
-        type: 2}
-      propertyPath: TeamInfo
-      value: 
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e62e323c9a4227d4d9ae75a7f16cb72c, type: 2}
   m_IsPrefabAsset: 0
