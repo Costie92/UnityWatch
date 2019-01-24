@@ -17,7 +17,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform SpawnPoint;
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
-    [SerializeField] private bool GameEnd;
+    public bool GameEnd;
     public GameObject buttons;
     private System.TimeSpan timeSpan;
     private double PhotonTime;
@@ -104,8 +104,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameEnd = false;
         TimerStart = false;
-        timeSpan = new System.TimeSpan(0, 5, 0);
-        nowTime = new System.TimeSpan(0, 5, 0);
+        timeSpan = new System.TimeSpan(0, 1, 0);
+        nowTime = new System.TimeSpan(0, 1, 0);
         buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
         myID = 0;
@@ -155,7 +155,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             TimerStart = true;
             PhotonTime = PhotonNetwork.Time;
-            photonView.RPC("SendTimerSetting", RpcTarget.All, PhotonTime, true);
+            photonView.RPC("SendTimerSetting", RpcTarget.AllBufferedViaServer, PhotonTime, true);
         }
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
