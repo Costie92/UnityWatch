@@ -21,8 +21,17 @@ namespace hcp {
 
         public void SetKillLog(string killerName, E_HeroType killerType, string victimName, E_HeroType victimType)
         {
-            this.killerName.text = killerName;
-            this.killerImage.sprite = heroImages[(int)killerType];
+            if (killerName == null)
+            {
+                this.killerName.text = "";
+                this.killerImage.sprite = null;
+            }
+            else
+            {
+                this.killerName.text = killerName;
+
+                this.killerImage.sprite = heroImages[(int)killerType];
+            }
             this.victimName.text = victimName;
             this.victimImage.sprite = heroImages[(int)victimType];
             GameObject.Destroy(this.gameObject, destroyTime);

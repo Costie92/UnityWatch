@@ -436,6 +436,8 @@ namespace hcp
             if (other.CompareTag(Constants.outLineTag))
             {
                 Debug.Log(photonView.ViewID+ "아웃 라인 접촉. 낙사. 사망.");
+                ShowKillLog(null, this.HeroType);
+
                 dieAction();
             }
         }
