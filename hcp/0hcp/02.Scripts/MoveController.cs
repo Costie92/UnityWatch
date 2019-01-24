@@ -39,7 +39,7 @@ namespace hcp
             controllerPos = fromCenterV + moveContCenter;
 
             Vector3 actualMoveV = dir * (fromCenterV.magnitude * contRangeMaxMagDiv);//센터에서 뻗는 방향 벡터와 콘트롤러 맥스 를 1로 하는 길이값 , 즉 실제 이동할 벡터.
-
+         //   Debug.Log(actualMoveV + "크기는 = " + actualMoveV.magnitude);
             actualMoveVector.y = 0;
             actualMoveVector.z = actualMoveV.y; //xz 평면 사상.
             actualMoveVector.x = actualMoveV.x;

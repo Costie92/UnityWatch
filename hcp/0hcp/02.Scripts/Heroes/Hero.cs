@@ -224,6 +224,8 @@ namespace hcp
         }
         public virtual void MoveHero(Vector3 moveV)
         {
+          ///  Debug.Log("히어로 무빙 받은 벡터 =" + moveV + "크기 = " + moveV.magnitude);
+         //   Debug.Log("히어로 무빙 벡터 = " + moveV * moveSpeed * Time.deltaTime +" 크기 =  "+ (moveV * moveSpeed * Time.deltaTime).magnitude);
             transform.Translate(moveV * moveSpeed * Time.deltaTime, Space.Self);
         }
         public virtual void RotateHero(Vector3 rotateV)
@@ -442,8 +444,8 @@ namespace hcp
             if (other.CompareTag(Constants.outLineTag))
             {
                 Debug.Log(photonView.ViewID+ "아웃 라인 접촉. 낙사. 사망.");
-                
 
+                photonView.RPC("GetDamaged", RpcTarget.All, 99999f, photonView.ViewID);
 
                 //dieAction();
             }

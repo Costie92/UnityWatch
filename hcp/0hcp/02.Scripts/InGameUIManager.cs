@@ -80,7 +80,7 @@ namespace hcp
             hpBarUI.fillAmount = targetHero.CurrHP * maxHPDiv;
 
 
-            targetHero.MoveHero(charactorMoveV * Time.deltaTime * 5);
+            targetHero.MoveHero(charactorMoveV );
 
 
             //임시로 하는 것 뿐임.
