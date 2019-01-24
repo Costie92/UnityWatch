@@ -136,9 +136,11 @@ namespace hcp {
 
                 FarFromAText.text = HowFarFromA.ToString("000");
                 TeamAProgress.fillAmount = fillAmountForProgress;
+
                 Vector2 iconPos = PayloadIcon.rectTransform.position;
-                iconPos.x = payLoadIconX;
+                iconPos.x = progressPosStart + ((progressPosEnd - progressPosStart) * fillAmountForProgress); ;
                 PayloadIcon.rectTransform.position = iconPos;
+
                 FarFromBText.text = HowFarFromB.ToString("000");
 
             }

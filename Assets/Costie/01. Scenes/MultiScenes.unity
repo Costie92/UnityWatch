@@ -1791,8 +1791,7 @@ Prefab:
   m_IsPrefabAsset: 0
 --- !u!4 &72799567 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 408914, guid: 3aea2b1d4d0db3542af1e9d3474cf6fe,
-    type: 2}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 72799566}
 --- !u!1001 &72802795
 Prefab:
@@ -51444,6 +51443,8 @@ MonoBehaviour:
   payload: {fileID: 165291769}
   payloadArrived: 0
   judgeDone: 0
+  winColor: {r: 0, g: 0, b: 1, a: 1}
+  loseColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &1655374965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54389,10 +54390,10 @@ RectTransform:
   m_Father: {fileID: 1641521229}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 25, y: 0}
-  m_SizeDelta: {x: -751.63, y: 43.15}
+  m_SizeDelta: {x: 44.369995, y: 87.15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1762943011
 MonoBehaviour:
