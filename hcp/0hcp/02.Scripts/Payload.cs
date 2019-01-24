@@ -124,6 +124,7 @@ namespace hcp {
                     stream.SendNext(fillAmountForProgress);
                     stream.SendNext(payLoadIconX);
                     stream.SendNext(HowFarFromB);
+                    
                 }
             }
             if (stream.IsReading)
@@ -254,7 +255,7 @@ namespace hcp {
             }
             wholeWPLengthDiv = 1 / wholeWPLength;
         }
-        float GetHowFarFromTeamA()
+        public float GetHowFarFromTeamA()
         {
             float basicDis = Vector3.Distance (wholeWayPoints[nowRange.Aside].position , transform.position);
             if (nowRange.Aside == 0)
@@ -265,7 +266,7 @@ namespace hcp {
             }
             return basicDis;
         }
-        float GetHowFarFromTeamB()
+        public float GetHowFarFromTeamB()
         {
             float basicDis = Vector3.Distance(wholeWayPoints[nowRange.Bside].position, transform.position);
             if (nowRange.Bside == wholeWayPoints.Count-1)
@@ -300,6 +301,12 @@ namespace hcp {
                 }
             }
         }
+        [SerializeField]
+        bool heroClose = false;
+        public bool HeroClose
+        {
+            get { return heroClose; }
+        }
 
         void Update()
         {
@@ -307,7 +314,12 @@ namespace hcp {
             if (!PhotonNetwork.IsMasterClient) return;
             if (arrive) return;
             Vector3 dir;
-            if (MoveSideCheck(out dir) == false ) return;
+            if (MoveSideCheck(out dir) == false)
+            {
+                heroClose = false;
+                return;
+            }
+            heroClose = true;
             
             transform.Translate(dir * Time.deltaTime * moveSpeed, Space.World);
         }

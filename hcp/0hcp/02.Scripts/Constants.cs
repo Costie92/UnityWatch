@@ -18,6 +18,31 @@ namespace hcp
         public static readonly string teamD_LayerName = "TEAM D";
         public static readonly int teamD_LayerMask = LayerMask.NameToLayer(teamD_LayerName);
 
+        public static int GetLayerByE_Team(E_Team team)
+        {
+            int layer = 0;
+            switch (team)
+            {
+                case E_Team.Team_A:
+                    layer = teamA_LayerMask;
+                    break;
+                case E_Team.Team_B:
+                    layer = teamB_LayerMask;
+                    break;
+                case E_Team.Team_C:
+                    layer = teamC_LayerMask;
+                    break;
+                case E_Team.Team_D:
+                    layer = teamD_LayerMask;
+                    break;
+                default:
+                    Debug.LogError("팀이 잘못 전달됨.");
+                    break;
+            }
+            return layer;
+        }
+
+
         public static readonly string outLineTag = "OutLine";
 
         public static readonly string hero_SoldierPath =    "hcp/HeroSoldier";

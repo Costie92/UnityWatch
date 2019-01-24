@@ -4,6 +4,15 @@ using UnityEngine;
 namespace hcp
 {
     [System.Serializable]
+    public enum E_Team
+    {
+        Team_A=0,
+        Team_B,
+        Team_C,
+        Team_D,
+        MAX
+    }
+    [System.Serializable]
     public enum E_ControlParam
     {
         NormalAttack,
