@@ -24,7 +24,8 @@ namespace hcp {
             if (killerName == null)
             {
                 this.killerName.text = "";
-                this.killerImage.sprite = null;
+                this.killerImage.sprite = heroImages[(int)victimType];
+                this.killerImage.color = Color.clear;
             }
             else
             {
