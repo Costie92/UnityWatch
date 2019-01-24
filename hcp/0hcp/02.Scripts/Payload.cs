@@ -197,7 +197,7 @@ namespace hcp {
 
         IEnumerator Start() {
 
-            NetworkManager.instance.AddListenerOnClientLeft(OnClientLefted);
+            TeamInfo.GetInstance(). AddListenerOnCLCD(OnClientLefted);
 
             progressPosStart = progressStart.position.x;
             progressPosEnd = progressEnd.position.x;
@@ -401,7 +401,7 @@ namespace hcp {
         
         bool IsHeroClose(Hero hero)
         {
-            if (hero.Die) return false;
+            if (hero.Die||hero==null) return false;
             Vector3 heroPos = hero.transform.position - transform.position;
             if (heroPos.sqrMagnitude <= distanceSqr)
             {

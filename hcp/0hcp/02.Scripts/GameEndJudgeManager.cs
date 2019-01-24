@@ -40,7 +40,7 @@ namespace hcp
             gameEndScreen.GetComponent<RectTransform>().sizeDelta = myVector;
             */
 
-            NetworkManager.instance.AddListenerOnClientLeft(OnClientLefted);
+            TeamInfo.GetInstance().AddListenerOnCLCD(OnClientLefted);
             geScreenDissolveMat = new Material(gameEndScreen.material);
             gameEndScreen.material = geScreenDissolveMat;
             gameEndScreen.gameObject.SetActive(false);
@@ -62,6 +62,7 @@ namespace hcp
         void OnClientLefted()
         {
             if (!PhotonNetwork.IsMasterClient) return;
+
             List<Hero> enemies = TeamInfo.GetInstance().EnemyHeroes;
             int cnt = 0;
             for (int i = 0; i < enemies.Count; i++)

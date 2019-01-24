@@ -80,6 +80,17 @@ namespace hcp
 
         void OnClientLefted()
         {
+            StartCoroutine(clientLeftCheck());
+        }
+        System.Action clientLeftAndCheckDone;
+        public void AddListenerOnCLCD(System.Action ac)
+        {
+            clientLeftAndCheckDone += ac;
+        }
+        IEnumerator clientLeftCheck()
+        {
+            yield return new WaitForEndOfFrame();
+
             for (int i = 0; i < myTeamHeroes.Count; i++)
             {
                 if (myTeamHeroes[i] == null)
@@ -94,6 +105,8 @@ namespace hcp
                     enemyHeroes.RemoveAt(i);
                 }
             }
+            if (clientLeftAndCheckDone != null)
+                clientLeftAndCheckDone();
         }
 
         Dictionary<int, string> teamInfoDic = new Dictionary<int, string>();
