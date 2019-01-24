@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 222663862484614072}
   - component: {fileID: 114341088812142482}
   - component: {fileID: 114621366618544028}
-  - component: {fileID: 114215265788484234}
   - component: {fileID: 114807912936797234}
   m_Layer: 5
   m_Name: Players
@@ -48,20 +47,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114215265788484234
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1008296765297528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!114 &114341088812142482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,10 +88,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 0
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 114215265788484234}
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
@@ -122,6 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyHeroImage: {fileID: 114972760940769536}
+  myherotype: 0
   imageSoldier: {fileID: 21300000, guid: 039f2e6977f6a3f40a067695436acd68, type: 3}
   imageHook: {fileID: 21300000, guid: e1b509b4b3817b9448d5b1dc6cf977c8, type: 3}
   BtnTeamA: {fileID: 0}

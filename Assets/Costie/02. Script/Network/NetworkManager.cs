@@ -19,6 +19,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text TimerText;
     public bool GameEnd;
     public GameObject buttons;
+    public Sprite imageSoldier, imageHook;
     private System.TimeSpan timeSpan;
     private double PhotonTime;
     private System.TimeSpan nowTime;
@@ -27,6 +28,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private Dictionary<int, bool> players;
     private Dictionary<int, string> teams;
     private Dictionary<int, hcp.E_HeroType> heros;
+    private Dictionary<int, Image> images;
     private Dictionary<int, string> names;
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
@@ -95,6 +97,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public Dictionary<int, Image> Images
+    {
+        get
+        {
+            return images;
+        }
+
+        set
+        {
+            images = value;
+        }
+    }
+
     private void Awake()
     {
         _instance = this;
@@ -104,8 +119,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameEnd = false;
         TimerStart = false;
-        timeSpan = new System.TimeSpan(0, 1, 0);
-        nowTime = new System.TimeSpan(0, 1, 0);
+        timeSpan = new System.TimeSpan(0, 10, 0);
+        nowTime = new System.TimeSpan(0, 10, 0);
         buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
         myID = 0;
@@ -113,6 +128,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Teams = new Dictionary<int, string>();
         Heros = new Dictionary<int, hcp.E_HeroType>();
         names = new Dictionary<int, string>();
+        images = new Dictionary<int, Image>();
         ReadyCount = 0;
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
@@ -146,7 +162,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     IEnumerator CreatePlayer()
     {
-        
+
         yield return new WaitForSeconds(1.0f);
         //lobbycamera = GameObject.Find("LobbyCamera");
         //if (lobbycamera)
@@ -159,7 +175,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
-        Destroy(photonView);
+        //Destroy(photonView);
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             SpawnPoint = MapInfo.instance.ASpawnPoint;
@@ -228,6 +244,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             onClientLeft();
         }
     }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log(newPlayer.ActorNumber + " Enter");
+    }
+
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         Debug.Log(newMasterClient.UserId);
@@ -259,7 +280,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Can't join random room!");
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)4 };
         RandomNumber = Random.Range(0, 10000);
-        PhotonNetwork.CreateRoom(RandomNumber.ToString("N"));
+        PhotonNetwork.CreateRoom(RandomNumber.ToString("N"),roomOps);
     }
 
     [PunRPC]
@@ -302,14 +323,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         switch (heroType) {
             case hcp.E_HeroType.Soldier:
                 Debug.Log(pVID + " : Select Soldier");
+                Images[pVID].sprite = imageSoldier;
                 break;
             case hcp.E_HeroType.Hook:
                 Debug.Log(pVID + " : Select Hook");
+                Images[pVID].sprite = imageHook;
                 break;
             default:
                 break;
         }
         Heros[pVID] = heroType;
+        
     }
 
     [PunRPC]
@@ -326,6 +350,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Heros.ContainsKey(pVID)) {
             Heros.Add(pVID, hcp.E_HeroType.Soldier);
             Debug.Log("My Hero is Soldier");
+        }
+        if (!Images.ContainsKey(pVID))
+        {
+            PlayerTeam[] objs = FindObjectsOfType<PlayerTeam>();
+            for (int i = 0; i < objs.Length; i++)
+            {
+                if (objs[i].photonView != null)
+                {
+                    if (objs[i].photonView.ViewID == pViewID)
+                    {
+                        images.Add(pVID, objs[i].transform.GetChild(0).GetComponent<Image>());
+                    }
+                }
+            }
         }
         if (!Teams.ContainsKey(pVID))
         {

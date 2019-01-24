@@ -11,23 +11,27 @@ public class PlayerTeam : MonoBehaviour
 {
     //[SerializeField] private Material Mycolor;
     public Image MyHeroImage;
-    [SerializeField] private Sprite imageSoldier, imageHook;
+    public hcp.E_HeroType myherotype;
+    
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
-    private PhotonView photonView;
+    public PhotonView photonView;
 
     private void Awake()
     {
         this.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>());
+        this.transform.localScale = new Vector3(1, 1, 1);
     }
     // Use this for initialization
     void Start()
     {
+        MyHeroImage.sprite = NetworkManager.instance.imageSoldier;
+        myherotype = hcp.E_HeroType.Soldier;
         photonView = GetComponent<PhotonView>();
-
         foreach (MonoBehaviour m in LobbyControlscripts)
         {
-            if (photonView.IsMine) {
+            if (photonView.IsMine)
+            {
                 NetworkManager.instance.buttons.SetActive(true);
                 BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button>();
                 BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
@@ -36,7 +40,7 @@ public class PlayerTeam : MonoBehaviour
                 BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
                 //BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
                 //BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
-                BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); }); 
+                BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); });
                 BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -60,6 +64,7 @@ public class PlayerTeam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         //if (PhotonNetwork.InRoom)
         //{
         //    if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -98,21 +103,17 @@ public class PlayerTeam : MonoBehaviour
         PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
-    public void onClickHeroButton(hcp.E_HeroType heroType) {
-        if (heroType == hcp.E_HeroType.Soldier)
-        {
-            MyHeroImage.sprite = imageSoldier;
-        }
-        else {
-            MyHeroImage.sprite = imageHook;
-        }
+    public void onClickHeroButton(hcp.E_HeroType heroType)
+    {
+        myherotype = heroType;
         NetworkManager.instance.photonView.RPC("SelectHeroo", RpcTarget.All, photonView.ViewID, heroType);
     }
     public void onClickReady()
     {
         NetworkManager.instance.photonView.RPC("Ready", RpcTarget.All, photonView.ViewID);
     }
-    public void onClickPlay() {
+    public void onClickPlay()
+    {
         NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
     }
 }

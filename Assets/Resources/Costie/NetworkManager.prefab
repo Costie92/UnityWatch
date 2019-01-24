@@ -61,6 +61,8 @@ MonoBehaviour:
   TimerText: {fileID: 0}
   GameEnd: 0
   buttons: {fileID: 0}
+  imageSoldier: {fileID: 21300000, guid: 039f2e6977f6a3f40a067695436acd68, type: 3}
+  imageHook: {fileID: 21300000, guid: e1b509b4b3817b9448d5b1dc6cf977c8, type: 3}
   myID: 0
   ReadyCount: 0
   TeamACount: 0
