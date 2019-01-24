@@ -74,7 +74,28 @@ namespace hcp
         {
             yield return new WaitForSeconds(2f);
             StartCoroutine(WaitForAllHeroBorn());
+
+            NetworkManager.instance.AddListenerOnClientLeft(OnClientLefted);
         }
+
+        void OnClientLefted()
+        {
+            for (int i = 0; i < myTeamHeroes.Count; i++)
+            {
+                if (myTeamHeroes[i] == null)
+                {
+                    myTeamHeroes.RemoveAt(i);
+                }
+            }
+            for (int i = 0; i < enemyHeroes.Count; i++)
+            {
+                if (enemyHeroes[i] == null)
+                {
+                    enemyHeroes.RemoveAt(i);
+                }
+            }
+        }
+
         Dictionary<int, string> teamInfoDic = new Dictionary<int, string>();
 
         IEnumerator WaitForAllHeroBorn()

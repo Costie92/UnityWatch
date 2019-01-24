@@ -196,12 +196,15 @@ namespace hcp {
         
 
         IEnumerator Start() {
+
+            NetworkManager.instance.AddListenerOnClientLeft(OnClientLefted);
+
             progressPosStart = progressStart.position.x;
             progressPosEnd = progressEnd.position.x;
-
+            /*
             if (!PhotonNetwork.IsMasterClient)
                 yield break;
-
+                */
             SetWholePath();
             
             wayPointcloseEnoughSqr = wayPointcloseEnough * wayPointcloseEnough;
@@ -221,6 +224,11 @@ namespace hcp {
             {
                 Debug.LogError("이 게임은 2 팀 대결이 아님.");
             }
+        }
+
+        void OnClientLefted()
+        {
+            GetABHeroes();
         }
 
         void SetWholePath()
@@ -297,7 +305,7 @@ namespace hcp {
                     BTeamHeroes.Add(heroes[i]);
                 }
                 else {
-                    Debug.LogError("GetABHeroes 양팀 대결이 아님.");
+                    Debug.Log("GetABHeroes 양팀 대결이 아님.");
                 }
             }
         }

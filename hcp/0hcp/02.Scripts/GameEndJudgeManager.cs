@@ -23,8 +23,9 @@ namespace hcp
         bool payloadArrived ;
         [SerializeField]
         bool judgeDone;
-
+        [SerializeField]
         Color winColor = new Color(0/255, 166/255, 255/255);
+        [SerializeField]
         Color loseColor = new Color(255 / 255, 0 / 255, 44 / 255);
 
         private void Awake()
@@ -38,6 +39,8 @@ namespace hcp
             Vector2 myVector = new Vector2(Screen.width, Screen.height);
             gameEndScreen.GetComponent<RectTransform>().sizeDelta = myVector;
             */
+
+            NetworkManager.instance.AddListenerOnClientLeft(OnClientLefted);
             geScreenDissolveMat = new Material(gameEndScreen.material);
             gameEndScreen.material = geScreenDissolveMat;
             gameEndScreen.gameObject.SetActive(false);
@@ -51,7 +54,26 @@ namespace hcp
         bool IsMatchTimeDone()
         {
             //게임 시간 받아오기.
+            if (NetworkManager.instance.GameEnd)
+                return true;
             return false;
+        }
+
+        void OnClientLefted()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            List<Hero> enemies = TeamInfo.GetInstance().EnemyHeroes;
+            int cnt = 0;
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] != null) cnt ++;
+            }
+            if (cnt == 0)
+            {
+                //게임 종료.
+                judgeDone = true;
+                photonView.RPC("GameJudgeReceived", RpcTarget.All, Constants.GetE_TeamByLayer(TeamInfo.GetInstance().MyTeamLayer));
+            }
         }
 
         // Update is called once per frame
@@ -87,11 +109,11 @@ namespace hcp
             if (farFromA >= farFromB)
             {
                 // B팀 승리.
-                return E_Team.Team_B;
+                return E_Team.Team_A;
             }
             else {
                 //A팀 승리.
-                return E_Team.Team_A;
+                return E_Team.Team_B;
             }
         }
 
@@ -120,7 +142,16 @@ namespace hcp
         {
             gameEndScreen.gameObject.SetActive(true);
             gameEndText.gameObject.SetActive(false);
-            geScreenDissolveMat.SetColor(" _EdgeColour2", (win)?winColor:loseColor  );
+            Color col;
+            if (win)
+            {
+                col = winColor;
+            }
+            else {
+                col = loseColor;
+            }
+                
+            geScreenDissolveMat.SetColor("_EdgeColour2", col);
             float startTime = 0f;
             while (startTime < 1f)
             {
