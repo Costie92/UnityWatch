@@ -61,7 +61,7 @@ namespace hcp
 
         void OnClientLefted()
         {
-            if (!PhotonNetwork.IsMasterClient) return;
+            if (!PhotonNetwork.IsMasterClient || judgeDone) return;
 
             List<Hero> enemies = TeamInfo.GetInstance().EnemyHeroes;
             int cnt = 0;

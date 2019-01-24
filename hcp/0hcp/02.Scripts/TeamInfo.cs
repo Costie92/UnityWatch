@@ -189,25 +189,21 @@ namespace hcp
                 }
             }
 
-            
+            myTeamLayer = LayerMask.NameToLayer(teamInfoDic[myPhotonViewIDKey]);
+
+
             Dictionary<int, string>.Enumerator enu = teamInfoDic.GetEnumerator();
             while (enu.MoveNext())
             {
                 int photonViewIDKey = enu.Current.Key;
                 string layerName = enu.Current.Value;
-
-                if (myPhotonViewIDKey == photonViewIDKey)   
-                {
-                    myTeamLayer = LayerMask.NameToLayer(layerName);
-                }
-                else
-                {
+                int layerMask = LayerMask.NameToLayer(layerName);
+                
                     //적 레이어임.
-                    if (false == enemyLayerList.Contains(photonViewIDKey))  //추가된 적 레이어가 아니면.
+                    if (false == enemyLayerList.Contains(layerMask) && layerMask != myTeamLayer )  //추가된 적 레이어가 아니면.
                     {
-                        enemyLayerList.Add(LayerMask.NameToLayer(layerName));
+                        enemyLayerList.Add(layerMask);
                     }
-                }
             }
             enemyTeamLayer = enemyLayerList;
         }
