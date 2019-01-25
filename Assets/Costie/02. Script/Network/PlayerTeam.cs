@@ -7,7 +7,7 @@ using Photon.Pun;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(PhotonView))]
-public class PlayerTeam : MonoBehaviour
+public class PlayerTeam : MonoBehaviourPun, IPunObservable
 {
     //[SerializeField] private Material Mycolor;
     public Image MyHeroImage;
@@ -53,7 +53,7 @@ public class PlayerTeam : MonoBehaviour
             }
             else
             {
-                m.enabled = false;
+                //m.enabled = false;
             }
         }
         NetworkManager.instance.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
@@ -64,7 +64,7 @@ public class PlayerTeam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         //if (PhotonNetwork.InRoom)
         //{
         //    if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -115,5 +115,19 @@ public class PlayerTeam : MonoBehaviour
     public void onClickPlay()
     {
         NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(myherotype);
+            //stream.SendNext(name);
+        }
+        else
+        {
+            myherotype = (hcp.E_HeroType)stream.ReceiveNext();
+            //name = (string)stream.ReceiveNext();
+        }
     }
 }

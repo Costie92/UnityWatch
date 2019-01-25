@@ -28,7 +28,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private Dictionary<int, bool> players;
     private Dictionary<int, string> teams;
     private Dictionary<int, hcp.E_HeroType> heros;
-    private Dictionary<int, Image> images;
     private Dictionary<int, string> names;
     [SerializeField] private int myID;
     [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
@@ -97,18 +96,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public Dictionary<int, Image> Images
-    {
-        get
-        {
-            return images;
-        }
-
-        set
-        {
-            images = value;
-        }
-    }
 
     private void Awake()
     {
@@ -128,7 +115,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Teams = new Dictionary<int, string>();
         Heros = new Dictionary<int, hcp.E_HeroType>();
         names = new Dictionary<int, string>();
-        images = new Dictionary<int, Image>();
         ReadyCount = 0;
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
@@ -323,11 +309,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         switch (heroType) {
             case hcp.E_HeroType.Soldier:
                 Debug.Log(pVID + " : Select Soldier");
-                Images[pVID].sprite = imageSoldier;
                 break;
             case hcp.E_HeroType.Hook:
                 Debug.Log(pVID + " : Select Hook");
-                Images[pVID].sprite = imageHook;
                 break;
             default:
                 break;
@@ -350,20 +334,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Heros.ContainsKey(pVID)) {
             Heros.Add(pVID, hcp.E_HeroType.Soldier);
             Debug.Log("My Hero is Soldier");
-        }
-        if (!Images.ContainsKey(pVID))
-        {
-            PlayerTeam[] objs = FindObjectsOfType<PlayerTeam>();
-            for (int i = 0; i < objs.Length; i++)
-            {
-                if (objs[i].photonView != null)
-                {
-                    if (objs[i].photonView.ViewID == pViewID)
-                    {
-                        images.Add(pVID, objs[i].transform.GetChild(0).GetComponent<Image>());
-                    }
-                }
-            }
         }
         if (!Teams.ContainsKey(pVID))
         {

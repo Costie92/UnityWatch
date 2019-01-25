@@ -88,10 +88,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 114807912936797234}
   viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
@@ -108,8 +108,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyHeroImage: {fileID: 114972760940769536}
   myherotype: 0
-  imageSoldier: {fileID: 21300000, guid: 039f2e6977f6a3f40a067695436acd68, type: 3}
-  imageHook: {fileID: 21300000, guid: e1b509b4b3817b9448d5b1dc6cf977c8, type: 3}
   BtnTeamA: {fileID: 0}
   BtnTeamB: {fileID: 0}
   BtnReady: {fileID: 0}
@@ -117,6 +115,7 @@ MonoBehaviour:
   BtnHook: {fileID: 0}
   LobbyControlscripts:
   - {fileID: 114807912936797234}
+  photonView: {fileID: 0}
 --- !u!114 &114972760940769536
 MonoBehaviour:
   m_ObjectHideFlags: 1
