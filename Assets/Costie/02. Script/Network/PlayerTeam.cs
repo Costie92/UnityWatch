@@ -12,7 +12,10 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     //[SerializeField] private Material Mycolor;
     public Image MyHeroImage;
     public Text MyNameText;
+    public Image ReadyFrame;
+    public Sprite SilverFrame, GoldFrame;
     public hcp.E_HeroType myherotype;
+    [SerializeField] private bool ReadyCheck;
     [SerializeField] private string MyTeam;
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
@@ -26,6 +29,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     // Use this for initialization
     void Start()
     {
+        ReadyCheck = false;
         MyHeroImage.sprite = NetworkManager.instance.imageSoldier;
         myherotype = hcp.E_HeroType.Soldier;
         photonView = GetComponent<PhotonView>();
@@ -66,6 +70,13 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
+        if (ReadyCheck)
+        {
+            ReadyFrame.sprite = GoldFrame;
+        }
+        else {
+            ReadyFrame.sprite = SilverFrame;
+        }
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         MyNameText.text = PlayerName.instance.MyName;
         //if (PhotonNetwork.InRoom)
@@ -132,6 +143,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     }
     public void onClickReady()
     {
+        ReadyCheck = !ReadyCheck;
         NetworkManager.instance.photonView.RPC("Ready", RpcTarget.All, photonView.ViewID);
     }
     public void onClickPlay()
