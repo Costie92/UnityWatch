@@ -19,7 +19,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text TimerText;
     public bool GameEnd;
     public GameObject buttons;
-    public Sprite imageSoldier, imageHook;
+    public Sprite imageSoldier, imageHook, imageReady, imageUnReady;
     private System.TimeSpan timeSpan;
     private double PhotonTime;
     private System.TimeSpan nowTime;

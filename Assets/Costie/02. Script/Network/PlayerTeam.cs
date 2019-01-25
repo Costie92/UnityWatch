@@ -13,7 +13,6 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     public Image MyHeroImage;
     public Text MyNameText;
     public Image ReadyFrame;
-    public Sprite SilverFrame, GoldFrame;
     public hcp.E_HeroType myherotype;
     [SerializeField] private bool ReadyCheck;
     [SerializeField] private string MyTeam;
@@ -70,13 +69,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        if (ReadyCheck)
-        {
-            ReadyFrame.sprite = GoldFrame;
-        }
-        else {
-            ReadyFrame.sprite = SilverFrame;
-        }
+        ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageReady;
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         MyNameText.text = PlayerName.instance.MyName;
         //if (PhotonNetwork.InRoom)
