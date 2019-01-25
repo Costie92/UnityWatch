@@ -4690,7 +4690,7 @@ MonoBehaviour:
   respawnTime: 5
   rotateYUpLimit: 45
   rotateYDownLimit: 10
-  moveSpeed: 4
+  moveSpeed: 5
   rotateSpeed: 30
   maxHP: 200
   currHP: 0

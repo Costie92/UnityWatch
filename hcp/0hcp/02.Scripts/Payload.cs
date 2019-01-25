@@ -326,19 +326,41 @@ namespace hcp {
             Vector3 dir;
             if (MoveSideCheck(out dir) == false)
             {
-                heroClose = false;
+                if (ATeamCount > 0 || BTeamCount > 0)
+                {
+                    heroClose = true;
+                }
+                else if (ATeamCount == 0 && BTeamCount == 0)
+                {
+                    heroClose = false;
+                }
                 return;
             }
-            heroClose = true;
-            
+            if (ATeamCount > 0 || BTeamCount > 0)
+            {
+                heroClose = true;
+            }
+            else if (ATeamCount == 0 && BTeamCount == 0)
+            {
+                heroClose = false;
+            }
+
             transform.Translate(dir * Time.deltaTime * moveSpeed, Space.World);
         }
 
         //프로퍼티에서 볼려구 그냥 뻈음.
         [SerializeField]
         int ATeamCount;
+        public int GetATeamCount
+        {
+            get { return ATeamCount; }
+        }
         [SerializeField]
         int BTeamCount;
+        public int GetBTeamCount
+        {
+            get { return BTeamCount; }
+        }
         [SerializeField]
         team judgedTeam;
 
@@ -365,7 +387,6 @@ namespace hcp {
                 judgedTeam = team.TeamB;
                     return true;
             }
-
                 else if (ATeamCount == 0 && BTeamCount > 0)
             {
                 if (nowRange.Aside == 0 && WayPointClose(nowRange.Aside))

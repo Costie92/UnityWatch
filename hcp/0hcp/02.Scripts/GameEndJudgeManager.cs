@@ -92,12 +92,37 @@ namespace hcp
             }
             if (IsMatchTimeDone())
             {
+                //우세한 팀만 붙어있을 떄는 종료.
+                // 사람이 아무도 없으면 종료.
                 if (!payload.HeroClose)
                 {
                     judgeDone = true;
                     //화물 도착, 게임 종료.
                     photonView.RPC("GameJudgeReceived", RpcTarget.All, JudgeWhichTeamWin());
                     return;
+                }
+                else
+                {
+                    //사람이 붙어 있음. 우세한 쪽에 따를것.
+                    E_Team nowWiningTeam = JudgeWhichTeamWin();
+                    switch (nowWiningTeam)
+                    {
+                        case E_Team.Team_A: //a팀이 우세한 경우.
+                            if (payload.GetATeamCount > 0 && payload.GetBTeamCount == 0)
+                            {
+                                judgeDone = true;
+                                photonView.RPC("GameJudgeReceived", RpcTarget.All, E_Team.Team_A);
+                            }
+                            break;
+                        case E_Team.Team_B:
+                            if (payload.GetATeamCount == 0 && payload.GetBTeamCount > 0)
+                            {
+                                judgeDone = true;
+                                photonView.RPC("GameJudgeReceived", RpcTarget.All, E_Team.Team_B);
+                            }
+                            break;
+                    }
+
                 }
             }
         }
