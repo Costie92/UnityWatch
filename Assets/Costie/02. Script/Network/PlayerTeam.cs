@@ -15,7 +15,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     public Image ReadyFrame;
     public hcp.E_HeroType myherotype;
     [SerializeField] private bool ReadyCheck;
-    [SerializeField] private string MyTeam;
+    [SerializeField] private string MyTeam, MyName;
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     public PhotonView photonView;
@@ -61,6 +61,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         if(photonView.IsMine)
             NetworkManager.instance.photonView.RPC("Join", RpcTarget.MasterClient, photonView.ViewID);
         NetworkManager.instance.photonView.RPC("Named", RpcTarget.AllBufferedViaServer, photonView.ViewID, PlayerName.instance.MyName);
+        MyName = PlayerName.instance.MyName;
         if (PhotonNetwork.IsMasterClient) {
             PosAfterDictionary();
         }
@@ -69,7 +70,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageReady;
+        ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageUnReady;
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         MyNameText.text = PlayerName.instance.MyName;
         //if (PhotonNetwork.InRoom)
@@ -153,12 +154,14 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(myherotype);
-            //stream.SendNext(name);
+            stream.SendNext(ReadyCheck);
+            stream.SendNext(MyName);
         }
         else
         {
             myherotype = (hcp.E_HeroType)stream.ReceiveNext();
-            //name = (string)stream.ReceiveNext();
+            ReadyCheck = (bool)stream.ReceiveNext();
+            MyName = (string)stream.ReceiveNext();
         }
     }
 }
