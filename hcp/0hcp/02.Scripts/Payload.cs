@@ -323,6 +323,7 @@ namespace hcp {
             if (!TeamInfo.GetInstance().isTeamSettingDone) return;
             if (!PhotonNetwork.IsMasterClient) return;
             if (arrive) return;
+
             Vector3 dir;
             if (MoveSideCheck(out dir) == false)
             {
@@ -454,7 +455,10 @@ namespace hcp {
         {
             payLoadArrive += ac;
         }
-
+        public void StopPayload()
+        {
+            arrive = true;
+        }
      
     }
 }

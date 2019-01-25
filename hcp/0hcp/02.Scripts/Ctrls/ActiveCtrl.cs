@@ -15,6 +15,7 @@ namespace hcp
         {
             get { return coolTime; }
         }
+        protected float coolTimeDiv;
         protected float lastActivatedTime = 0f;
         /*
          쿨타임 외의 실행 조건.
@@ -35,11 +36,29 @@ namespace hcp
                 return lastActivatedTime + coolTime - Time.time;
             }
         }
+        public float ReUseRemainingTimeInAZeroToOne
+        {
+            get {
+                float reUseTime = ReUseRemainingTime;
+                if (reUseTime == -1)
+                {
+                    return 0f;
+                }
+                else {
+                    return //1-(
+                        reUseTime * coolTimeDiv
+                      //  )
+                    ;
+                }
+
+            }
+        }
 
         public ActiveCtrl(E_ControlParam contParam, float coolTime)
         {
             this.controlParam = contParam;
             this.coolTime = coolTime;
+            coolTimeDiv = 1 / coolTime;
         }
 
         public virtual void Activate()

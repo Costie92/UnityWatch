@@ -2,32 +2,94 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 namespace hcp
 {
     public class InGameUIManager : MonoBehaviour
     {
+        [System.Serializable]
+        struct touchFingerID
+        {
+            public int fingerID;
+            //   public Vector3 vector;
+            public bool activated;
+
+            public void Activate(int fID)
+            {
+                activated = true;
+                fingerID = fID;
+
+            }
+            public void DeActivate()
+            {
+                activated = false;
+            }
+            public bool IsThisTouchFID(int fingerId)
+            {
+                if (fingerID == fingerId)
+                    return true;
+                else return false;
+            }
+        }
+
+        [Header("Move Controller")]
         [Tooltip("controller point")]
         [SerializeField]
         GameObject cont;
         [Tooltip("controller range")]
         [SerializeField]
         GameObject contBack;
+        
+
         [Tooltip("controller max point")]
         [SerializeField]
         GameObject contMax;
 
         [SerializeField]
         Vector3 charactorMoveV = Vector3.zero;
+        
+        MoveController moveController;
+
+
+        [SerializeField]
+        touchFingerID moveContTouch;
+
+
+        [Header("Rotate Controller")]
+        [Tooltip("controller point")]
+        [SerializeField]
+        GameObject rcont;
+        [Tooltip("controller range")]
+        [SerializeField]
+        GameObject rcontBack;
+        
+
+        [Tooltip("controller max point")]
+        [SerializeField]
+        GameObject rcontMax;
+
+        [SerializeField]
+        Vector3 charactorRotateV = Vector3.zero;
+        
+        MoveController rotateController;
+        
+        [SerializeField]
+        touchFingerID rotateContTouch;
+
+
+        [Space(10)]
 
         [SerializeField]
         Vector3 mouseTouched;//임시로 회전 용으로 사용. 에디터에서 터치를 못 읽어서
         [SerializeField]
         bool contTouched;//임시로 회전 용으로 사용. 에디터에서 터치를 못 읽어서
 
+
+
         [SerializeField]
         Image crossHair;
 
-        MoveController moveController;
         [SerializeField]
         Hero targetHero;
 
@@ -45,7 +107,8 @@ namespace hcp
         [SerializeField]
         GameObject killLog;
 
-
+        [SerializeField]
+        Image[] heroControlBtnsScreen;
 
         public Text[] ct;
 
@@ -66,9 +129,17 @@ namespace hcp
         {
             moveController = new MoveController(contBack.transform.position, contMax.transform.position);   //스케일 렌더 모드 캔버스의 실제 ui 포지션을 얻고 싶으면
                                                                                                             //스타트 에서 포지션을 접근해야함.
+
+            rotateController = new MoveController(rcontBack.transform.position, rcontMax.transform.position);
+
+            moveContTouch = new touchFingerID();
+            moveContTouch.DeActivate();
+            rotateContTouch = new touchFingerID();
+            rotateContTouch.DeActivate();
+            
         }
 
-        // Update is called once per frame
+       
         void Update()
         {
             if (targetHero == null) return;
@@ -76,14 +147,76 @@ namespace hcp
             {
                 ct[i].text = targetHero.GetReUseRemainTime((E_ControlParam)i).ToString();
             }
+            for (int i = 0; i < (int)E_ControlParam.MAX; i++)
+            {
+                heroControlBtnsScreen[
+                    ((int)E_ControlParam.MAX* (int)targetHero.HeroType)
+                    +i].fillAmount = targetHero.GetReUseRemainTimeByZeroToOne ((E_ControlParam)i);
+            }
 
             hpBarUI.fillAmount = targetHero.CurrHP * maxHPDiv;
 
+            #region 안드로이드  (터치)
+#if UNITY_ANDROID
 
-            targetHero.MoveHero(charactorMoveV );
+            if (Input.touchCount == 0)
+            {
+                moveContTouch.DeActivate();
+                rotateContTouch.DeActivate();
+                targetHero.MoveHero(Vector3.zero);    //무빙은 계속 쏴줘야함.
 
+                return;
+            }
 
+            Touch[] touches = Input.touches;
+            for (int i = 0; i < touches.Length; i++)
+            {
+                if (EventSystem.current.IsPointerOverGameObject(touches[i].fingerId) && 
+                    touches[i].phase == TouchPhase.Began)   //게임 오브젝트에 올려진 터치의 시작이라면.
+                {
+                  //  Vector3 worldTouchedPos = Camera.main.ScreenToWorldPoint(touches[i].position);
+                    if ( moveController.IsInThisContPos(touches[i].position))// moveContBound.Contains(worldTouchedPos))
+                    {
+                        //무브 컨트롤러에 처음 올려진 터치.
+                        moveContTouch.Activate(touches[i].fingerId);
+                    }
+                    else if (rotateController.IsInThisContPos(touches[i].position))
+                    {
+                        //로테이트 컨트롤러에 처음 올려진 터치.
+                        rotateContTouch.Activate(touches[i].fingerId);
+                    }
+                }
+                if (touches[i].phase == TouchPhase.Ended)
+                {
+                    if (moveContTouch.IsThisTouchFID(touches[i].fingerId))
+                    {
+                        moveContTouch.DeActivate();
+                    }
+                    else if (rotateContTouch.IsThisTouchFID(touches[i].fingerId))
+                    {
+                        rotateContTouch.DeActivate();
+                    }
+                }
+            }
+
+            On_MoveContAndroid();
+            targetHero.MoveHero(charactorMoveV);
+
+            On_RotateContAndroid();
+            if (charactorRotateV.sqrMagnitude > Mathf.Epsilon)
+            {
+                targetHero.RotateHero(charactorRotateV);
+                //나중에 전사가 필요할듯.
+                //targetHero.RotateHero(new Vector3(rotateV.x / Screen.width, rotateV.y / Screen.height, 0));
+            }
+#endif
+            #endregion
+            #region 에디터
+
+            //#if UNITY_EDITOR
             //임시로 하는 것 뿐임.
+            targetHero.MoveHero(charactorMoveV);
+
             if (Input.GetMouseButtonDown(0) && !contTouched)
             {
                 if (mouseTouched == Vector3.zero)
@@ -106,37 +239,113 @@ namespace hcp
                 // targetHero.transform.Rotate(new Vector3(0, rotateV.x / Screen.width, 0), Space.Self);
                 targetHero.RotateHero(new Vector3(rotateV.x/Screen.width, rotateV.y / Screen.height, 0));
             }
+//#endif
+#endregion
 
-
-            /*
-            Debug.Log("터치카운트" + Input.touchCount);
-
-            if (Input.touchCount > 0)   //나중에 핸드폰 연결해서 터치로 받게 하기.
-            {
-                Debug.Log("터치처리" + Input.touchCount);
-                Vector2 deltaSwipe = Input.touches[0].deltaPosition;
-                Vector3 rotate = new Vector3(0, deltaSwipe.x, 0);  //y가 -90 ~ 90로 돌면 됨 양수가 오른쪽으로 로테이트
-
-                tempChara.transform.Rotate(rotate, Space.Self);
-            }
-            */
         }
+
+#region Basic Moving And Rotating
+
+        public void On_MoveContAndroid()
+        {
+#if UNITY_ANDROID
+            if (!moveContTouch.activated)
+            {
+                cont.transform.position = contBack.transform.position;
+                charactorMoveV = Vector3.zero;
+                return;
+            }
+
+            Vector3 moveTouchPos = Vector3.down;
+            bool hasTouch = false;
+            Touch[] touches = Input.touches;
+            for (int i = 0; i < touches.Length; i++)
+            {
+                if (touches[i].fingerId == moveContTouch.fingerID)
+                {
+                    hasTouch = true;
+                    moveTouchPos = Camera.main.ScreenToWorldPoint(touches[i].position);
+                }
+            }
+            if (!hasTouch)
+            {
+                cont.transform.position = contBack.transform.position;
+                charactorMoveV = Vector3.zero;
+                return;
+            }
+
+            Vector3 contV;
+
+            Vector3 moveV = ChangexyVector3ToxzVector3( moveController.GetMoveVector(moveTouchPos, out contV));
+            cont.transform.position = contV;
+            charactorMoveV = moveV;
+#endif
+        }
+
+        public void On_RotateContAndroid()
+        {
+#if UNITY_ANDROID
+            if (!rotateContTouch.activated)
+            {
+                rcont.transform.position = rcontBack.transform.position;
+                charactorRotateV = Vector3.zero;
+                return;
+            }
+
+            Vector3 moveTouchPos = Vector3.down;
+            bool hasTouch = false;
+            Touch[] touches = Input.touches;
+            for (int i = 0; i < touches.Length; i++)
+            {
+                if (touches[i].fingerId == rotateContTouch.fingerID)
+                {
+                    hasTouch = true;
+                    moveTouchPos = Camera.main.ScreenToWorldPoint(touches[i].position);
+                }
+            }
+            if (!hasTouch)
+            {
+                rcont.transform.position = rcontBack.transform.position;
+                charactorRotateV = Vector3.zero;
+                return;
+            }
+
+            Vector3 contV;
+
+            Vector3 rotateV = rotateController.GetMoveVector(moveTouchPos, out contV);
+            rcont.transform.position = contV;
+            charactorRotateV = rotateV;
+#endif
+        }
+        
+        Vector3 ChangexyVector3ToxzVector3(Vector3 xyVector3)
+        {
+            return new Vector3(xyVector3.x, 0, xyVector3.y);
+        }
+
         public void On_MoveCont()  //회전 상관 없이 이동만 관장함.
                                    //이제 쉐이더 넣고 해주면 됨.
         {
+//#if UNITY_EDITOR
             contTouched = true; //임시 (회전 값 보정 위해.)
             Vector3 contV;
-            Vector3 moveV = moveController.GetMoveVector(Input.mousePosition, out contV);
+            Vector3 moveV = ChangexyVector3ToxzVector3( moveController.GetMoveVector(Input.mousePosition, out contV));
             cont.transform.position = contV;
             charactorMoveV = moveV;
+//#endif
         }
         public void On_MoveStop()
         {
+//#if UNITY_EDITOR
             contTouched = false;
             cont.transform.position = contBack.transform.position;
             charactorMoveV = Vector3.zero;
+//#endif
         }
 
+#endregion
+
+        
         public void OnClick_NormalAttack()
         {
             targetHero.ControlHero(E_ControlParam.NormalAttack);

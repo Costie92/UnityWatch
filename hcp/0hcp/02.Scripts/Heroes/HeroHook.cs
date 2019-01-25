@@ -299,6 +299,7 @@ namespace hcp
 
             photonView.RPC("HHHUltActivate", RpcTarget.All, ultStartPos, ultStartRot);
             state = E_HeroHookState.Hooking;
+            nowUltAmount = 0f;
             StartCoroutine(ultActionDone());
         }
         IEnumerator ultActionDone()
@@ -345,5 +346,15 @@ namespace hcp
             
                 PlusUltAmount(ultPlusPerSec * Time.deltaTime);
         }
+        public override float GetReUseRemainTimeByZeroToOne(E_ControlParam param)
+        {
+            if (param == E_ControlParam.Ultimate)
+            {
+                    return 1 - UltAmountPercent;
+            }
+            return activeCtrlDic[param].ReUseRemainingTimeInAZeroToOne;
+            ;
+        }
+
     }
 }

@@ -7827,7 +7827,7 @@ MonoBehaviour:
   maxShotLength: 5000
   crossHairs:
   - {fileID: 21300000, guid: d5505449141785140a5b225d36cd52bd, type: 3}
-  - {fileID: 21300000, guid: 92fececc8b7c90946a06c5b311584139, type: 3}
+  - {fileID: 21300000, guid: d055d0e76bb14d14e8afc3993616e434, type: 3}
   headShotOffset: 1.6
   camPos: {fileID: 4176018442227214}
   FPSCamPerHeroGO: {fileID: 1587995430455682, guid: 3cbd3592684d41a46a2468c1a88be67a,
@@ -7858,6 +7858,10 @@ MonoBehaviour:
   ultFireRate: 1
   isUltOn: 0
   ultActivateTime: 0
+  HSUltCrossHairPrefab: {fileID: 1457267099333836, guid: dc9136379ed42f248a551ee14ebfead2,
+    type: 2}
+  HSUltCrossHair: {fileID: 0}
+  HSUltHalfCircleImage: {fileID: 0}
 --- !u!114 &114355412253598030
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -7,13 +7,11 @@ namespace hcp
     {
         //  Vector3 moveContRangeMaxVector;
         Vector3 moveContCenter;
-        Vector3 actualMoveVector;
         float contRangeMaxSqrMag;
         float contRangeMaxMag;
         float contRangeMaxMagDiv;
         public MoveController(Vector3 moveContCenter, Vector3 moveContRangeMaxPos)
         {
-            actualMoveVector = new Vector3();
             this.moveContCenter = moveContCenter;
 
             Vector3 maxContLength = moveContRangeMaxPos - moveContCenter;
@@ -22,6 +20,10 @@ namespace hcp
             contRangeMaxMag = maxContLength.magnitude;
             contRangeMaxMagDiv = 1 / contRangeMaxMag;
             //  Debug.Log("받은 센터 포지션 = "+ moveContCenter +"받은 맥스 포지션 = " + moveContRangeMaxPos+"맥스까지 벡터="+maxContLength);
+        }
+        public bool IsInThisContPos(Vector2 inputPos)
+        {
+            return (inputPos - (Vector2)moveContCenter ).sqrMagnitude <= contRangeMaxSqrMag;
         }
 
         public Vector3 GetMoveVector(Vector3 currMousePosition, out Vector3 controllerPos)
@@ -40,10 +42,12 @@ namespace hcp
 
             Vector3 actualMoveV = dir * (fromCenterV.magnitude * contRangeMaxMagDiv);//센터에서 뻗는 방향 벡터와 콘트롤러 맥스 를 1로 하는 길이값 , 즉 실제 이동할 벡터.
          //   Debug.Log(actualMoveV + "크기는 = " + actualMoveV.magnitude);
+         /*
             actualMoveVector.y = 0;
             actualMoveVector.z = actualMoveV.y; //xz 평면 사상.
             actualMoveVector.x = actualMoveV.x;
-            return actualMoveVector;
+            */
+            return actualMoveV;
         }
     }
 }

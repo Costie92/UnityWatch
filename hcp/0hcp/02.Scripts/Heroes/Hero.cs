@@ -317,10 +317,14 @@ namespace hcp
             }
         }
 
-        public float GetReUseRemainTime(E_ControlParam param)
+        public virtual float GetReUseRemainTime(E_ControlParam param)
         {
             return activeCtrlDic[param].ReUseRemainingTime;
         }
+        public virtual float GetReUseRemainTimeByZeroToOne(E_ControlParam param)
+        {
+            return activeCtrlDic[param].ReUseRemainingTimeInAZeroToOne;
+;        }
         
         public virtual bool IsCannotMoveState()
         {

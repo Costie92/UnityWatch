@@ -52,6 +52,19 @@ namespace hcp
         float correctionMaxLength ;
         float correctionMaxLengthSqr;
 
+        [SerializeField]
+        GameObject HSMagazineUIPrefab;
+        [SerializeField]
+        GameObject HSBulletImage;
+        [SerializeField]
+        GameObject HSBulletImageBack;
+        [SerializeField]
+        GameObject HSMagazineUI;
+        [SerializeField]
+        Transform HSMagazineUICurrBulletImageParent;
+        [SerializeField]
+        UnityEngine.UI.Text currBulletUIText;
+
         [Space(10)]
         [Header("   Hero-Soldier-Reload")]
         [Space(10)]
@@ -90,6 +103,7 @@ namespace hcp
         [Tooltip("Hero- Soldier Ultimate, max Missile Shot Time.")]
         [SerializeField]
         float ultMaxTime ;
+        float ultMaxTimeDiv;
 
         [Tooltip("Hero- Soldier Ultimate, fire rate.")]
         [SerializeField]
@@ -100,6 +114,15 @@ namespace hcp
 
         [SerializeField]
         float ultActivateTime = 0f;
+
+        [SerializeField]
+        GameObject HSUltCrossHairPrefab;
+        [SerializeField]
+        GameObject HSUltCrossHair;
+        [SerializeField]
+        UnityEngine.UI.Image HSUltHalfCircleImage;
+
+
         private void Start()
         {
             ultMissiles = new HSUltMissile[ultMissileParent.transform.childCount];
@@ -113,11 +136,29 @@ namespace hcp
             ultMissileParent.transform.SetParent(null);//미사일 관리만을 위한 애니까.
             ultMissileParent.transform.position = Vector3.zero + Vector3.down * 5f; //원점의 바닥 밑으로 숨겨버림.
 
-            
+            if (photonView.IsMine)
+            {
+                HSMagazineUI = GameObject.Instantiate(HSMagazineUIPrefab, 
+                    Vector3.zero,
+                   // new Vector3(-1 * (Screen.width / 4), -1 * (Screen.height / 4), 0), 
+                    Quaternion.identity, InGameUIManager.Instance.transform);
+                HSMagazineUICurrBulletImageParent = HSMagazineUI.transform.GetChild(1);
+                for (int i = 0; i < maxBullet; i++)
+                {
+                    GameObject.Instantiate(HSBulletImage, HSMagazineUICurrBulletImageParent);
+                    GameObject.Instantiate(HSBulletImageBack, HSMagazineUI.transform.GetChild(0));
+                }
+
+               
+                HSMagazineUI.transform.GetChild(2).GetComponent<UnityEngine.UI.Text>().text = "/"+maxBullet.ToString();
+                currBulletUIText = HSMagazineUI.transform.GetChild(3).GetComponent<UnityEngine.UI.Text>() ;
+                currBulletUIText.text = currBullet.ToString();
+            }
         }
 
         protected override void Awake()
         {
+            ultMaxTimeDiv = 1 / ultMaxTime;
             heroType = E_HeroType.Soldier;
             correctionMaxLengthSqr = correctionMaxLength * correctionMaxLength;
             correctionRangeSqr = correctionRange * correctionRange;
@@ -229,16 +270,36 @@ namespace hcp
 
                     //궁 유지중인 부분.
                     activeCtrlDic[param].Activate();
+
+                    if (HSUltCrossHair != null)
+                    {
+                        Transform ultMagazine = HSUltCrossHair.transform.GetChild(0);
+                        for (int i = 0; i < ultShootCount; i++)
+                        {
+                            ultMagazine.GetChild(i).gameObject.SetActive(false);
+                        }
+                    }
+
                     return;
                 }
                 else
                 {
+                    InGameUIManager.Instance.CrossHairChange(crossHairs[1]);
                     //궁 처음 쏘는 초기화 부분.
                     nowUltAmount = 0f;
                     isUltOn = true;
                     ultShootCount = 0;
                     ultActivateTime = 0f;
                     activeCtrlDic[param].Activate();
+
+                    HSUltCrossHair = GameObject.Instantiate(HSUltCrossHairPrefab, new Vector3(Screen.width/2,Screen.height/2,0),Quaternion.identity, InGameUIManager.Instance.transform);
+                    HSUltHalfCircleImage = HSUltCrossHair.GetComponent<UnityEngine.UI.Image>();
+                    Transform ultMagazine = HSUltCrossHair.transform.GetChild(0);
+                    for (int i = 0; i < ultShootCount; i++)
+                    {
+                        ultMagazine.GetChild(i).gameObject.SetActive(false);
+                    }
+
                     return;
                 }
             }
@@ -268,6 +329,12 @@ namespace hcp
         void NormalAttack()
         {
             currBullet--;
+            for (int i = 0; i < maxBullet- currBullet; i++)
+            {
+                HSMagazineUICurrBulletImageParent.transform.GetChild(i).gameObject.SetActive(false);
+            }
+            currBulletUIText.text = currBullet.ToString();
+
             photonView.RPC("normalMuzzleFlashPlay", RpcTarget.Others);
 
             FPSCamPerHero.FPSCamAct (E_ControlParam.NormalAttack);// 나자신의 시각효과만 담당.
@@ -528,6 +595,13 @@ namespace hcp
 
             StartCoroutine(ReloadingCheck());
             currBullet = maxBullet;
+
+
+            for (int i = 0; i < maxBullet; i++)
+            {
+                HSMagazineUICurrBulletImageParent.transform.GetChild(i).gameObject.SetActive(true);
+            }
+            currBulletUIText.text = currBullet.ToString();
         }
 
         IEnumerator ReloadingCheck()
@@ -601,6 +675,27 @@ namespace hcp
 
         #endregion
 
+        public override float GetReUseRemainTimeByZeroToOne(E_ControlParam param)
+        {
+            if (param == E_ControlParam.Ultimate)
+            {
+                if (isUltOn)
+                {
+                    return activeCtrlDic[param].ReUseRemainingTimeInAZeroToOne;
+                    ;
+                }
+                else {
+                    return 1- UltAmountPercent;
+                }
+            }
+            if (isUltOn&& param!=E_ControlParam.FirstSkill)
+            {
+                return 1;
+            }
+            return activeCtrlDic[param].ReUseRemainingTimeInAZeroToOne;
+            ;
+        }
+
         private void Update()
         {
 
@@ -612,11 +707,23 @@ namespace hcp
             }
             else
             {
+                
                 ultActivateTime += Time.deltaTime;
+
+                if (HSUltCrossHair != null && HSUltHalfCircleImage != null)
+                {
+                    HSUltHalfCircleImage.fillAmount=(1 - (ultActivateTime * ultMaxTimeDiv))*0.5f;  //0.5는 그냥 이미지가 반쪽짜리 이미지라서 그럴 뿐임.
+                }
 
                 if (ultActivateTime > ultMaxTime || ultShootCount >= ultMissilesMaxCount)
                 {
                     isUltOn = false;    //궁 종료 시점.
+
+                    InGameUIManager.Instance.CrossHairChange(crossHairs[0]);
+                    if (HSUltCrossHair != null)
+                    {
+                        Destroy(HSUltCrossHair);
+                    }
                 }
             }
         }

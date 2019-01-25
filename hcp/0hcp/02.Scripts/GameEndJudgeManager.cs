@@ -146,6 +146,11 @@ namespace hcp
         [PunRPC]
         public void GameJudgeReceived(E_Team winTeam)
         {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                payload.StopPayload();
+            }
+            if (judgeDone) return;
             judgeDone = true;
             int winTeamLayer = Constants.GetLayerByE_Team(winTeam);
 

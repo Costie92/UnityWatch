@@ -17,7 +17,7 @@ namespace hcp {
         [SerializeField]
         Text victimName;
         [SerializeField]
-        float destroyTime = 2f;
+        float destroyTime = 5f;
 
         public void SetKillLog(string killerName, E_HeroType killerType, string victimName, E_HeroType victimType)
         {
