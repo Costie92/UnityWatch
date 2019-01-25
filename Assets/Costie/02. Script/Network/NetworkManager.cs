@@ -30,7 +30,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private Dictionary<int, hcp.E_HeroType> heros;
     private Dictionary<int, string> names;
     [SerializeField] private int myID;
-    [SerializeField] private int ReadyCount, TeamACount = 0, TeamBCount = 0;
+    public int ReadyCount, TeamACount = 0, TeamBCount = 0;
     [SerializeField] private int RandomNumber;
 
     private static NetworkManager _instance = null;
@@ -122,6 +122,32 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            if (TimerStart)
+            {
+                if (nowTime.TotalSeconds > 0)
+                {
+                    nowTime = (timeSpan - System.TimeSpan.FromSeconds(PhotonNetwork.Time - PhotonTime));
+                }
+                else
+                {
+                    if (!GameEnd)
+                    {
+                        //do victory check;
+                        Debug.Log(nowTime.TotalSeconds);
+                        GameEnd = true;
+                    }
+                }
+                string DisplayText = string.Format("{0}:{1:00}", (int)nowTime.TotalMinutes, nowTime.Seconds);
+                TimerText.text = DisplayText;
+            }
+        }
+    }
+
     private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
     {
         if (arg1.name == "MultiScenes")
@@ -171,7 +197,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         else if (Teams[myID] == hcp.Constants.teamB_LayerName)
         {
             SpawnPoint = MapInfo.instance.BSpawnPoint;
-
             Debug.Log(myID + " : Create at B");
         }
         else if (Teams[myID] == hcp.Constants.teamC_LayerName)
@@ -193,29 +218,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (SceneManager.GetActiveScene().buildIndex == 1)
-        {
-            if (TimerStart)
-            {
-                if (nowTime.TotalSeconds > 0)
-                {
-                    nowTime = (timeSpan - System.TimeSpan.FromSeconds(PhotonNetwork.Time - PhotonTime));
-                }
-                else {
-                    if (!GameEnd) {
-                        //do victory check;
-                        Debug.Log(nowTime.TotalSeconds);
-                        GameEnd = true;
-                    }
-                }
-                string DisplayText = string.Format("{0}:{1:00}", (int)nowTime.TotalMinutes, nowTime.Seconds);
-                TimerText.text = DisplayText;
-            }
-        }
-    }
     System.Action onClientLeft;
     public void AddListenerOnClientLeft(System.Action ac)
     {
@@ -223,13 +225,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        Debug.Log(SceneManager.GetActiveScene().buildIndex == 0);
+        if (SceneManager.GetActiveScene().buildIndex == 0) {
+            RemoveDictionary(otherPlayer.ActorNumber);
+        }
         Debug.Log(otherPlayer.ActorNumber);
-
         if (onClientLeft != null)
         {
             onClientLeft();
         }
     }
+
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log(newPlayer.ActorNumber + " Enter");
@@ -237,13 +243,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        Debug.Log(newMasterClient.UserId);
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PlayerTeam[] objs = FindObjectsOfType<PlayerTeam>();
+                foreach (PlayerTeam items in objs)
+                {
+                    if (items.photonView.ViewID / 1000 == myID)
+                    {
+                        Debug.Log("My Photon ID is " + items.photonView.ViewID);
+                        items.BecomeToMaster();
+                    }
+                }
+            }
+        }
     }
+
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.JoinLobby();
     }
+
     public override void OnJoinedLobby()
     {
         Debug.Log("Joined Lobby");
@@ -254,6 +276,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinRandomRoom();
         }
     }
+
     public override void OnJoinedRoom()
     {
         Hashtable hashTable = new Hashtable();
@@ -268,6 +291,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RandomNumber = Random.Range(0, 10000);
         PhotonNetwork.CreateRoom(RandomNumber.ToString("N"),roomOps);
     }
+
+
 
     [PunRPC]
     public void SendTimerSetting(double time,bool Start) {
@@ -337,8 +362,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         if (!Teams.ContainsKey(pVID))
         {
-
-            if ((pVID % 2 == 1))
+            TeamACount = 0;
+            TeamBCount = 0;
+            foreach (KeyValuePair<int, string> pair in Teams) {
+                if (pair.Value == hcp.Constants.teamA_LayerName)
+                {
+                    TeamACount++;
+                }
+                else if (pair.Value == hcp.Constants.teamB_LayerName) {
+                    TeamBCount++;
+                }
+            }
+            if ((TeamACount <= TeamBCount))
             {
                 Debug.Log("Assigned A");
                 Teams.Add(pVID, hcp.Constants.teamA_LayerName);
@@ -348,6 +383,65 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 Debug.Log("Assigned B");
                 Teams.Add(pVID, hcp.Constants.teamB_LayerName);
             }
+        }
+        int[] DicpView = new int[Players.Count];
+        Players.Keys.CopyTo(DicpView, 0);
+        string[] DicTeam = new string[Teams.Count];
+        Teams.Values.CopyTo(DicTeam, 0);
+        bool[] DicPlayer = new bool[Players.Count];
+        Players.Values.CopyTo(DicPlayer, 0);
+        int[] DicHero = new int[Heros.Count];
+        int count = 0;
+        foreach (KeyValuePair<int, hcp.E_HeroType> items in Heros) {
+            DicHero[count] = (int)items.Value;
+            count++;
+        }
+
+        photonView.RPC("MasterDictionary", RpcTarget.Others, DicpView, DicTeam, DicPlayer, DicHero, pViewID);
+    }
+    [PunRPC]
+    public void MasterDictionary(int[] DicpView, string[] DicTeam, bool[] DicPlayer, int[] DicHero, int pViewID)
+    {
+        int pVID = pViewID / 1000;
+        if (myID == 0)
+        {
+            myID = pVID;
+        }
+        for (int i = 0; i < DicpView.Length; i++)
+        {
+            if (!Players.ContainsKey(DicpView[i]))
+            {
+                Players.Add(DicpView[i], DicPlayer[i]);
+            }
+            else
+            {
+                Players[DicpView[i]] = DicPlayer[i];
+            }
+            if (!Teams.ContainsKey(DicpView[i]))
+            {
+                Teams.Add(DicpView[i], DicTeam[i]);
+            }
+            else
+            {
+                Teams[DicpView[i]] = DicTeam[i];
+            }
+            if (!Heros.ContainsKey(DicpView[i]))
+            {
+                Heros.Add(DicpView[i], (hcp.E_HeroType)DicHero[i]);
+            }
+            else
+            {
+                Heros[DicpView[i]] = (hcp.E_HeroType)DicHero[i];
+            }
+        }
+        PlayerTeam[] objs = FindObjectsOfType<PlayerTeam>();
+        foreach (PlayerTeam items in objs)
+        {
+            if (items.photonView.IsMine)
+            {
+                Debug.Log("HI");
+            }
+            items.PosAfterDictionary();
         }
     }
     [PunRPC]
@@ -360,6 +454,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Debug.Log(" ID : " + pVID + "Name is : " + name);
         }
     }
+
     [PunRPC]
     public void Ready(int pViewID)
     {
@@ -374,6 +469,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Debug.Log(" ID : " + pVID + " UnReady");
         }
     }
+
     [PunRPC]
     public void Play()
     {
@@ -416,6 +512,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.LoadLevel(1);
             }
         }
+    }
+
+    public void RemoveDictionary(int pViewID) {
+        bool RemoveSuccess = true;
+        if (Players.ContainsKey(pViewID)) {
+            RemoveSuccess = RemoveSuccess && Players.Remove(pViewID);
+        }
+        if (Teams.ContainsKey(pViewID)) {
+            RemoveSuccess = RemoveSuccess && Teams.Remove(pViewID);
+        }
+        if (Heros.ContainsKey(pViewID)){
+            RemoveSuccess = RemoveSuccess && Heros.Remove(pViewID);
+        }
+        if (Names.ContainsKey(pViewID)) {
+            RemoveSuccess = RemoveSuccess && Names.Remove(pViewID);
+        }
+        Debug.Log(RemoveSuccess);
     }
 
     public void TryJoinRandomRoom() {

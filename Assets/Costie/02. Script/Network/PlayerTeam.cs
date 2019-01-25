@@ -11,8 +11,9 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
 {
     //[SerializeField] private Material Mycolor;
     public Image MyHeroImage;
+    public Text MyNameText;
     public hcp.E_HeroType myherotype;
-    
+    [SerializeField] private string MyTeam;
     [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     public PhotonView photonView;
@@ -44,27 +45,29 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
                 BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
-                    BtnReady.GetComponentInChildren<Text>().text = "Play";
+                    BecomeToMaster();
                 }
                 else
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
-                //this.GetComponent<MeshRenderer>().material = Mycolor;
             }
             else
             {
                 //m.enabled = false;
             }
         }
-        NetworkManager.instance.photonView.RPC("Join", RpcTarget.All, photonView.ViewID);
+        if(photonView.IsMine)
+            NetworkManager.instance.photonView.RPC("Join", RpcTarget.MasterClient, photonView.ViewID);
         NetworkManager.instance.photonView.RPC("Named", RpcTarget.AllBufferedViaServer, photonView.ViewID, PlayerName.instance.MyName);
-        PosTeam((photonView.ViewID / 1000) % 2 == 1);
+        if (PhotonNetwork.IsMasterClient) {
+            PosAfterDictionary();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
+        MyNameText.text = PlayerName.instance.MyName;
         //if (PhotonNetwork.InRoom)
         //{
         //    if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -86,21 +89,40 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         //    }
         //}
     }
-    public void PosTeam(bool isTeamA)
+    public void PosTeam(string TeamLayer,int Pos)
     {
-        int Pos = photonView.ViewID / 1000;
-        if (isTeamA)
+        if (TeamLayer == hcp.Constants.teamA_LayerName)
         {
-            this.transform.localPosition = new Vector3(-750, 350 - Pos * 250, 0);
+            this.transform.localPosition = new Vector3(-750, 100 - Pos * 450, 0);
         }
         else
         {
-            this.transform.localPosition = new Vector3(750, 350 - Pos * 250, 0);
+            this.transform.localPosition = new Vector3(750, 100 - Pos * 450, 0);
         }
+    }
+    public void PosAfterDictionary() {
+        Debug.Log("PosAfterDictionary");
+        Debug.Log("MY ID IS : " + photonView.ViewID);
+        Debug.Log(NetworkManager.instance.Teams.Count);
+        MyTeam = NetworkManager.instance.Teams[photonView.ViewID / 1000];
+        //int MyPos = MyTeam == hcp.Constants.teamA_LayerName ? NetworkManager.instance.TeamACount : NetworkManager.instance.TeamBCount;
+        int MyPos = 0;
+        foreach (KeyValuePair<int, string> pair in NetworkManager.instance.Teams) {
+            if (pair.Key == photonView.ViewID / 1000)
+            {
+                break;
+            }
+            if (MyTeam == pair.Value) {
+                MyPos++;
+            }
+            Debug.Log("My POS IS : " + MyPos);
+        }
+        
+        PosTeam(MyTeam, MyPos);
     }
     public void onClicKTeamButton(string TeamString)
     {
-        PosTeam(TeamString == "A");
+        //PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
     public void onClickHeroButton(hcp.E_HeroType heroType)
@@ -116,7 +138,11 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     {
         NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
     }
-
+    public void BecomeToMaster() {
+        BtnReady.GetComponent<Button>().onClick.RemoveAllListeners();
+        BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
+        BtnReady.GetComponentInChildren<Text>().text = "Play";
+    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
