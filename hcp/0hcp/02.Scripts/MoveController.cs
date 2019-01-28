@@ -28,7 +28,7 @@ namespace hcp
 
         public Vector3 GetMoveVector(Vector3 currMousePosition, out Vector3 controllerPos)
         {
-            Vector3 mousePos = currMousePosition;
+            Vector3 mousePos = currMousePosition;   //그냥 픽셀 좌표계 벡터 받으면 됨.
 
             Vector3 fromCenterV = mousePos - moveContCenter;//센터에서 마우스 포지션으로 뻗는 벡터.
             Vector3 dir = fromCenterV.normalized;

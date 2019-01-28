@@ -39,8 +39,6 @@ namespace hcp
         [Tooltip("controller range")]
         [SerializeField]
         GameObject contBack;
-        
-
         [Tooltip("controller max point")]
         [SerializeField]
         GameObject contMax;
@@ -49,12 +47,9 @@ namespace hcp
         Vector3 charactorMoveV = Vector3.zero;
         
         MoveController moveController;
-
-
         [SerializeField]
         touchFingerID moveContTouch;
-
-
+        
         [Header("Rotate Controller")]
         [Tooltip("controller point")]
         [SerializeField]
@@ -62,8 +57,6 @@ namespace hcp
         [Tooltip("controller range")]
         [SerializeField]
         GameObject rcontBack;
-        
-
         [Tooltip("controller max point")]
         [SerializeField]
         GameObject rcontMax;
@@ -72,20 +65,15 @@ namespace hcp
         Vector3 charactorRotateV = Vector3.zero;
         
         MoveController rotateController;
-        
         [SerializeField]
         touchFingerID rotateContTouch;
-
-
         [Space(10)]
-
+        /*
         [SerializeField]
         Vector3 mouseTouched;//임시로 회전 용으로 사용. 에디터에서 터치를 못 읽어서
         [SerializeField]
         bool contTouched;//임시로 회전 용으로 사용. 에디터에서 터치를 못 읽어서
-
-
-
+        */
         [SerializeField]
         Image crossHair;
 
@@ -135,7 +123,6 @@ namespace hcp
             moveContTouch.DeActivate();
             rotateContTouch = new touchFingerID();
             rotateContTouch.DeActivate();
-            
         }
 
         #region 터치 잘 받나 체크용
@@ -178,6 +165,7 @@ namespace hcp
         void Update()
         {
             if (targetHero == null) return;
+
             for (int i = 0; i < (int)E_ControlParam.MAX; i++)
             {
                 ct[i].text = targetHero.GetReUseRemainTime((E_ControlParam)i).ToString();
@@ -214,7 +202,6 @@ namespace hcp
 
             for (int i = 0; i < touches.Length; i++)
             {
-
                 Touch touch = touches[i];
                 TouchPhase phase = touch.phase;
                 int fingerID = touch.fingerId;
@@ -251,7 +238,7 @@ namespace hcp
                         {
                             moveContTouch.DeActivate();
                         }
-                        else if (rotateContTouch.IsThisTouchFID(fingerID))
+                        if (rotateContTouch.IsThisTouchFID(fingerID))
                         {
                             rotateContTouch.DeActivate();
                         }
@@ -293,12 +280,9 @@ namespace hcp
             targetHero.MoveHero(charactorMoveV);
 
             On_RotateContAndroid();
-            if (charactorRotateV.sqrMagnitude > Mathf.Epsilon)
-            {
-                targetHero.RotateHero(charactorRotateV);
+            targetHero.RotateHero(charactorRotateV);
                 //나중에 전사가 필요할듯.
                 //targetHero.RotateHero(new Vector3(rotateV.x / Screen.width, rotateV.y / Screen.height, 0));
-            }
 #endif
             #endregion
             /*
@@ -346,6 +330,7 @@ namespace hcp
                 charactorMoveV = Vector3.zero;
                 return;
             }
+
             /*
             bool hasTouch = false;
             for (int i = 0; i < Input.touches.Length; i++)
@@ -384,6 +369,7 @@ namespace hcp
                 charactorRotateV = Vector3.zero;
                 return;
             }
+
             /*
 
             bool hasTouch = false;
@@ -418,7 +404,7 @@ namespace hcp
             return new Vector3(xyVector3.x, 0, xyVector3.y);
         }
 
-        public void On_MoveCont()  //회전 상관 없이 이동만 관장함.
+        public void On_MoveCont()  //회전 상관 없이 이동만 관장함.  //터치 전에 쓸떄 이용.
                                    //이제 쉐이더 넣고 해주면 됨.
         {
 //#if UNITY_EDITOR
@@ -441,11 +427,7 @@ namespace hcp
             */
 //#endif
         }
-       
-
-
         #endregion
-
 
         public void OnClick_NormalAttack()
         {
@@ -479,6 +461,7 @@ namespace hcp
         {
             controlPanelPerHero[(int)heroType].SetActive(true);
         }
+
         public void ShowKillLog(string killerName, E_HeroType killerHeroType, string victimName, E_HeroType victimHeroType)
         {
             GameObject temp =  GameObject.Instantiate(killLog, killLogPanel);
