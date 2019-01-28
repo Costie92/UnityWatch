@@ -125,6 +125,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (TimerStart)
@@ -216,6 +223,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         else {
             PhotonNetwork.Instantiate(Hookpath, SpawnPoint.position, SpawnPoint.rotation, 0);
         }
+        if (!TimerStart && !PhotonNetwork.IsMasterClient) {
+            photonView.RPC("RequestTime", RpcTarget.MasterClient);
+        }
     }
 
     System.Action onClientLeft;
@@ -292,7 +302,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(RandomNumber.ToString("N"),roomOps);
     }
 
-
+    [PunRPC]
+    public void RequestTime() {
+        photonView.RPC("SendTimerSetting", RpcTarget.AllBufferedViaServer, PhotonTime, true);
+    }
 
     [PunRPC]
     public void SendTimerSetting(double time,bool Start) {
@@ -308,6 +321,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Arg 1 : " + a + ", Arg 2 : " + b);
         Debug.Log(info.Sender.UserId);
         Debug.Log(info.Sender.ActorNumber);
+    }
+    [PunRPC]
+    public void SendPlayersStas(int[] a, string[] b, bool[] c, int[] d, int e) {
+
     }
 
     [PunRPC]

@@ -76,39 +76,42 @@ public class PlayerName : MonoBehaviour {
     public void OnSendName(string arg)
     {
         Debug.Log(arg);
-        try
+        if (arg != "")
         {
-            // Determine whether the directory exists.
-            if (Directory.Exists(path))
-            {
-                Debug.Log("That path exists already.");
-            }
-            Directory.CreateDirectory(path);
             try
             {
-                if (File.Exists(path + "/" + Filepath))
+                // Determine whether the directory exists.
+                if (Directory.Exists(path))
                 {
-                    Debug.Log("File path exist already.");
+                    Debug.Log("That path exists already.");
                 }
-                File.Create(path + "/" + Filepath).Dispose();
-                Debug.Log("File Created");
-                StreamWriter sw1 = new StreamWriter(path + "/" + Filepath);
-                sw1.Write(arg);
-                sw1.Close();
-                Debug.Log("Write Successed");
-                InputField.SetActive(false);
-                MyName = arg;
-                NetworkManager.instance.TryJoinRandomRoom();
+                Directory.CreateDirectory(path);
+                try
+                {
+                    if (File.Exists(path + "/" + Filepath))
+                    {
+                        Debug.Log("File path exist already.");
+                    }
+                    File.Create(path + "/" + Filepath).Dispose();
+                    Debug.Log("File Created");
+                    StreamWriter sw1 = new StreamWriter(path + "/" + Filepath);
+                    sw1.Write(arg);
+                    sw1.Close();
+                    Debug.Log("Write Successed");
+                    InputField.SetActive(false);
+                    MyName = arg;
+                    NetworkManager.instance.TryJoinRandomRoom();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("The process failed : " + e.ToString());
+                }
+
             }
             catch (Exception e)
             {
                 Debug.Log("The process failed : " + e.ToString());
             }
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log("The process failed : " + e.ToString());
         }
     }
 }

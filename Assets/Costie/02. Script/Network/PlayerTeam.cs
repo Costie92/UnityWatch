@@ -72,7 +72,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     {
         ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageUnReady;
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
-        MyNameText.text = PlayerName.instance.MyName;
+        MyNameText.text = MyName;
         //if (PhotonNetwork.InRoom)
         //{
         //    if (SceneManager.GetActiveScene().name == "LobbyScene")
