@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 namespace hcp
 {
@@ -12,7 +11,7 @@ namespace hcp
         struct touchFingerID
         {
             public int fingerID;
-            //   public Vector3 vector;
+            public Vector3 touchedPos;
             public bool activated;
 
             public void Activate(int fID)
@@ -201,7 +200,12 @@ namespace hcp
             {
                 moveContTouch.DeActivate();
                 rotateContTouch.DeActivate();
-                targetHero.MoveHero(Vector3.zero);    //무빙은 계속 쏴줘야함.
+                cont.transform.position = contBack.transform.position;
+                charactorMoveV = Vector3.zero;
+                rcont.transform.position = rcontBack.transform.position;
+                charactorRotateV = Vector3.zero;
+
+                targetHero.MoveHero(charactorMoveV);    //무빙은 계속 쏴줘야함.
 
                 return;
             }
@@ -210,6 +214,52 @@ namespace hcp
 
             for (int i = 0; i < touches.Length; i++)
             {
+
+                Touch touch = touches[i];
+                TouchPhase phase = touch.phase;
+                int fingerID = touch.fingerId;
+                Vector3 touchPos = touch.position;
+                
+                switch (phase)
+                    {
+                        case TouchPhase.Began:
+                        if (moveController.IsInThisContPos(touchPos))
+                        {
+                            moveContTouch.Activate(fingerID);
+                        }
+                        else if (rotateController.IsInThisContPos(touchPos))
+                        {
+                            rotateContTouch.Activate(fingerID);
+                        }
+                            break;
+                        case TouchPhase.Moved:
+                        case TouchPhase.Stationary:
+                        if (moveContTouch.activated && moveContTouch.IsThisTouchFID(fingerID))
+                        {
+                            moveContTouch.touchedPos = touchPos;
+                        }
+                        if (rotateContTouch.activated && rotateContTouch.IsThisTouchFID(fingerID))
+                        {
+                            rotateContTouch.touchedPos = touchPos;
+                        }
+
+                        break;
+
+                        case TouchPhase.Ended:
+                        case TouchPhase.Canceled:
+                        if (moveContTouch.IsThisTouchFID(fingerID))
+                        {
+                            moveContTouch.DeActivate();
+                        }
+                        else if (rotateContTouch.IsThisTouchFID(fingerID))
+                        {
+                            rotateContTouch.DeActivate();
+                        }
+                            break;
+                    }
+
+
+                /*
                 if (EventSystem.current.IsPointerOverGameObject(touches[i].fingerId) && 
                     touches[i].phase == TouchPhase.Began)   //게임 오브젝트에 올려진 터치의 시작이라면.
                 {
@@ -236,6 +286,7 @@ namespace hcp
                         rotateContTouch.DeActivate();
                     }
                 }
+                */
             }
 
             On_MoveContAndroid();
@@ -295,28 +346,30 @@ namespace hcp
                 charactorMoveV = Vector3.zero;
                 return;
             }
-
-            Vector3 moveTouchPos = Vector3.down;
+            /*
             bool hasTouch = false;
-            Touch[] touches = Input.touches;
-            for (int i = 0; i < touches.Length; i++)
+            for (int i = 0; i < Input.touches.Length; i++)
             {
-                if (touches[i].fingerId == moveContTouch.fingerID)
-                {
+                if (moveContTouch.fingerID == Input.touches[i].fingerId)
                     hasTouch = true;
-                    moveTouchPos = Camera.main.ScreenToWorldPoint(touches[i].position);
-                }
             }
+
             if (!hasTouch)
             {
+                moveContTouch.DeActivate();
+                Debug.Log("무브 컨트롤러 핑거아이디가 적재되어있지 않음");
                 cont.transform.position = contBack.transform.position;
                 charactorMoveV = Vector3.zero;
                 return;
             }
+            
 
+            Touch moveTouch = Input.GetTouch(moveContTouch.fingerID);
+           */
+
+            Vector3 touchPos = moveContTouch.touchedPos;
             Vector3 contV;
-
-            Vector3 moveV = ChangexyVector3ToxzVector3( moveController.GetMoveVector(moveTouchPos, out contV));
+            Vector3 moveV = ChangexyVector3ToxzVector3( moveController.GetMoveVector(touchPos, out contV));
             cont.transform.position = contV;
             charactorMoveV = moveV;
 #endif
@@ -331,29 +384,31 @@ namespace hcp
                 charactorRotateV = Vector3.zero;
                 return;
             }
+            /*
 
-            Vector3 moveTouchPos = Vector3.down;
             bool hasTouch = false;
-            Touch[] touches = Input.touches;
-            for (int i = 0; i < touches.Length; i++)
+            for (int i = 0; i < Input.touches.Length; i++)
             {
-                if (touches[i].fingerId == rotateContTouch.fingerID)
-                {
+                if (rotateContTouch.fingerID == Input.touches[i].fingerId)
                     hasTouch = true;
-                    moveTouchPos = Camera.main.ScreenToWorldPoint(touches[i].position);
-                }
             }
+
             if (!hasTouch)
             {
+                rotateContTouch.DeActivate();
+                Debug.Log("로테이트 컨트롤러 핑거아이디가 적재되어있지 않음");
                 rcont.transform.position = rcontBack.transform.position;
                 charactorRotateV = Vector3.zero;
                 return;
             }
 
+            Touch rotateTouch = Input.GetTouch(rotateContTouch.fingerID);
+            */
+            Vector3 touchPos = rotateContTouch .touchedPos;
             Vector3 contV;
-
-            Vector3 rotateV = rotateController.GetMoveVector(moveTouchPos, out contV);
+            Vector3 rotateV = rotateController.GetMoveVector(touchPos, out contV);
             rcont.transform.position = contV;
+            rotateV.y *= -1;
             charactorRotateV = rotateV;
 #endif
         }
