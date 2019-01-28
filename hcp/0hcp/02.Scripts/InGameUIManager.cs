@@ -139,7 +139,43 @@ namespace hcp
             
         }
 
-       
+        #region 터치 잘 받나 체크용
+        [System.Serializable]
+        struct touchCK {
+            public int fid;
+            public Vector3 pos;
+            TouchPhase phase;
+            public void TouchAccept(Touch t)
+            {
+                fid = t.fingerId;
+                pos = t.position;
+                phase = t.phase;
+            }
+            public void ReSet()
+            {
+                fid = -1; pos = Vector3.zero; phase = TouchPhase.Canceled;
+            }
+        }
+
+        [SerializeField]
+        touchCK[] ts = new touchCK[5];
+        
+        void TestTouches()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                ts[i] = new touchCK();
+            }
+
+            for (int i = 0; i < Input.touches.Length; i++)
+            {
+                ts[i].TouchAccept(Input.touches[i]);
+            }
+
+        }
+
+        #endregion
+
         void Update()
         {
             if (targetHero == null) return;
@@ -159,6 +195,8 @@ namespace hcp
             #region 안드로이드  (터치)
 #if UNITY_ANDROID
 
+            TestTouches();
+
             if (Input.touchCount == 0)
             {
                 moveContTouch.DeActivate();
@@ -169,6 +207,7 @@ namespace hcp
             }
 
             Touch[] touches = Input.touches;
+
             for (int i = 0; i < touches.Length; i++)
             {
                 if (EventSystem.current.IsPointerOverGameObject(touches[i].fingerId) && 
@@ -211,6 +250,7 @@ namespace hcp
             }
 #endif
             #endregion
+            /*
             #region 에디터
 
             //#if UNITY_EDITOR
@@ -241,7 +281,7 @@ namespace hcp
             }
 //#endif
 #endregion
-
+            */
         }
 
 #region Basic Moving And Rotating
@@ -327,25 +367,31 @@ namespace hcp
                                    //이제 쉐이더 넣고 해주면 됨.
         {
 //#if UNITY_EDITOR
+/*
             contTouched = true; //임시 (회전 값 보정 위해.)
             Vector3 contV;
             Vector3 moveV = ChangexyVector3ToxzVector3( moveController.GetMoveVector(Input.mousePosition, out contV));
             cont.transform.position = contV;
             charactorMoveV = moveV;
+            */
 //#endif
         }
         public void On_MoveStop()
         {
 //#if UNITY_EDITOR
+/*
             contTouched = false;
             cont.transform.position = contBack.transform.position;
-            charactorMoveV = Vector3.zero;
+            charactorMoveV = Vector3.zero; 
+            */
 //#endif
         }
+       
 
-#endregion
 
-        
+        #endregion
+
+
         public void OnClick_NormalAttack()
         {
             targetHero.ControlHero(E_ControlParam.NormalAttack);

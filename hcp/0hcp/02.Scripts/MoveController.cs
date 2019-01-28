@@ -21,9 +21,9 @@ namespace hcp
             contRangeMaxMagDiv = 1 / contRangeMaxMag;
             //  Debug.Log("받은 센터 포지션 = "+ moveContCenter +"받은 맥스 포지션 = " + moveContRangeMaxPos+"맥스까지 벡터="+maxContLength);
         }
-        public bool IsInThisContPos(Vector2 inputPos)
+        public bool IsInThisContPos(Vector3 inputPos)
         {
-            return (inputPos - (Vector2)moveContCenter ).sqrMagnitude <= contRangeMaxSqrMag;
+            return (inputPos - moveContCenter ).sqrMagnitude <= contRangeMaxSqrMag;
         }
 
         public Vector3 GetMoveVector(Vector3 currMousePosition, out Vector3 controllerPos)

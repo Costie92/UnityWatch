@@ -7847,6 +7847,15 @@ MonoBehaviour:
   maxBullet: 25
   correctionRange: 1
   correctionMaxLength: 20
+  HSMagazineUIPrefab: {fileID: 1125556077154114, guid: cc23e036ba6d7b4498ee790bb615e9c8,
+    type: 2}
+  HSBulletImage: {fileID: 1564937797873438, guid: adc5b278080426843aeda2404c00d7bc,
+    type: 2}
+  HSBulletImageBack: {fileID: 1356132258903072, guid: 5f96bda073c1cd14d86c90a097335d85,
+    type: 2}
+  HSMagazineUI: {fileID: 0}
+  HSMagazineUICurrBulletImageParent: {fileID: 0}
+  currBulletUIText: {fileID: 0}
   reloading: 0
   reloadClip: {fileID: 7400000, guid: e842d52bbeb5a7244ae4a58f71607353, type: 2}
   healDroneCoolTime: 15
