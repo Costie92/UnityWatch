@@ -35,7 +35,7 @@
 
 						half4 frag(float4 pos : SV_POSITION) : COLOR
 					{					
-					//	if (!setOccludeVision) discard;
+						if (!setOccludeVision) discard;
 						return occludeColor;
 					}
 

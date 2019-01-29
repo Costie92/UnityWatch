@@ -173,7 +173,9 @@ namespace hcp
             }
             for (int i = 0; i < heroRenderers.Length; i++)
             {
-                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
+                heroRenderers[i].material.SetFloat("setOccludeVision", 0f);
+             //   heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
+                Debug.Log(heroRenderers[i].material.GetShaderPassEnabled("OccludePass"));
             }
 
 
@@ -292,7 +294,7 @@ namespace hcp
                 dieAction();
             }
 
-            if (attackerPhotonViewID == TeamInfo.GetInstance().MyPhotonViewIDKey)
+            else if (attackerPhotonViewID*0.001f == TeamInfo.GetInstance().MyPhotonViewIDKey)
             {
                 SetOcclude(2f);
             }
@@ -577,13 +579,17 @@ namespace hcp
         {
             for (int i = 0; i < heroRenderers.Length; i++)
             {
-                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", true);
+
+                heroRenderers[i].material.SetFloat("setOccludeVision", 1f);
+                //heroRenderers[i].material.SetShaderPassEnabled("OccludePass", true);
             }
             yield return new WaitForSeconds(occludeTime);
 
             for (int i = 0; i < heroRenderers.Length; i++)
             {
-                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
+
+                heroRenderers[i].material.SetFloat("setOccludeVision", 0f);
+                //heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
             }
         }
     }

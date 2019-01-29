@@ -12,6 +12,7 @@ namespace hcp
         {
             get { return myPhotonViewIDKey; }
         }
+
         [SerializeField]
         int myTeamLayer;
         public int MyTeamLayer
