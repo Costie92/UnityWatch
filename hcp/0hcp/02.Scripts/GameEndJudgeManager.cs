@@ -205,6 +205,10 @@ namespace hcp
                 gameEndText.gameObject.SetActive(true);
             }
 
+            yield return new WaitForSeconds(5f);
+
+            Destroy(NetworkManager.instance.gameObject);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingScene");
         }
       
     }
