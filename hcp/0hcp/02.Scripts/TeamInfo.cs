@@ -142,7 +142,7 @@ namespace hcp
             {
                 heroPhotonIDDic.Add(heroes[i].photonView.ViewID, heroes[i]);
                 int heroPhotonID = heroes[i].photonView.ViewID / 1000;  //이 영웅의 포톤뷰 키
-
+             
 
                 int setLayerByNM = LayerMask.NameToLayer( teamInfoDic[heroPhotonID]);   //네트워크 매니저에서 저장되어 넘어온 이 포톤뷰의 팀 설정 (레이어)
                 if (setLayerByNM ==  myTeamLayer)

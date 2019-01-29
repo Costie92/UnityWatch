@@ -171,6 +171,11 @@ namespace hcp
             {
                 heroRenderers[i].material = new Material(heroRenderers[i].material);
             }
+            for (int i = 0; i < heroRenderers.Length; i++)
+            {
+                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
+            }
+
 
             dieAction = new System.Action(DieCallBack);
 
@@ -286,6 +291,12 @@ namespace hcp
                 }
                 dieAction();
             }
+
+            if (attackerPhotonViewID == TeamInfo.GetInstance().MyPhotonViewIDKey)
+            {
+                SetOcclude(2f);
+            }
+
         }
 
         public void ShowKillLog(string kn, E_HeroType kt)
@@ -545,6 +556,34 @@ namespace hcp
             {
                 heroRenderers[i].material.SetFloat("outLineWidth", outLineWidth);
                 heroRenderers[i].material.SetColor("outLineColor", outLineColor);
+            }
+        }
+
+        [SerializeField]
+        float occludeReservationTime;
+        public virtual void SetOcclude(float occludeTime)
+        {
+            float newOccludeReserveTime = Time.time + occludeTime;
+
+            if (occludeReservationTime < newOccludeReserveTime) //새롭게 들어온 오클루드가 더 길때
+            {
+                occludeReservationTime = newOccludeReserveTime;
+                StopCoroutine(OccludeShowAndOff(occludeTime));
+                StartCoroutine(OccludeShowAndOff(occludeTime));
+            }
+        }
+
+        IEnumerator OccludeShowAndOff( float occludeTime)
+        {
+            for (int i = 0; i < heroRenderers.Length; i++)
+            {
+                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", true);
+            }
+            yield return new WaitForSeconds(occludeTime);
+
+            for (int i = 0; i < heroRenderers.Length; i++)
+            {
+                heroRenderers[i].material.SetShaderPassEnabled("OccludePass", false);
             }
         }
     }

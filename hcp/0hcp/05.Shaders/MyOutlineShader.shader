@@ -5,57 +5,85 @@
 		_MainTex ("Texture", 2D) = "white" {}
 		outLineWidth("outline width",Range(0,0.1)) = 1
 			outLineColor("outLineColor",Color) = (1,1,1,1)
+			occludeColor("occludeColor",Color)=(1,0,0,1)
+			[Toggle] setOccludeVision("setOccludeVision",Float)=0
 	}
 		SubShader
 		{
 			Tags { "RenderType" = "Opaque" }
 			LOD 100
+				Pass	//맵핵 패스
+				{
+			Name "OccludePass"
+					Tags { "Queue" = "Geometry+1" }
+					ZTest Greater
+					ZWrite Off
 
-				Pass{
-			Cull Front
-			CGPROGRAM
+					CGPROGRAM
+					#pragma vertex vert            
+					#pragma fragment frag
+					//	#pragma fragmentoption ARB_precision_hint_fastest
+
+					half4 occludeColor;
+					float setOccludeVision;
+
+					float4 vert(float4 pos : POSITION) : SV_POSITION
+					{
+						float4 viewPos = UnityObjectToClipPos(pos);
+						return viewPos;
+					}
+
+						half4 frag(float4 pos : SV_POSITION) : COLOR
+					{					
+					//	if (!setOccludeVision) discard;
+						return occludeColor;
+					}
+
+					ENDCG
+				}
+
+				Pass	//외곽선 패스
+					{
+				Cull Front
+				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
 
-			sampler2D _MainTex;
-			float outLineWidth;
-			half4 outLineColor;
+				sampler2D _MainTex;
+				float outLineWidth;
+				half4 outLineColor;
 
-			struct vi {
-			float4 vertex  :POSITION;
-			float3 normal  :NORMAL;
-			float2 uv : TEXCOORD0;
-		};
+				struct vi {
+				float4 vertex  :POSITION;
+				float3 normal  :NORMAL;
+				};
 
-		struct vo {
-			float4 vertex  :POSITION;
-			float2 uv : TEXCOORD0;
+				float4 vert(vi input) :SV_POSITION
+				{
+					float4 vertex=  UnityObjectToClipPos(
+								input.vertex
+								+ normalize(input.normal)*outLineWidth
+								);
 
-		};
-
-		vo vert(vi input){
-			vo o;
+					return vertex;
 			
 		//	o.vertex += (float4)(normalize(input.normal)*outLineWidth,1);
 			
-			o.vertex = UnityObjectToClipPos(input.vertex
-				+ normalize(input.normal)*outLineWidth
-			);
+			
 			/*
 			float3 normal = mul((float3x3) UNITY_MATRIX_MV, input.normal);
 			normal.x *= UNITY_MATRIX_P[0][0];
 			normal.y *= UNITY_MATRIX_P[1][1];
 			o.vertex.xy += normal.xy * outLineWidth;
 			*/
-			o.uv = input.uv;
-			return o;
-		}
+			//return o;
+				}
 
-		fixed4 frag(vo i) : COLOR
-		{
-			return outLineColor;
-		}
-		ENDCG
+				fixed4 frag(float4 pos : POSITION) : COLOR
+				{
+					return outLineColor;
+				}
+				ENDCG
 		}
 
 		Pass
