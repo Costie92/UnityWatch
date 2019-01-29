@@ -106,9 +106,6 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         }
     }
     public void PosAfterDictionary() {
-        Debug.Log("PosAfterDictionary");
-        Debug.Log("MY ID IS : " + photonView.ViewID);
-        Debug.Log(NetworkManager.instance.Teams.Count);
         MyTeam = NetworkManager.instance.Teams[photonView.ViewID / 1000];
         //int MyPos = MyTeam == hcp.Constants.teamA_LayerName ? NetworkManager.instance.TeamACount : NetworkManager.instance.TeamBCount;
         int MyPos = 0;
@@ -120,7 +117,6 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
             if (MyTeam == pair.Value) {
                 MyPos++;
             }
-            Debug.Log("My POS IS : " + MyPos);
         }
         
         PosTeam(MyTeam, MyPos);

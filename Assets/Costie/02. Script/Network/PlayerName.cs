@@ -75,7 +75,6 @@ public class PlayerName : MonoBehaviour {
 
     public void OnSendName(string arg)
     {
-        Debug.Log(arg);
         if (arg != "")
         {
             try
@@ -93,11 +92,10 @@ public class PlayerName : MonoBehaviour {
                         Debug.Log("File path exist already.");
                     }
                     File.Create(path + "/" + Filepath).Dispose();
-                    Debug.Log("File Created");
+
                     StreamWriter sw1 = new StreamWriter(path + "/" + Filepath);
                     sw1.Write(arg);
                     sw1.Close();
-                    Debug.Log("Write Successed");
                     InputField.SetActive(false);
                     MyName = arg;
                     NetworkManager.instance.TryJoinRandomRoom();

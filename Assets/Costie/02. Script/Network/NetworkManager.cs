@@ -132,7 +132,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 Application.Quit();
             }
         }
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 2)
         {
             if (TimerStart)
             {
@@ -235,11 +235,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Debug.Log(SceneManager.GetActiveScene().buildIndex == 0);
-        if (SceneManager.GetActiveScene().buildIndex == 0) {
+        if (SceneManager.GetActiveScene().buildIndex == 1) {
             RemoveDictionary(otherPlayer.ActorNumber);
         }
-        Debug.Log(otherPlayer.ActorNumber);
         if (onClientLeft != null)
         {
             onClientLeft();
@@ -248,12 +246,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Debug.Log(newPlayer.ActorNumber + " Enter");
+        //Debug.Log(newPlayer.ActorNumber + " Enter");
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        if (SceneManager.GetActiveScene().buildIndex == 0)
+        if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (PhotonNetwork.IsMasterClient)
             {
@@ -262,7 +260,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 {
                     if (items.photonView.ViewID / 1000 == myID)
                     {
-                        Debug.Log("My Photon ID is " + items.photonView.ViewID);
                         items.BecomeToMaster();
                     }
                 }
@@ -278,7 +275,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("Joined Lobby");
+        //Debug.Log("Joined Lobby");
         //PhotonNetwork.JoinRandomRoom();
         //RoomOptions roomOptions = new RoomOptions();
         if (PlayerName.instance.HaveName)
@@ -291,12 +288,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Hashtable hashTable = new Hashtable();
         PhotonNetwork.Instantiate(LobbyPlyaers.name, this.transform.position, this.transform.rotation, 0);
-        Debug.Log("Joined Room");
+        //Debug.Log("Joined Room");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("Can't join random room!");
+        //Debug.Log("Can't join random room!");
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)4 };
         RandomNumber = Random.Range(0, 10000);
         PhotonNetwork.CreateRoom(RandomNumber.ToString("N"), roomOps);
@@ -312,23 +309,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonTime = time;
         //TimeStarted = System.DateTime.Parse(date);
         TimerStart = Start;
-        Debug.Log(PhotonTime + " " + TimerStart);
-    }
-
-    [PunRPC]
-    public void HookSucessed(int a, int b, PhotonMessageInfo info)
-    {
-        Debug.Log("Arg 1 : " + a + ", Arg 2 : " + b);
-        Debug.Log(info.Sender.UserId);
-        Debug.Log(info.Sender.ActorNumber);
-    }
-    [PunRPC]
-    public void SendPlayersStas(double a, bool b) {
-
-    }
-    [PunRPC]
-    public void SendPlayersStas(int[] a, string[] b, bool[] c, int[] d, int e) {
-
     }
 
     [PunRPC]
@@ -337,11 +317,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         int pVID = pViewID / 1000;
         switch (TeamString) {
             case "A":
-                Debug.Log(pVID + " : Assigned A");
+                //Debug.Log(pVID + " : Assigned A");
                 Teams[pVID] = hcp.Constants.teamA_LayerName;
                 break;
             case "B":
-                Debug.Log(pVID + " : Assigned B");
+                //Debug.Log(pVID + " : Assigned B");
                 Teams[pVID] = hcp.Constants.teamB_LayerName;
                 break;
             default:
@@ -354,10 +334,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         int pVID = pViewID / 1000;
         switch (heroType) {
             case hcp.E_HeroType.Soldier:
-                Debug.Log(pVID + " : Select Soldier");
+                //Debug.Log(pVID + " : Select Soldier");
                 break;
             case hcp.E_HeroType.Hook:
-                Debug.Log(pVID + " : Select Hook");
+                //Debug.Log(pVID + " : Select Hook");
                 break;
             default:
                 break;
@@ -375,11 +355,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             if (myID == 0)
                 myID = pVID;
             Players.Add(pVID, false);
-            Debug.Log(" ID : " + pVID + " Joined");
+            //Debug.Log(" ID : " + pVID + " Joined");
         }
         if (!Heros.ContainsKey(pVID)) {
             Heros.Add(pVID, hcp.E_HeroType.Soldier);
-            Debug.Log("My Hero is Soldier");
+            //Debug.Log("My Hero is Soldier");
         }
         if (!Teams.ContainsKey(pVID))
         {
@@ -396,12 +376,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
             if ((TeamACount <= TeamBCount))
             {
-                Debug.Log("Assigned A");
+                //Debug.Log("Assigned A");
                 Teams.Add(pVID, hcp.Constants.teamA_LayerName);
             }
             else
             {
-                Debug.Log("Assigned B");
+                //Debug.Log("Assigned B");
                 Teams.Add(pVID, hcp.Constants.teamB_LayerName);
             }
         }
@@ -460,7 +440,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (items.photonView.IsMine)
             {
-                Debug.Log("HI");
+                //Debug.Log("HI");
             }
             items.PosAfterDictionary();
         }
@@ -472,7 +452,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Names.ContainsKey(pVID))
         {
             Names.Add(pVID, name);
-            Debug.Log(" ID : " + pVID + "Name is : " + name);
+            //Debug.Log(" ID : " + pVID + "Name is : " + name);
         }
     }
 
@@ -483,11 +463,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Players[pVID] = !Players[pVID];
         if (Players[pVID])
         {
-            Debug.Log(" ID : " + pVID + " Ready");
+            //Debug.Log(" ID : " + pVID + " Ready");
         }
         else
         {
-            Debug.Log(" ID : " + pVID + " UnReady");
+            //Debug.Log(" ID : " + pVID + " UnReady");
         }
     }
 
@@ -497,7 +477,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Photon.Realtime.Player[] photonPlayers = PhotonNetwork.PlayerListOthers;
-            Debug.Log("Plyaer Count : " + photonPlayers.Length);
             var enumerator = Players.GetEnumerator();
             ReadyCount = 0;
             while (enumerator.MoveNext())
@@ -507,7 +486,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 {
                     ReadyCount++;
                 }
-                Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
             }
             var Teamenumerator = Teams.GetEnumerator();
 
@@ -523,7 +501,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 else {
                     TeamBCount++;
                 }
-                Debug.Log("Key : " + items.Key + ", Value : " + items.Value);
             }
             if ((photonPlayers.Length == ReadyCount && TeamACount == TeamBCount) || photonPlayers.Length == 0)
             {
@@ -549,7 +526,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (Names.ContainsKey(pViewID)) {
             RemoveSuccess = RemoveSuccess && Names.Remove(pViewID);
         }
-        Debug.Log(RemoveSuccess);
+        //Debug.Log(RemoveSuccess);
     }
 
     public void TryJoinRandomRoom() {

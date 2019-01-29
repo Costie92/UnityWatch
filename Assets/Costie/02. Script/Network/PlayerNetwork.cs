@@ -66,7 +66,6 @@ public class PlayerNetwork : MonoBehaviour, IPunObservable {
             m_UIText.text = Health.ToString();
         }
         else {
-            Debug.Log(photonView.ViewID);
             m_UIText.text = "";
             Playercamera.SetActive(false);
             foreach (MonoBehaviour m in playerControlscripts) {
