@@ -299,7 +299,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Can't join random room!");
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)4 };
         RandomNumber = Random.Range(0, 10000);
-        PhotonNetwork.CreateRoom(RandomNumber.ToString("N"),roomOps);
+        PhotonNetwork.CreateRoom(RandomNumber.ToString("N"), roomOps);
     }
 
     [PunRPC]
@@ -308,7 +308,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void SendTimerSetting(double time,bool Start) {
+    public void SendTimerSetting(double time, bool Start) {
         PhotonTime = time;
         //TimeStarted = System.DateTime.Parse(date);
         TimerStart = Start;
@@ -321,6 +321,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Arg 1 : " + a + ", Arg 2 : " + b);
         Debug.Log(info.Sender.UserId);
         Debug.Log(info.Sender.ActorNumber);
+    }
+    [PunRPC]
+    public void SendPlayersStas(double a, bool b) {
+
     }
     [PunRPC]
     public void SendPlayersStas(int[] a, string[] b, bool[] c, int[] d, int e) {
