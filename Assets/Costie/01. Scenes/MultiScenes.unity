@@ -1858,8 +1858,7 @@ Prefab:
   m_IsPrefabAsset: 0
 --- !u!4 &72799567 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 408914, guid: 3aea2b1d4d0db3542af1e9d3474cf6fe,
-    type: 2}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 72799566}
 --- !u!1001 &72802795
 Prefab:
@@ -7992,6 +7991,41 @@ Prefab:
         type: 2}
       propertyPath: InstantiationId
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: enemyTeamColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: enemyTeamColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: enemyTeamColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: myTeamColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: myTeamColor.g
+      value: 0.97310853
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: myTeamColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114403891282351062, guid: 7eefeeb4aa7836a4392278840096d96c,
+        type: 2}
+      propertyPath: outLineWidth
+      value: 0.006
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7eefeeb4aa7836a4392278840096d96c, type: 2}

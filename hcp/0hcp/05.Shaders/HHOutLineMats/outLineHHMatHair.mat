@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: outLineHHMat
+  m_Name: outLineHHMatHair
   m_Shader: {fileID: 4800000, guid: 1c5c2b6d9bd337e449d95ae8fa10a9a4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 41b91128a19b36942adfda7b33e9fcad, type: 3}
+        m_Texture: {fileID: 2800000, guid: 903bd8015ca717f4d838384fc2d92ad4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:

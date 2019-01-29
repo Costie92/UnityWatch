@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: outLineHHMat 2
+  m_Name: outLineHHMatBody
   m_Shader: {fileID: 4800000, guid: 1c5c2b6d9bd337e449d95ae8fa10a9a4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -78,7 +78,7 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
-    - outLineWidth: 0.0115
+    - outLineWidth: 0.0074
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColour1: {r: 1, g: 1, b: 1, a: 1}

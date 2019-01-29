@@ -40,6 +40,8 @@ namespace hcp
                 return playerName;
             }
         }
+        [SerializeField]
+        Renderer[] heroRenderers;
 
         [SerializeField]
         float respawnTime = 5f;
@@ -165,6 +167,11 @@ namespace hcp
         }
         protected virtual void Awake()
         {
+            for (int i = 0; i < heroRenderers.Length; i++)
+            {
+                heroRenderers[i].material = new Material(heroRenderers[i].material);
+            }
+
             dieAction = new System.Action(DieCallBack);
 
             rb = this.gameObject.GetComponent<Rigidbody>();
@@ -530,6 +537,15 @@ namespace hcp
                 }
             transform.position = spawnPoint.position + Vector3.up * 2f;
                 transform.rotation = spawnPoint.rotation;
+        }
+
+        public virtual void SetOutLine(float outLineWidth,Color outLineColor)
+        {
+            for (int i = 0; i < heroRenderers.Length; i++)
+            {
+                heroRenderers[i].material.SetFloat("outLineWidth", outLineWidth);
+                heroRenderers[i].material.SetColor("outLineColor", outLineColor);
+            }
         }
     }
 }

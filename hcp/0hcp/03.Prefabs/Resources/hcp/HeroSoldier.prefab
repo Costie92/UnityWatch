@@ -7740,7 +7740,7 @@ MonoBehaviour:
   - {fileID: 114294148763764470}
   - {fileID: 114421732369849136}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &114294148763764470
 MonoBehaviour:
@@ -7812,6 +7812,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heroType: 0
   playerName: 
+  heroRenderers:
+  - {fileID: 137008791562066542}
+  - {fileID: 137274297636987990}
+  - {fileID: 137473369313055214}
+  - {fileID: 137989094319771480}
+  - {fileID: 137319471678756840}
+  - {fileID: 137733907670584580}
   respawnTime: 5
   rotateYUpLimit: 45
   rotateYDownLimit: 10
@@ -8276,7 +8283,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 857e5ac310b46684382595591482203c, type: 2}
+  - {fileID: 2100000, guid: b1edc356244d09d4aa42625d1a2812a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8380,7 +8387,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: f538095d4955e5046af177d5a42aece9, type: 2}
+  - {fileID: 2100000, guid: ed0a80885883f9949a4686cbf1490089, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8484,7 +8491,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 03455ced4e5a89b41a93e4f534046fe3, type: 2}
+  - {fileID: 2100000, guid: be47b2f77faefbd418cc7532c247c17b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8588,7 +8595,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 2249ce5f96708174185fe6d2b31426c8, type: 2}
+  - {fileID: 2100000, guid: a9189407c86b73e439d44d0321401c44, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8692,7 +8699,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 42911fa235967a24e97c18fd3b0e65c2, type: 2}
+  - {fileID: 2100000, guid: 0452823765235ad44be3b2b87ae9969d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8796,7 +8803,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: e122404a2fb9d3d419438bcf965e5d59, type: 2}
+  - {fileID: 2100000, guid: 45b58dbf2c367f4429fe5625b7bb85b6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -64,6 +64,15 @@ namespace hcp
 
         public bool isTeamSettingDone=false;
 
+        [SerializeField]
+        Color enemyTeamColor;
+        [SerializeField]
+        Color myTeamColor;
+        [SerializeField]
+        [Range(0, 0.1f)]
+        float outLineWidth;
+
+
         private void Awake()
         {
             if (_instance == null)
@@ -140,12 +149,14 @@ namespace hcp
                 {
                     myTeamHeroes.Add(heroes[i]);
                     heroes[i].gameObject.layer = myTeamLayer;
+                    heroes[i].SetOutLine(outLineWidth, myTeamColor);
                 }
                 else
                 {
                     //내팀이 아니면 일단 적이고
                     enemyHeroes.Add(heroes[i]);
                     heroes[i].gameObject.layer = setLayerByNM;  //저장되어 넘어온 레이어를 영웅에 넣어줌.
+                    heroes[i].SetOutLine(outLineWidth, enemyTeamColor);
                 }
             }
 

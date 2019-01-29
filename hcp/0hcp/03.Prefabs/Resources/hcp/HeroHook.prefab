@@ -4687,6 +4687,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heroType: 0
   playerName: 
+  heroRenderers:
+  - {fileID: 137324351262693512}
+  - {fileID: 137220388188953060}
   respawnTime: 5
   rotateYUpLimit: 45
   rotateYDownLimit: 10
@@ -5114,7 +5117,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: a66c7d0527b036a409d275859476c395, type: 2}
+  - {fileID: 2100000, guid: 3d4995e5c7154f34a88d4d13b0cc7aaf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5192,7 +5195,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: fe6a22f35544fdd46b52ce3d2c49ac6c, type: 2}
+  - {fileID: 2100000, guid: 4ee2b1d464f698a488aeaf1bcdcea267, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
