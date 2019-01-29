@@ -181,7 +181,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     IEnumerator CreatePlayer()
     {
-
+        int myPos = 0;
         yield return new WaitForSeconds(1.0f);
         //lobbycamera = GameObject.Find("LobbyCamera");
         //if (lobbycamera)
@@ -195,6 +195,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
         //Destroy(photonView);
+        foreach (KeyValuePair<int, string> pair in Teams)
+        {
+            if (pair.Key == myID)
+            {
+                break;
+            }
+            if (pair.Value == Teams[myID]) {
+                myPos++;
+            }
+        }
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             SpawnPoint = MapInfo.instance.ASpawnPoint;
@@ -216,6 +226,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             SpawnPoint = MapInfo.instance.DSpawnPoint;
             Debug.Log(myID + " : Create at D");
         }
+        SpawnPoint.position += SpawnPoint.position + new Vector3(0, 0, 2 * myPos);
         if (Heros[myID] == hcp.E_HeroType.Soldier)
         {
             PhotonNetwork.Instantiate(Soldierpath, SpawnPoint.position, SpawnPoint.rotation, 0);
@@ -507,7 +518,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 buttons = null;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
                 PhotonNetwork.CurrentRoom.IsOpen = false;
-                PhotonNetwork.LoadLevel(1);
+                PhotonNetwork.LoadLevel(2);
             }
         }
     }
