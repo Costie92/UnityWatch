@@ -207,6 +207,10 @@ namespace hcp
 
             yield return new WaitForSeconds(5f);
 
+            PhotonNetwork.LeaveRoom();
+            PhotonNetwork.LeaveLobby();
+            PhotonNetwork.Disconnect();
+
             Destroy(NetworkManager.instance.gameObject);
             UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingScene");
         }
