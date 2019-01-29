@@ -195,7 +195,10 @@ namespace hcp
 
             if (photonView.IsMine)
             {
-                
+                for (int i = 0; i < heroRenderers.Length; i++)
+                {
+                    heroRenderers[i].enabled=false;
+                }
 
                 InGameUIManager.Instance.SetTargetHero(this);
                 Camera mainCam = Camera.main;
@@ -294,8 +297,9 @@ namespace hcp
                 dieAction();
             }
 
-            else if (attackerPhotonViewID*0.001f == TeamInfo.GetInstance().MyPhotonViewIDKey)
+            else if ( ((int)attackerPhotonViewID/1000) == TeamInfo.GetInstance().MyPhotonViewIDKey)
             {
+                Debug.Log("오클루드 실행");
                 SetOcclude(2f);
             }
 
@@ -579,7 +583,6 @@ namespace hcp
         {
             for (int i = 0; i < heroRenderers.Length; i++)
             {
-
                 heroRenderers[i].material.SetFloat("setOccludeVision", 1f);
                 //heroRenderers[i].material.SetShaderPassEnabled("OccludePass", true);
             }
