@@ -72,7 +72,7 @@ namespace hcp
             if (cnt == 0)
             {
                 //게임 종료.
-                judgeDone = true;
+             //   judgeDone = true;
                 photonView.RPC("GameJudgeReceived", RpcTarget.All, Constants.GetE_TeamByLayer(TeamInfo.GetInstance().MyTeamLayer));
             }
         }
@@ -85,7 +85,7 @@ namespace hcp
 
             if (payloadArrived)
             {
-                judgeDone = true;
+            //    judgeDone = true;
                 //화물 도착, 게임 종료.
                 photonView.RPC("GameJudgeReceived", RpcTarget.All, JudgeWhichTeamWin());
                 return;
@@ -96,7 +96,7 @@ namespace hcp
                 // 사람이 아무도 없으면 종료.
                 if (!payload.HeroClose)
                 {
-                    judgeDone = true;
+               //     judgeDone = true;
                     //화물 도착, 게임 종료.
                     photonView.RPC("GameJudgeReceived", RpcTarget.All, JudgeWhichTeamWin());
                     return;
@@ -110,14 +110,14 @@ namespace hcp
                         case E_Team.Team_A: //a팀이 우세한 경우.
                             if (payload.GetATeamCount > 0 && payload.GetBTeamCount == 0)
                             {
-                                judgeDone = true;
+                           //     judgeDone = true;
                                 photonView.RPC("GameJudgeReceived", RpcTarget.All, E_Team.Team_A);
                             }
                             break;
                         case E_Team.Team_B:
                             if (payload.GetATeamCount == 0 && payload.GetBTeamCount > 0)
                             {
-                                judgeDone = true;
+                              //  judgeDone = true;
                                 photonView.RPC("GameJudgeReceived", RpcTarget.All, E_Team.Team_B);
                             }
                             break;
@@ -150,7 +150,10 @@ namespace hcp
             {
                 payload.StopPayload();
             }
-            if (judgeDone) return;
+            if (judgeDone)
+            {
+                Debug.Log("이미 저지던이 켜져있으므로 기각");
+                return; }
             judgeDone = true;
             int winTeamLayer = Constants.GetLayerByE_Team(winTeam);
 
