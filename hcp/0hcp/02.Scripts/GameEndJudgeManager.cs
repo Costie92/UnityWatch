@@ -210,6 +210,8 @@ namespace hcp
             PhotonNetwork.LeaveRoom();
             PhotonNetwork.LeaveLobby();
             PhotonNetwork.Disconnect();
+            while (PhotonNetwork.IsConnected)
+                yield return null;
 
             Destroy(NetworkManager.instance.gameObject);
             UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingScene");

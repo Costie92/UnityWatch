@@ -111,8 +111,10 @@ Shader "Custom/MyDiffuseDissolveShader" {
 						//라이팅 위치만 문제가 되는 상환이니까 아예 빛 월드 포스를 하나 딱 둬버리는 것도 나쁘지 않을듯.
 
 						- mul(unity_ObjectToWorld, i.localPos));	//월드공간 라이팅 벡터 노말라이즈
-
-					float3 nvNormalize = normalize(mul(unity_ObjectToWorld, i.normal));	//월드공간 노말벡터 노말라이즈.
+					float3 wnV = mul(unity_ObjectToWorld, i.normal);
+					float3 nvNormalize = normalize(
+						wnV
+					);	//월드공간 노말벡터 노말라이즈.
 
 					/*
 					float3 camVNormalize = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, vertexed.localPos)); //월드공간 카메라 벡터 노말라이즈.

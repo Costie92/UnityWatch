@@ -7842,6 +7842,7 @@ MonoBehaviour:
   FPSCamPerHero: {fileID: 0}
   hpBar: {fileID: 114171302416772874}
   centerOffset: 1
+  occludeReservationTime: 0
   lastDir: 0
   firePos: {fileID: 4876097736563572}
   healDrone: {fileID: 114106299794873186}

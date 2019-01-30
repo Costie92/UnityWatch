@@ -296,11 +296,13 @@ namespace hcp
                 }
                 dieAction();
             }
-
-            else if ( ((int)attackerPhotonViewID/1000) == TeamInfo.GetInstance().MyPhotonViewIDKey)
+            else if ( TeamInfo.GetInstance().HeroPhotonIDDic[attackerPhotonViewID].gameObject.layer == TeamInfo.GetInstance().MyTeamLayer
+                
+               // ((int)attackerPhotonViewID/1000) == TeamInfo.GetInstance().MyPhotonViewIDKey)
+               )
             {
                 Debug.Log("오클루드 실행");
-                SetOcclude(2f);
+                SetOcclude(3f);
             }
 
         }
