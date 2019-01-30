@@ -121,7 +121,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         DontDestroyOnLoad(this);
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
-
+    private void OnDestroy()
+    {
+        SceneManager.activeSceneChanged -= SceneManager_activeSceneChanged;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -226,7 +229,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             SpawnPoint = MapInfo.instance.DSpawnPoint;
             Debug.Log(myID + " : Create at D");
         }
-        SpawnPoint.position += SpawnPoint.position + new Vector3(0, 0, 2 * myPos);
+        SpawnPoint.position += new Vector3(0, 0, 2 * myPos);
         if (Heros[myID] == hcp.E_HeroType.Soldier)
         {
             PhotonNetwork.Instantiate(Soldierpath, SpawnPoint.position, SpawnPoint.rotation, 0);
