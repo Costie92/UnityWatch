@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: outLineHHMatFace
-  m_Shader: {fileID: 4800000, guid: 1c5c2b6d9bd337e449d95ae8fa10a9a4, type: 3}
-  m_ShaderKeywords: RIMLIGHTTOGGLE_ON _USE_GRADIENT_ON
+  m_Shader: {fileID: 4800000, guid: 7c82db7da44411c47b2191438e14ad62, type: 3}
+  m_ShaderKeywords: OUTLINETOGGLE_ON RIMLIGHTTOGGLE_ON _USE_GRADIENT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -133,9 +133,9 @@ Material:
     - _Use_Gradient: 1
     - _ZWrite: 1
     - _cutoff: 0
-    - outLineToggle: 0
+    - outLineToggle: 1
     - outLineWidth: 0.0036
-    - rimLightRange: 0.334
+    - rimLightRange: 0
     - rimLightToggle: 1
     - setOccludeVision: 0
     m_Colors:
@@ -149,4 +149,4 @@ Material:
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - occludeColor: {r: 1, g: 0, b: 0, a: 1}
     - outLineColor: {r: 0, g: 0.8512273, b: 1, a: 1}
-    - rimLightColor: {r: 0, g: 0.8414297, b: 1, a: 1}
+    - rimLightColor: {r: 0, g: 0.55501795, b: 1, a: 1}

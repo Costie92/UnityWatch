@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: outLineHHMatBody
-  m_Shader: {fileID: 4800000, guid: 617fc0a94c4641145bf0e090ad52edf5, type: 3}
-  m_ShaderKeywords: RIMLIGHTTOGGLE_ON _USE_GRADIENT_ON
+  m_Shader: {fileID: 4800000, guid: 7c82db7da44411c47b2191438e14ad62, type: 3}
+  m_ShaderKeywords: OUTLINETOGGLE_ON RIMLIGHTTOGGLE_ON _USE_GRADIENT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -117,10 +117,10 @@ Material:
     - _Edges: 0.1
     - _Exposure: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 1
     - _GlossyReflections: 1
     - _Level: 0.1
-    - _Metallic: 0
+    - _Metallic: 1
     - _Mode: 0
     - _NoiseStrength: 0.4
     - _OcclusionStrength: 1
@@ -133,14 +133,14 @@ Material:
     - _Use_Gradient: 1
     - _ZWrite: 1
     - _cutoff: 0
-    - outLineToggle: 0
+    - outLineToggle: 1
     - outLineWidth: 0.0036
-    - rimLightRange: 0.673
+    - rimLightRange: 0
     - rimLightToggle: 1
     - setOccludeVision: 0
     m_Colors:
     - TempColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 0.24472576, b: 0, a: 1}
     - _EdgeColor1: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColour1: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColour2: {r: 1, g: 1, b: 1, a: 1}
@@ -149,4 +149,4 @@ Material:
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - occludeColor: {r: 1, g: 0, b: 0, a: 1}
     - outLineColor: {r: 0, g: 0.8512273, b: 1, a: 1}
-    - rimLightColor: {r: 0, g: 0.8414297, b: 1, a: 1}
+    - rimLightColor: {r: 0, g: 0.55501795, b: 1, a: 1}
