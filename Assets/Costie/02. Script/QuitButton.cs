@@ -26,10 +26,7 @@ public class QuitButton : MonoBehaviour {
     }
     public void onClickQuit()
     {
-        if (Application.platform == RuntimePlatform.WindowsEditor) {
-            UnityEditor.EditorApplication.isPlaying = false;
-        }
-        else
+        if (Application.platform == RuntimePlatform.Android)
         {
             Application.Quit();
         }
