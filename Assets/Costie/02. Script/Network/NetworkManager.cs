@@ -17,21 +17,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform SpawnPoint;
     [SerializeField] private bool TimerStart;
     [SerializeField] private Text TimerText;
+    [SerializeField] private int myID;
+    [SerializeField] private int RandomNumber;
+
     public bool GameEnd;
     public GameObject buttons;
     public Sprite imageSoldier, imageHook, imageReady, imageUnReady;
+    public int ReadyCount, TeamACount = 0, TeamBCount = 0;
+
     private System.TimeSpan timeSpan;
     private double PhotonTime;
     private System.TimeSpan nowTime;
-    //[SerializeField] private GameObject lobbycamera;
 
     private Dictionary<int, bool> players;
     private Dictionary<int, string> teams;
     private Dictionary<int, hcp.E_HeroType> heros;
     private Dictionary<int, string> names;
-    [SerializeField] private int myID;
-    public int ReadyCount, TeamACount = 0, TeamBCount = 0;
-    [SerializeField] private int RandomNumber;
+    
 
     private static NetworkManager _instance = null;
     public static NetworkManager instance
@@ -56,7 +58,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             players = value;
         }
     }
-
     public Dictionary<int, string> Teams
     {
         get
@@ -69,7 +70,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             teams = value;
         }
     }
-
     public Dictionary<int, hcp.E_HeroType> Heros
     {
         get
@@ -82,7 +82,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             heros = value;
         }
     }
-
     public Dictionary<int, string> Names
     {
         get
@@ -104,28 +103,39 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Use this for initialization
     void Start()
     {
+
+        ///게임 시간을 5분으로 설정
         GameEnd = false;
         TimerStart = false;
-        timeSpan = new System.TimeSpan(0, 10, 0);
-        nowTime = new System.TimeSpan(0, 10, 0);
+        timeSpan = new System.TimeSpan(0, 5, 0);
+        nowTime = new System.TimeSpan(0, 5, 0);
         buttons = GameObject.Find("Buttons");
         buttons.SetActive(false);
-        myID = 0;
+
+
+        ///딕셔너리 초기화
         Players = new Dictionary<int, bool>();
         Teams = new Dictionary<int, string>();
         Heros = new Dictionary<int, hcp.E_HeroType>();
         names = new Dictionary<int, string>();
+
+        myID = 0;
         ReadyCount = 0;
+
+
+        ///포톤 세팅
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
+
         DontDestroyOnLoad(this);
+
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
     private void OnDestroy()
     {
         SceneManager.activeSceneChanged -= SceneManager_activeSceneChanged;
     }
-    // Update is called once per frame
+
     void Update()
     {
         if (Application.platform == RuntimePlatform.Android)
@@ -158,13 +168,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    ///멀티 씬으로 전환시 플레이어 생성
     private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
     {
         if (arg1.name == "MultiScenes")
         {
-            foreach (KeyValuePair<int, string> pair in Names) {
-                Debug.Log("IDs : " + pair.Key + "Names : " + pair.Value);
-            }
             if (PhotonNetwork.InRoom)
             {
                 TimerText = GameObject.Find("Timer").GetComponent<Text>();
@@ -175,20 +183,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         if (currentName == null)
         {
-            // Scene1 has been removed
             currentName = "Replaced";
         }
-
-        Debug.Log("Scenes: " + currentName + ", " + arg1.name);
     }
 
     IEnumerator CreatePlayer()
     {
         int myPos = 0;
         yield return new WaitForSeconds(1.0f);
-        //lobbycamera = GameObject.Find("LobbyCamera");
-        //if (lobbycamera)
-        //    lobbycamera.SetActive(false);
+
+        ///마스터 클라이언트의 생성시간 전송
         if (PhotonNetwork.IsMasterClient)
         {
             TimerStart = true;
@@ -197,7 +201,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         string Soldierpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Soldier);
         string Hookpath = hcp.Constants.GetHeroPhotonNetworkInstanciatePath(hcp.E_HeroType.Hook);
-        //Destroy(photonView);
+
+
+        ////스폰 위치 설정
         foreach (KeyValuePair<int, string> pair in Teams)
         {
             if (pair.Key == myID)
@@ -211,25 +217,25 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (Teams[myID] == hcp.Constants.teamA_LayerName)
         {
             SpawnPoint = MapInfo.instance.ASpawnPoint;
-            Debug.Log(myID + " : Create at A");
-
+            //Debug.Log(myID + " : Create at A");
         }
         else if (Teams[myID] == hcp.Constants.teamB_LayerName)
         {
             SpawnPoint = MapInfo.instance.BSpawnPoint;
-            Debug.Log(myID + " : Create at B");
+            //Debug.Log(myID + " : Create at B");
         }
         else if (Teams[myID] == hcp.Constants.teamC_LayerName)
         {
             SpawnPoint = MapInfo.instance.CSpawnPoint;
-            Debug.Log(myID + " : Create at C");
+            //Debug.Log(myID + " : Create at C");
         }
         else if (Teams[myID] == hcp.Constants.teamD_LayerName)
         {
             SpawnPoint = MapInfo.instance.DSpawnPoint;
-            Debug.Log(myID + " : Create at D");
+            //Debug.Log(myID + " : Create at D");
         }
         SpawnPoint.position += new Vector3(0, 0, 2 * myPos);
+
         if (Heros[myID] == hcp.E_HeroType.Soldier)
         {
             PhotonNetwork.Instantiate(Soldierpath, SpawnPoint.position, SpawnPoint.rotation, 0);
@@ -242,13 +248,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    #region photon networking
     System.Action onClientLeft;
     public void AddListenerOnClientLeft(System.Action ac)
     {
         onClientLeft += ac;
     }
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+
+        ///플레이어가 나갔을 시 딕셔너리에서 제거
         if (SceneManager.GetActiveScene().buildIndex == 1) {
             RemoveDictionary(otherPlayer.ActorNumber);
         }
@@ -260,11 +270,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        //Debug.Log(newPlayer.ActorNumber + " Enter");
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
+
+        ///마스터 클라이언트가 되었을 때 버튼 설정 변경
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (PhotonNetwork.IsMasterClient)
@@ -281,30 +292,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    //포톤 서버 접속 시 로비 입장
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.JoinLobby();
     }
-
+    //로비 입장시 아이디 확인 이후 랜덤 룸 접속
     public override void OnJoinedLobby()
     {
-        //Debug.Log("Joined Lobby");
-        //PhotonNetwork.JoinRandomRoom();
-        //RoomOptions roomOptions = new RoomOptions();
         if (PlayerName.instance.HaveName)
         {
             PhotonNetwork.JoinRandomRoom();
         }
     }
-
+    //룸에 접속 성공하면 로비 캐릭터 생성
     public override void OnJoinedRoom()
     {
-        Hashtable hashTable = new Hashtable();
         PhotonNetwork.Instantiate(LobbyPlyaers.name, this.transform.position, this.transform.rotation, 0);
         //Debug.Log("Joined Room");
     }
-
+    //룸에 접속 실패 시 룸 생성
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         //Debug.Log("Can't join random room!");
@@ -313,18 +321,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(RandomNumber.ToString("N"), roomOps);
     }
 
+    #endregion
+
+    #region RPCs
+    //게임 시작 시간 요청 / 전송
     [PunRPC]
     public void RequestTime() {
         photonView.RPC("SendTimerSetting", RpcTarget.AllBufferedViaServer, PhotonTime, true);
     }
-
     [PunRPC]
     public void SendTimerSetting(double time, bool Start) {
         PhotonTime = time;
-        //TimeStarted = System.DateTime.Parse(date);
         TimerStart = Start;
     }
-
+    //팀 선택 시 딕셔너리 저장
     [PunRPC]
     public void SelectTeam(int pViewID,string TeamString)
     {
@@ -341,8 +351,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             default:
                 break;
         }
-        
     }
+    //영웅 선택 시 딕셔너리 저장
     [PunRPC]
     public void SelectHeroo(int pViewID, hcp.E_HeroType heroType) {
         int pVID = pViewID / 1000;
@@ -359,7 +369,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Heros[pVID] = heroType;
         
     }
-
+    //룸에 입장 시 딕셔너리 생성
     [PunRPC]
     public void Join(int pViewID)
     {
@@ -414,6 +424,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("MasterDictionary", RpcTarget.Others, DicpView, DicTeam, DicPlayer, DicHero, pViewID);
     }
+
+    //마스터 클라이언트 딕셔너리 동기화
     [PunRPC]
     public void MasterDictionary(int[] DicpView, string[] DicTeam, bool[] DicPlayer, int[] DicHero, int pViewID)
     {
@@ -459,6 +471,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             items.PosAfterDictionary();
         }
     }
+    //룸에 자신의 이름 딕셔너리 추가
     [PunRPC]
     public void Named(int pViewID, string name)
     {
@@ -466,10 +479,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!Names.ContainsKey(pVID))
         {
             Names.Add(pVID, name);
-            //Debug.Log(" ID : " + pVID + "Name is : " + name);
         }
     }
-
+    //레디 시 상태정보 전송
     [PunRPC]
     public void Ready(int pViewID)
     {
@@ -484,7 +496,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             //Debug.Log(" ID : " + pVID + " UnReady");
         }
     }
-
+    //플레이어 레디 상태 체크 이후 씬 전환
     [PunRPC]
     public void Play()
     {
@@ -525,7 +537,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
     }
+    #endregion
 
+    //플레이어가 나갈 경우 딕셔너리 제거 성공 여부
     public void RemoveDictionary(int pViewID) {
         bool RemoveSuccess = true;
         if (Players.ContainsKey(pViewID)) {
@@ -543,6 +557,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //Debug.Log(RemoveSuccess);
     }
 
+    //랜덤한 방에 접속 시도
     public void TryJoinRandomRoom() {
         PhotonNetwork.JoinRandomRoom();
     }

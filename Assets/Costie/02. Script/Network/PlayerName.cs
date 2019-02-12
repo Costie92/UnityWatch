@@ -5,12 +5,15 @@ using System;
 using System.IO;
 using UnityEngine.UI;
 public class PlayerName : MonoBehaviour {
+
     public bool HaveName;
     public string MyName;
     public static string path;
     public static string Filepath;
+
     [SerializeField] private GameObject InputField;
     [SerializeField] private InputField.SubmitEvent submitEvent;
+
     private static PlayerName _instance = null;
     public static PlayerName instance
     {
@@ -21,6 +24,7 @@ public class PlayerName : MonoBehaviour {
             return _instance;
         }
     }
+
     private void Awake()
     {
         path = Application.persistentDataPath + "/Player";
@@ -29,6 +33,7 @@ public class PlayerName : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
+        //이름이 담긴 파일이 존재하는지 확인 이후 인풋필드 Active
         HaveName = IsHaveName();
         if (!HaveName) {
             InputField.SetActive(true);
@@ -38,10 +43,7 @@ public class PlayerName : MonoBehaviour {
         }
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    //파일의 존재 여부를 확인하여 있을 경우 이름을 불러옴
     public bool IsHaveName() {
         try
         {
@@ -72,7 +74,7 @@ public class PlayerName : MonoBehaviour {
         }
         return false;
     }
-
+    //폴더가 없을 경우 인풋 필드에 적힌 string 값을 파일형태로 저장 후 NetworkManager에 전송
     public void OnSendName(string arg)
     {
         if (arg != "")

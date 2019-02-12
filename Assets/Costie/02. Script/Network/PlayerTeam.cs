@@ -9,14 +9,15 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PhotonView))]
 public class PlayerTeam : MonoBehaviourPun, IPunObservable
 {
-    //[SerializeField] private Material Mycolor;
+
     public Image MyHeroImage;
     public Text MyNameText;
     public Image ReadyFrame;
     public hcp.E_HeroType myherotype;
+
     [SerializeField] private bool ReadyCheck;
     [SerializeField] private string MyTeam, MyName;
-    [SerializeField] private Button BtnTeamA, BtnTeamB, BtnReady, BtnSoldier, BtnHook;
+    [SerializeField] private Button BtnReady, BtnSoldier, BtnHook;
     [SerializeField] private MonoBehaviour[] LobbyControlscripts;
     public PhotonView photonView;
 
@@ -37,13 +38,15 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
             if (photonView.IsMine)
             {
                 NetworkManager.instance.buttons.SetActive(true);
-                BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button>();
-                BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
                 BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
                 BtnSoldier = NetworkManager.instance.buttons.transform.GetChild(3).GetComponent<Button>();
                 BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
-                //BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
-                //BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                /*
+                 * BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button
+                 * BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
+                 * BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
+                 * BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                 */
                 BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); });
                 BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
@@ -73,26 +76,6 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageUnReady;
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         MyNameText.text = MyName;
-        //if (PhotonNetwork.InRoom)
-        //{
-        //    if (SceneManager.GetActiveScene().name == "LobbyScene")
-        //    {
-        //        if (PhotonNetwork.IsMasterClient)
-        //        {
-        //            if (Input.GetKeyDown(KeyCode.P))
-        //            {
-        //                NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (Input.GetKeyDown(KeyCode.R))
-        //            {
-        //                NetworkManager.instance.photonView.RPC("Ready", RpcTarget.All, photonView.ViewID);
-        //            }
-        //        }
-        //    }
-        //}
     }
     public void PosTeam(string TeamLayer,int Pos)
     {
@@ -106,8 +89,8 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         }
     }
     public void PosAfterDictionary() {
+
         MyTeam = NetworkManager.instance.Teams[photonView.ViewID / 1000];
-        //int MyPos = MyTeam == hcp.Constants.teamA_LayerName ? NetworkManager.instance.TeamACount : NetworkManager.instance.TeamBCount;
         int MyPos = 0;
         foreach (KeyValuePair<int, string> pair in NetworkManager.instance.Teams) {
             if (pair.Key == photonView.ViewID / 1000)
