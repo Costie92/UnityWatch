@@ -37,16 +37,11 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         {
             if (photonView.IsMine)
             {
+                //각 버튼에 리스너 추가
                 NetworkManager.instance.buttons.SetActive(true);
                 BtnReady = NetworkManager.instance.buttons.transform.GetChild(2).GetComponent<Button>();
                 BtnSoldier = NetworkManager.instance.buttons.transform.GetChild(3).GetComponent<Button>();
                 BtnHook = NetworkManager.instance.buttons.transform.GetChild(4).GetComponent<Button>();
-                /*
-                 * BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button
-                 * BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
-                 * BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
-                 * BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
-                 */
                 BtnSoldier.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Soldier); });
                 BtnHook.GetComponent<Button>().onClick.AddListener(delegate { onClickHeroButton(hcp.E_HeroType.Hook); });
                 if (PhotonNetwork.IsMasterClient)
@@ -55,12 +50,21 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
                 }
                 else
                     BtnReady.GetComponent<Button>().onClick.AddListener(onClickReady);
+                /*
+                 * BtnTeamA = NetworkManager.instance.buttons.transform.GetChild(0).GetComponent<Button
+                 * BtnTeamB = NetworkManager.instance.buttons.transform.GetChild(1).GetComponent<Button>();
+                 * BtnTeamA.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("A"); });
+                 * BtnTeamB.GetComponent<Button>().onClick.AddListener(delegate { onClicKTeamButton("B"); });
+                 */
+                
             }
             else
             {
                 //m.enabled = false;
             }
         }
+
+        //각 플레이어에게 접속했다고 RPC전송
         if(photonView.IsMine)
             NetworkManager.instance.photonView.RPC("Join", RpcTarget.MasterClient, photonView.ViewID);
         NetworkManager.instance.photonView.RPC("Named", RpcTarget.AllBufferedViaServer, photonView.ViewID, PlayerName.instance.MyName);
@@ -73,12 +77,14 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
+        //나의 레디 / 영웅 / 이름 정보 업데이트
         ReadyFrame.sprite = ReadyCheck ? NetworkManager.instance.imageReady : NetworkManager.instance.imageUnReady;
         MyHeroImage.sprite = myherotype == hcp.E_HeroType.Soldier ? NetworkManager.instance.imageSoldier : NetworkManager.instance.imageHook;
         MyNameText.text = MyName;
     }
     public void PosTeam(string TeamLayer,int Pos)
     {
+        //팀에 접속한 인원 만큼 나의 위치는 아래로 위치함
         if (TeamLayer == hcp.Constants.teamA_LayerName)
         {
             this.transform.localPosition = new Vector3(-750, 100 - Pos * 450, 0);
@@ -89,7 +95,7 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
         }
     }
     public void PosAfterDictionary() {
-
+        //딕셔너리의 팀원의 숫자 만큼 나의 위치가 지정됨
         MyTeam = NetworkManager.instance.Teams[photonView.ViewID / 1000];
         int MyPos = 0;
         foreach (KeyValuePair<int, string> pair in NetworkManager.instance.Teams) {
@@ -106,9 +112,9 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     }
     public void onClicKTeamButton(string TeamString)
     {
-        //PosTeam(TeamString == "A");
         NetworkManager.instance.photonView.RPC("SelectTeam", RpcTarget.All, photonView.ViewID, TeamString);
     }
+    //각 버튼 클릭시 RPC를 플레이어들에게 전송
     public void onClickHeroButton(hcp.E_HeroType heroType)
     {
         myherotype = heroType;
@@ -123,11 +129,15 @@ public class PlayerTeam : MonoBehaviourPun, IPunObservable
     {
         NetworkManager.instance.photonView.RPC("Play", RpcTarget.All);
     }
+
+    //마스터 클라이언트가 되었을 시 버튼 기능 변경
     public void BecomeToMaster() {
         BtnReady.GetComponent<Button>().onClick.RemoveAllListeners();
         BtnReady.GetComponent<Button>().onClick.AddListener(onClickPlay);
         BtnReady.GetComponentInChildren<Text>().text = "Play";
     }
+
+    //내 상태가 변경 될 때 포톤으로 정보 전송
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
